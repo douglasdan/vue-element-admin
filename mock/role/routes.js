@@ -346,44 +346,6 @@ const asyncRoutes = [
   },
 
   {
-    path: '/tab',
-    component: 'layout/Layout',
-    children: [
-      {
-        path: 'index',
-        component: 'views/tab/index',
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
-      }
-    ]
-  },
-
-  {
-    path: '/error',
-    component: 'layout/Layout',
-    redirect: 'noRedirect',
-    name: 'ErrorPages',
-    meta: {
-      title: 'Error Pages',
-      icon: '404'
-    },
-    children: [
-      {
-        path: '401',
-        component: 'views/error-page/401',
-        name: 'Page401',
-        meta: { title: 'Page 401', noCache: true }
-      },
-      {
-        path: '404',
-        component: 'views/error-page/404',
-        name: 'Page404',
-        meta: { title: 'Page 404', noCache: true }
-      }
-    ]
-  },
-
-  {
     path: '/error-log',
     component: 'layout/Layout',
     redirect: 'noRedirect',
@@ -396,79 +358,6 @@ const asyncRoutes = [
       }
     ]
   },
-
-  {
-    path: '/excel',
-    component: 'layout/Layout',
-    redirect: '/excel/export-excel',
-    name: 'Excel',
-    meta: {
-      title: 'Excel',
-      icon: 'excel'
-    },
-    children: [
-      {
-        path: 'export-excel',
-        component: 'views/excel/export-excel',
-        name: 'ExportExcel',
-        meta: { title: 'Export Excel' }
-      },
-      {
-        path: 'export-selected-excel',
-        component: 'views/excel/select-excel',
-        name: 'SelectExcel',
-        meta: { title: 'Select Excel' }
-      },
-      {
-        path: 'export-merge-header',
-        component: 'views/excel/merge-header',
-        name: 'MergeHeader',
-        meta: { title: 'Merge Header' }
-      },
-      {
-        path: 'upload-excel',
-        component: 'views/excel/upload-excel',
-        name: 'UploadExcel',
-        meta: { title: 'Upload Excel' }
-      }
-    ]
-  },
-
-  {
-    path: '/zip',
-    component: 'layout/Layout',
-    redirect: '/zip/download',
-    alwaysShow: true,
-    meta: { title: 'Zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: 'views/zip/index',
-        name: 'ExportZip',
-        meta: { title: 'Export Zip' }
-      }
-    ]
-  },
-
-  {
-    path: '/pdf',
-    component: 'layout/Layout',
-    redirect: '/pdf/index',
-    children: [
-      {
-        path: 'index',
-        component: 'views/pdf/index',
-        name: 'PDF',
-        meta: { title: 'PDF', icon: 'pdf' }
-      }
-    ]
-  },
-  {
-    path: '/pdf/download',
-    component: 'views/pdf/download',
-    hidden: true
-  },
-
   {
     path: '/theme',
     component: 'layout/Layout',
@@ -482,7 +371,6 @@ const asyncRoutes = [
       }
     ]
   },
-
   {
     path: '/clipboard',
     component: 'layout/Layout',
@@ -496,7 +384,6 @@ const asyncRoutes = [
       }
     ]
   },
-
   {
     path: '/i18n',
     component: 'layout/Layout',
@@ -509,7 +396,6 @@ const asyncRoutes = [
       }
     ]
   },
-
   {
     path: 'external-link',
     component: 'layout/Layout',

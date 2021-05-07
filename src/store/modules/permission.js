@@ -51,12 +51,12 @@ function generateRouteMetaByMenu(menu, path) {
 
 const state = {
   routes: [],
-  addRoutes: []
+  asyncRoutes: []
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    state.addRoutes = routes
+    state.asyncRoutes = routes
     state.routes = constantRoutes.concat(routes)
   }
 }
@@ -64,11 +64,7 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise((resolve, reject) => {
-      let accessedRoutes = []
-
-      if (window.localStorage.getItem('ROUTES')) {
-        accessedRoutes = JSON.parse(window.localStorage.getItem('ROUTES'))
-      }
+      let accessedRoutes = state.asyncRoutes
 
       if (accessedRoutes.length === 0) {
         getRoutes().then((response) => {
@@ -79,16 +75,16 @@ const actions = {
               reject('您没有被授予任何角色权限，请联系管理员')
             } else {
               window.localStorage.setItem('ROUTES', JSON.stringify(accessedRoutes))
+              window.localStorage.setItem('RedirectTo.default', response.data.redirectTo)
 
               accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
+
               commit('SET_ROUTES', accessedRoutes)
               resolve(accessedRoutes)
             }
           }
         })
       } else {
-        accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
-        commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       }
 

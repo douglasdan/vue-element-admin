@@ -137,8 +137,6 @@ export default {
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               console.log('加载路由')
-
-              // window.localStorage.getItem("ROUTES")
             })
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })

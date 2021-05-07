@@ -73,30 +73,57 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
+    redirect: '/',
+    children: [],
+    hidden: true
   }
+
+  // {
+  //   path:'/company',
+  //   component: Layout,
+  //   children:[
+  //     {
+  //       path: ''
+  //     }
+  //   ]
+  // }
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: 'Dashboard',
+  //       meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // }
 ]
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
+const createRouter = (routes) => {
+  if (window.localStorage.getItem('RedirectTo.default')) {
+    constantRoutes[constantRoutes.length - 1].redirect = window.localStorage.getItem('RedirectTo.default')
+  }
 
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+  const router = new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
+  debugger
+  if (routes) {
+    router.addRoutes(routes)
+  }
+  return router
+}
 
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
-  const newRouter = createRouter()
+export function resetRouter(routes) {
+  const newRouter = createRouter(routes || [])
   router.matcher = newRouter.matcher // reset router
 }
 

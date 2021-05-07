@@ -17,7 +17,20 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/api/sys/login',
-    method: 'post'
+    url: '/api/sys/logout',
+    method: 'get'
+  })
+}
+
+export function getRoutes() {
+  //
+  let sys = window.localStorage.getItem('SYS')
+  if (!sys) {
+    sys = 1
+  }
+
+  return request({
+    url: '/api/sys/routes?type=' + sys,
+    method: 'get'
   })
 }

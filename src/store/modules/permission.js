@@ -77,6 +77,18 @@ const actions = {
               window.localStorage.setItem('ROUTES', JSON.stringify(accessedRoutes))
               window.localStorage.setItem('RedirectTo.default', response.data.redirectTo)
 
+              accessedRoutes.push({
+                path: '/profile',
+                component: () => import('@/layout/index.vue'),
+                children: [
+                  {
+                    path: 'index',
+                    component: () => import('@/views/user-profile.vue'),
+                    name: '个人中心',
+                    meta: { title: '个人中心', icon: 'user' }
+                  }
+                ]
+              })
               accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
 
               commit('SET_ROUTES', accessedRoutes)

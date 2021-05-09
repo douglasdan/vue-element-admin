@@ -20,6 +20,13 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import Mdm from './components/LowCode/index'
+Vue.use(Mdm)
+
+import TreeSelect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+Vue.use(TreeSelect)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

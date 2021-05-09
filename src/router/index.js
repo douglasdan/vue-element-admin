@@ -112,7 +112,6 @@ const createRouter = (routes) => {
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes
   })
-  debugger
   if (routes) {
     router.addRoutes(routes)
   }

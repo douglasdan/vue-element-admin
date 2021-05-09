@@ -1,9 +1,9 @@
 <template>
   <el-container style="border: 1px solid #eee" class="main-content-full">
-    <OrgSideBar />
+    <org-side-bar>></org-side-bar>
     <el-container>
       <el-main style="padding: 10px;">
-        <OrgList />
+        <UserList />
       </el-main>
     </el-container>
   </el-container>
@@ -11,13 +11,13 @@
 
 <script>
 
-import OrgList from './OrgList'
+import UserList from './UserList'
 import OrgSideBar from '../OrgSideBar.vue'
 
 export default {
-  name: 'CompanyMgr',
+  name: 'UserMgr',
   components: {
-    OrgList,
+    UserList,
     OrgSideBar
   },
   data() {

@@ -34,3 +34,26 @@ export function getRoutes() {
     method: 'get'
   })
 }
+
+export function selectUserPage(data) {
+  return request({
+    url: '/api/v1/user/query',
+    method: 'post',
+    data
+  })
+}
+
+export function save(data) {
+  return request({
+    url: '/api/v1/user/save',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: '/api/v1/user/delete/${id}',
+    method: 'delete'
+  })
+}

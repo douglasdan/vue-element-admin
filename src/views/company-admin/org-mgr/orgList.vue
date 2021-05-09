@@ -1,7 +1,7 @@
 <template>
   <section>
     <el-table :data="orgs" border style="width: 100%">
-      <el-table-column type="index" />
+      <el-table-column type="index" label="序号" />
       <el-table-column prop="orgName" label="组织名称" />
       <el-table-column prop="orgType" label="组织性质" :formatter="formatter" />
       <el-table-column width="240">

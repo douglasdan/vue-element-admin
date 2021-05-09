@@ -8,7 +8,13 @@ const state = {
   showSettings: showSettings,
   tagsView: tagsView,
   fixedHeader: fixedHeader,
-  sidebarLogo: sidebarLogo
+  sidebarLogo: sidebarLogo,
+
+  sideBarWidth: 210,
+  navbarHeight: 50,
+  tagsViewHeight: 34,
+  tableFuncBarHeight: 42,
+  tablePaginationHeight: 42
 }
 
 const mutations = {

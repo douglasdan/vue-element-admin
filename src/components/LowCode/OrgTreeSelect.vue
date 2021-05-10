@@ -12,7 +12,7 @@
 
 <script>
 import TreeSelect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import '@/styles/tree-select.scss'
 
 export default {
   name: 'OrgTreeSelect',
@@ -56,3 +56,7 @@ export default {
   }
 }
 </script>
+
+<style scoped="true">
+
+</style>

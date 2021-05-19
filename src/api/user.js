@@ -43,7 +43,7 @@ export function selectUserPage(data) {
   })
 }
 
-export function save(data) {
+export function saveUser(data) {
   return request({
     url: '/api/v1/user/save',
     method: 'post',

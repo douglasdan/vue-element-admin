@@ -1,24 +1,29 @@
 <template>
   <section>
-    <el-row style="margin-bottom: 10px;">
-      <el-button type="primary" @click="handleAdd">新增用户</el-button>
+    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
+      <el-button type="primary" @click="handleAdd">新增主数据</el-button>
     </el-row>
-    <el-table :data="users" border style="width: 100%;" :height="tableHeight">
+    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="userAccount" label="账号" />
-      <el-table-column prop="userName" label="姓名" />
-      <el-table-column prop="userPhone" label="电话" />
+      <el-table-column prop="mdmName" label="名称" :formatter="formatter"/>
+      <el-table-column prop="mdmType" label="类型" :formatter="formatter"/>
+      <el-table-column prop="mdmCode" label="编码" :formatter="formatter"/>
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <el-button
+          <el-button v-if="!scope.row.editable"
+            size="mini"
+            type="primary"
+            @click="handleEdit(scope.$index, scope.row)"
+          >查看</el-button>
+          <el-button v-if="scope.row.editable"
             size="mini"
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
-          <el-button
+          <el-button v-if="scope.row.editable"
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
@@ -26,6 +31,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <div class="block" style="margin: 5px; float: right;">
       <el-pagination
         :current-page.sync="pageNo"
@@ -38,33 +44,23 @@
       />
     </div>
 
-    <el-dialog title="编辑" :visible.sync="editDialogVisible">
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="所属组织">
-            <org-tree-select v-model="editForm.orgId" @change="handleOrgSelect" />
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="用户名称">
-            <el-input v-model="editForm.userName" placeholder="" />
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="用户账号">
-            <el-input v-model="editForm.userAccount" placeholder="" />
-          </el-form-item>
-        </el-form>
-      </el-row>
+    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
+      <el-form :inline="true" label-width="120px" style="width: 100%;">
+        <el-form-item label="名称">
+          <el-input v-model="editForm.mdmName" placeholder="" :disabled="shouldDisableInput"/>
+        </el-form-item>
+        <div></div>
+        <el-form-item label="编码">
+          <el-input v-model="editForm.mdmCode" placeholder="" :disabled="shouldDisableInput"/>
+        </el-form-item>
+        <div></div>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取消</el-button>
         <el-button type="primary" @click="submitEdit()">确定</el-button>
       </div>
     </el-dialog>
+
   </section>
 </template>
 
@@ -72,28 +68,31 @@
 
 import store from '@/store'
 import { mapState } from 'vuex'
-import { selectUserPage, saveUser, deleteUser } from '@/api/user'
+import { getMdmTypeAll, saveMdm, deleteMdm } from '@/api/mdm'
+
+const DefaultMdm = {
+  id: null,
+  mdmName:'',
+  mdmType:"1",
+  mdmCode:'',
+  json: '[]',
+  editable: true
+}
 
 export default {
   name: 'OrgList',
+  components:{
+  },
   data() {
     return {
-      users: [],
+      rows: [],
       total: 0,
       pageSize: 20,
       pageNo: 1,
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: {}
-    }
-  },
-  watch: {
-    '$store.state.corpAdmin.selectOrg': async function() {
-      await store.dispatch('mdm/getMdmData', 'orgType')
-      console.log('state.corpAdmin.selectOrg changed refresh org list')
-
-      this.loadData()
+      editForm: JSON.parse(JSON.stringify(DefaultMdm))
     }
   },
   computed: {
@@ -102,18 +101,25 @@ export default {
         return state.mdm.data
       }
     }),
-    supOrgEditable() {
-      return !!this.editForm.orgId
-    },
     tableHeight() {
       const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
-      console.log(h)
       return h
+    },
+    shouldDisableInput() {
+      console.log("shouldDisableInput", typeof(this.editForm.editable))
+      return !this.editForm.editable
     }
+  },
+  watch: {
+  },
+  created() {
+  },
+  mounted() {
+    this.loadData()
   },
   methods: {
     formatter(row, column, cellValue, index) {
@@ -126,19 +132,13 @@ export default {
       this.loadData()
     },
     loadData() {
-      selectUserPage({
-        'pageNo': this.pageNo,
-        'pageSize': this.pageSize,
-        conditions: [
-          { field: 'under_org_id', values: [this.$store.state.corpAdmin.selectOrg.orgId], op: 'eq' }
-        ]
-      }).then(ret => {
-        this.total = ret.data.total
-        this.users = [].concat(ret.data.rows)
+      getMdmTypeAll().then(ret => {
+        if (ret.success) {
+          this.rows = ret.data
+        }
       })
     },
     handleClose() {
-      debugger
       this.editDialogVisible = false
     },
     cancelEdit() {
@@ -146,28 +146,38 @@ export default {
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
-      Object.assign(this.editForm, row)
+      this.editForm = JSON.parse(JSON.stringify(row))
       this.editDialogVisible = true
     },
     handleAdd() {
-      Object.assign(this.editForm, {})
+      Object.assign(this.editForm, DefaultMdm)
       this.editDialogVisible = true
     },
-    handleDelete(i, row) {
-      deleteUser()
-    },
-    handleOrgSelect(org) {
-      this.editForm.orgId = org.orgId
-    },
-    submitEdit() {
-      console.log('orgList save', JSON.stringify(this.editForm))
+    handleMdmTypeChange() {
 
-      saveUser(this.editForm).then(ret => {
+    },
+    handleDelete(i, row) {
+      deleteMdm(row.id).then(ret => {
         if (ret.success) {
-          this.loadData();
+          this.loadData()
+          this.editDialogVisible = false
         }
       })
-    }
+    },
+    onJsonChange(str) {
+      this.editForm.json = str
+    },
+    submitEdit() {
+      console.log('RoleList save', this.editForm)
+
+      this.editForm.json = this.$refs.refJsonEditor.getJsonStr()
+      saveMdm(this.editForm).then(ret => {
+        if (ret.success) {
+          this.loadData()
+          this.editDialogVisible = false
+        }
+      })
+    },
   }
 }
 

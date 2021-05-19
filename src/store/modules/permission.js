@@ -40,7 +40,12 @@ function generateRouteMetaByMenu(menu, path) {
 
     if (route.children.length > 0) {
       route.redirect = route.fullPath + '/' + route.children[0].path
-      route.component = () => import('@/layout/index.vue')
+
+      if (menu.depth === 1) {
+        route.component = () => import('@/layout/index.vue')
+      } else {
+        route.component = () => import('@/views/index.vue')
+      }
     } else {
       //
       route.component = routesMap[route.fullPath]

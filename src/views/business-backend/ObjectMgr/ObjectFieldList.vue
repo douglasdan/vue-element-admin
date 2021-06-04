@@ -5,29 +5,25 @@
     </el-row>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="appId" label="名称" :formatter="formatter"/>
-      <el-table-column prop="obiectName" label="对象名称" :formatter="formatter"/>
-      <el-table-column prop="objectType" label="对象类型" :formatter="formatter"/>
-      <el-table-column prop="objectCode" label="对象编码" :formatter="formatter"/>
-      <el-table-column prop="labelFieldCode" label="名称字段" :formatter="formatter"/>
-      <el-table-column prop="idField" label="ID字段" :formatter="formatter"/>
-      <el-table-column prop="objectIcon" label="图标" :formatter="formatter"/>
-      <el-table-column prop="version" label="当前版本" :formatter="formatter"/>
+      <el-table-column prop="fieldName"       label="字段名称" :formatter="formatter"/>
+      <el-table-column prop="fieldType"       label="字段类型" :formatter="formatter"/>
+      <el-table-column prop="fieldCode"       label="字段代码" :formatter="formatter"/>
+      <el-table-column prop="fieldTip"        label="提示" :formatter="formatter"/>
+      <el-table-column prop="fieldDesc"       label="描述" :formatter="formatter"/>
+      <el-table-column prop="fieldUnique"     label="是否唯一" :formatter="formatter"/>
+      <el-table-column prop="fieldLength"     label="最大长度" :formatter="formatter"/>
+      <el-table-column prop="decicmalLength"  label="小数位" :formatter="formatter"/>
+      <el-table-column prop="version"         label="版本" :formatter="formatter"/>
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <el-button v-if="scope.row.editable"
+          <el-button
             size="mini"
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
-          <el-button v-if="scope.row.editable"
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,18 +40,31 @@
       />
     </div>
 
-    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
-      <el-form :inline="true" label-width="120px" style="width: 100%;">
-        <el-form-item label="名称">
-          <el-input v-model="editForm.mdmName" placeholder="" :disabled="shouldDisableInput"/>
+    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :append-to-body="true">
+      <el-form :inline="true" label-width="120px" style="width: 400px;">
+        <el-form-item label="字段名称：">
+          <el-input v-model="editForm.fieldName" placeholder="" :disabled="shouldDisableInput"/>
         </el-form-item>
-        <div></div>
-        <div></div>
-        <el-form-item label="编码">
-          <el-input v-model="editForm.mdmCode" placeholder="" :disabled="shouldDisableInput"/>
+        <el-form-item label="字段类型：">
+          <mdm-select v-model="editForm.fieldType" :code="'fieldType'" :disabled="shouldDisableInput"/>
         </el-form-item>
-        <div></div>
-        <el-form-item label="内容">
+        <el-form-item label="字段代码：">
+          <el-input v-model="editForm.fieldCode" placeholder="" :disabled="shouldDisableInput"/>
+        </el-form-item>
+        <el-form-item label="长度：">
+          <el-input type="number" v-model="editForm.fieldLength" placeholder="" :disabled="shouldDisableInput"/>
+        </el-form-item>
+        <el-form-item label="小数位：">
+          <el-input type="number" v-model="editForm.decicmalLength" placeholder="" :disabled="shouldDisableInput"/>
+        </el-form-item>
+        <el-form-item label="提示：">
+          <el-input v-model="editForm.fieldTip" placeholder=""/>
+        </el-form-item>
+        <el-form-item label="描述：">
+          <el-input type="textarea" v-model="editForm.fieldDesc" placeholder=""/>
+        </el-form-item>
+        <el-form-item label="版本：">
+          <el-input v-model="editForm.version" placeholder="" :disabled="true"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -75,16 +84,29 @@ import { selectObjectFieldDefinePage, saveObjectFieldDefine } from '@/api/object
 
 const DefaultField = {
   id: null,
-  mdmName:'',
-  mdmType:"1",
-  mdmCode:'',
-  json: '[]',
-  editable: true
+  oid: null,
+  fieldName: '',
+  fieldType: '',
+  fieldCode: '',
+  fieldTip: '',
+  fieldDesc: '',
+  fieldUnique: false,
+  fieldLength: 20,
+  decicmalLength: 2,
+  mdmDataId: null,
+  mdmMultiple: false,
+  mdmDdata: '[]',
+  logicDelete: false,
+  tenantId: null,
+  version: null
 }
 
 export default {
   name: 'ObjectFieldList',
   components:{
+  },
+  props: {
+    objectId: Number
   },
   data() {
     return {
@@ -113,8 +135,7 @@ export default {
       return h
     },
     shouldDisableInput() {
-      console.log("shouldDisableInput", typeof(this.editForm.editable))
-      return !this.editForm.editable
+      return !!this.editForm.id
     }
   },
   watch: {
@@ -126,6 +147,15 @@ export default {
   },
   methods: {
     formatter(row, column, cellValue, index) {
+      if (column.property === 'fieldType' && this.mdm['fieldType']) {
+        let name = ""
+        JSON.parse(this.mdm['fieldType'].json).forEach((item) => {
+          if (item.value === cellValue) {
+            name = item.label
+          }
+        })
+        return name
+      }
       return cellValue
     },
     handleSizeChange(val) {
@@ -140,7 +170,8 @@ export default {
         pageSize: this.pageSize,
       }).then(ret => {
         if (ret.success) {
-          this.rows = ret.data
+          this.rows = ret.data.rows
+          this.total = ret.data.total
         }
       })
     },
@@ -156,17 +187,18 @@ export default {
       this.editDialogVisible = true
     },
     handleAdd() {
-      Object.assign(this.editForm, DefaultMdm)
+      this.editForm = JSON.parse(JSON.stringify(DefaultField))
       this.editDialogVisible = true
     },
-    handleMdmTypeChange() {
-      //
+    cancelEdit() {
+      this.editDialogVisible = false
     },
-    handleDelete(i, row) {
-      deleteMdm(row.id).then(ret => {
+    submitEdit(){
+      this.editForm.oid = this.$props.objectId
+      saveObjectFieldDefine(this.editForm).then(ret => {
         if (ret.success) {
-          this.loadData()
           this.editDialogVisible = false
+          this.loadData()
         }
       })
     },

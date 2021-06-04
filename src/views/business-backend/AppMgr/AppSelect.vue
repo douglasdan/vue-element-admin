@@ -36,6 +36,11 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'disabled': {
+      handler(nval, oval) {
+      },
+      immediate: true
     }
   },
   mounted() {
@@ -51,6 +56,7 @@ export default {
     },
     handleChange(nval, oval) {
       this.val = nval
+      this.$emit('input', nval)
       this.$emit('change', nval, oval)
     }
   }

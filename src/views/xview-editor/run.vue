@@ -1,9 +1,9 @@
 <template>
-  <a-row :gutter="[16,16]">
-    <a-col :span="12">
+  <el-row>
+    <el-col :span="12">
       <vue-json-editor
-        v-model="viewJson"
-        :show-btns="true"
+        v-model="viewData"
+        :show-btns="false"
         :mode="'code'"
         lang="zh"
         style="height: 820px"
@@ -11,13 +11,13 @@
         @json-save="onJsonSave"
         @has-error="onError"
       />
-    </a-col>
-    <a-col :span="12">
+    </el-col>
+    <el-col :span="12">
       <div style="border: 1px rgb(0, 255, 242) solid; width: 800px; min-height: 600px;">
         <x-element :view="viewData" />
       </div>
-    </a-col>
-  </a-row>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -26,19 +26,19 @@ import vueJsonEditor from 'vue-json-editor'
 
 const defaultJson =
   {
-    component: 'a-col',
+    component: 'el-col',
     props: {
       'span': 24
     },
     children: [
       {
-        component: 'a-row',
+        component: 'el-row',
         props: {
           style: 'height: 40px;'
         },
         children: [
           {
-            component: 'a-col',
+            component: 'el-col',
             props: {
               'span': 12
             },
@@ -50,7 +50,7 @@ const defaultJson =
             ]
           },
           {
-            component: 'a-col',
+            component: 'el-col',
             props: {
               'span': 12
             },
@@ -67,7 +67,7 @@ const defaultJson =
         ]
       },
       {
-        component: 'a-card',
+        component: 'el-card',
         props: {
           style: 'width: 100%;',
           size: 'small',
@@ -76,31 +76,31 @@ const defaultJson =
         },
         children: [
           {
-            component: 'a-form',
+            component: 'el-form',
             props: {
               'label-col': { span: 8 },
               'wrapper-col': { span: 16 }
             },
             children: [
               {
-                component: 'a-form-item',
+                component: 'el-form-item',
                 props: {
                   label: 'name'
                 },
                 children: [
                   {
-                    component: 'a-input'
+                    component: 'el-input'
                   }
                 ]
               },
               {
-                component: 'a-form-item',
+                component: 'el-form-item',
                 props: {
                   label: 'password'
                 },
                 children: [
                   {
-                    component: 'a-input'
+                    component: 'el-input'
                   }
                 ]
               }
@@ -109,15 +109,22 @@ const defaultJson =
         ]
       },
       {
-        component: 'x-table',
-        props: {
-          objectId: 'J123',
-          viewId: 'V1233'
-        }
-      },
-      {
         component: 'x-card',
+        name: '卡片zzz',
         props: {
+        },
+        header: {
+          buttons: [
+            {
+              component: 'x-button',
+              name: '测试',
+              props: {
+                type: "text",
+                style: "float: right; padding: 3px 0"
+              },
+              action: 'alert(123)'
+            }
+          ]
         },
         children: [
           {
@@ -131,27 +138,51 @@ const defaultJson =
   }
 
 export default {
-  name: 'XRun',
+  name: 'x-run',
   components: {
     vueJsonEditor
   },
+  props: {
+    viewJson: {
+      type: String,
+      required: true,
+      default: '{}'
+    }
+  },
   data() {
     return {
-      viewJson: defaultJson,
       viewData: defaultJson
+    }
+  },
+  watch: {
+    'viewJson': {
+      handler(nval, oval) {
+        if (nval === '') {
+          this.viewData = {}
+        }
+        else {
+          this.viewData = JSON.parse(nval)
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     onJsonChange(value) {
       console.log('value:', value)
-      this.viewData = JSON.parse(JOSN.stringify(this.viewJson))
+      this.viewData = JSON.parse(JSON.stringify(this.viewJson))
     },
     onJsonSave(value) {
       console.log('value:', value)
-      this.viewData = JSON.parse(JOSN.stringify(this.viewJson))
+      this.viewData = JSON.parse(JSON.stringify(this.viewJson))
+      this.$emmit('input', JSON.stringify(this.viewData))
     },
     onError(value) {
       console.log('value:', value)
+    },
+    getJsonContent() {
+      return JSON.stringify(this.viewData);
     }
   }
 

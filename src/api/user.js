@@ -22,13 +22,14 @@ export function logout() {
   })
 }
 
-export function getRoutes() {
-  //
-  let sys = window.localStorage.getItem('SYS')
-  if (!sys) {
-    sys = 1
-  }
+export function saveRoute(data) {
+  return request({
+    url: '/api/sys/routes?type=' + sys,
+    method: 'post'
+  })
+}
 
+export function getRoutes(sys) {
   return request({
     url: '/api/sys/routes?type=' + sys,
     method: 'get'

@@ -1,5 +1,5 @@
 <template>
-  <object-list />
+  <object-list></object-list>
 </template>
 
 <script>
@@ -7,13 +7,10 @@
 import ObjectList from './ObjectList'
 
 export default {
-  name: '',
+  name: 'ObjectMgr',
   components: {
     ObjectList
   },
-  data() {
-
-  }
 }
 
 </script>

@@ -1,15 +1,17 @@
 <template>
   <el-card v-bind="view.props">
-    <a slot="extra" href="#">{{ view.props.extra }}</a>
-    <!-- <x-element :view="item" v-for="item in view.children"></x-element> -->
-
+    <div slot="header" class="clearfix">
+      <span>{{ view.name }}</span>
+      <x-button v-for="item in view.header.buttons" v-bind="item.props" :view="item"></x-button>
+    </div>
+    <x-element v-for="item in view.children" :view="item" />
   </el-card>
 </template>
 
 <script>
 
 export default {
-  name: 'XCard',
+  name: 'x-card',
   components: {
   },
   props: {

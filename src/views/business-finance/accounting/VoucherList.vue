@@ -1,11 +1,12 @@
 <template>
   <section>
     <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
-      <el-button type="primary" @click="handleAdd">新增视图</el-button>
+      <el-button type="primary" @click="handleAdd">新增角色</el-button>
     </el-row>
-    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
+    <el-table :data="roles" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="viewName" label="名称" :formatter="formatter"/>
+      <el-table-column prop="roleName" label="角色名称" />
+      <el-table-column prop="roleDesc" label="角色描述" />
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -21,10 +22,14 @@
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="editPerm(scope.$index, scope.row)"
+          >分配权限</el-button>
         </template>
       </el-table-column>
     </el-table>
-
     <div class="block" style="margin: 5px; float: right;">
       <el-pagination
         :current-page.sync="pageNo"
@@ -37,8 +42,32 @@
       />
     </div>
 
-    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
-      <view-editor :viewDefine="editForm" @close="() => editDialogVisible = false"></view-editor>
+    <el-dialog title="编辑" :visible.sync="editDialogVisible">
+      <el-row>
+        <el-form :inline="true">
+          <el-form-item label="角色名称">
+            <el-input v-model="editForm.roleName" placeholder="" />
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-form :inline="true">
+          <el-form-item label="角色描述">
+            <el-input v-model="editForm.roleDesc" type="textarea" autosize placeholder="" />
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-form :inline="true">
+          <el-form-item label="数据权限范围">
+            <mdm-data :value="editForm.dataPermType" :code="'dataPermType'" @change="handleDataPermChange" />
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelEdit">取消</el-button>
+        <el-button type="primary" @click="submitEdit()">确定</el-button>
+      </div>
     </el-dialog>
 
   </section>
@@ -48,31 +77,23 @@
 
 import store from '@/store'
 import { mapState } from 'vuex'
-import { selectViewDefinePage, saveViewDefine, deleteViewDefine } from '@/api/view-define'
-
-import ViewEditor from './ViewEditor'
-
-const DefaultView = {
-  id: null,
-  viewName:'',
-  viewContent:'{}',
-}
+import { selectRolePage, saveRole, deleteRole } from '@/api/role'
 
 export default {
-  name: 'ViewList',
-  components: {
-    ViewEditor
-  },
+  name: 'VoucherList',
   data() {
     return {
-      rows: [],
+      roles: [],
       total: 0,
       pageSize: 20,
       pageNo: 1,
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: JSON.parse(JSON.stringify(DefaultView))
+      editForm: {
+        roleName: '',
+        roleDesc: ''
+      }
     }
   },
   computed: {
@@ -83,9 +104,7 @@ export default {
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
-    },
-  },
-  created() {
+    }
   },
   mounted() {
     this.loadData()
@@ -101,21 +120,19 @@ export default {
       this.loadData()
     },
     loadData() {
-      selectViewDefinePage({
-        pageNo: this.pageNo,
-        pageSize: this.pageSize
+      selectRolePage({
+        'pageNo': this.pageNo,
+        'pageSize': this.pageSize
       }).then(ret => {
-        if (ret.success) {
-          this.rows = ret.data.rows
-          this.total = ret.data.total
-        }
+        this.total = ret.data.total
+        this.roles = [].concat(ret.data.rows)
       })
     },
     handleClose() {
       this.editDialogVisible = false
     },
     cancelEdit() {
-      this.editForm = JSON.parse(JSON.stringify(DefaultView))
+      this.editForm = {}
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
@@ -123,28 +140,32 @@ export default {
       this.editDialogVisible = true
     },
     handleAdd() {
-      this.editForm = JSON.parse(JSON.stringify(DefaultView))
+      this.editForm = {}
       this.editDialogVisible = true
     },
     handleDelete(i, row) {
-      deleteViewDefine(row.id).then(ret => {
+      deleteRole(row.roleId).then(ret => {
         if (ret.success) {
           this.loadData()
           this.editDialogVisible = false
         }
       })
-    },
-    onJsonChange(str) {
-      this.editForm.json = str
     },
     submitEdit() {
-      // this.editForm.viewContent = this.$refs.refJsonEditor.getJsonStr()
-      saveViewDefine(this.editForm).then(ret => {
+      console.log('RoleList save', this.editForm)
+      saveRole(this.editForm).then(ret => {
         if (ret.success) {
           this.loadData()
           this.editDialogVisible = false
         }
       })
+    },
+    editPerm(row) {
+      //
+
+    },
+    handleDataPermChange() {
+
     }
   }
 }

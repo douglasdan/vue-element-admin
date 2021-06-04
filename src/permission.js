@@ -20,8 +20,9 @@ router.beforeEach(async(to, from, next) => {
   // determine whether the user has logged in
   const hasToken = getToken()
 
+  console.log('route to ', from.path, to.path)
+
   if (hasToken) {
-    console.log('route to ' + to.path)
 
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -72,4 +73,8 @@ router.beforeEach(async(to, from, next) => {
 router.afterEach(() => {
   // finish progress bar
   NProgress.done()
+})
+
+router.onError(() => {
+  console.error('router error')
 })

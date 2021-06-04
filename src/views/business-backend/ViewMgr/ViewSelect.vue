@@ -1,10 +1,10 @@
 <template>
-  <el-select v-model="val" placeholder="" :disabled="disabled" @change="handleChange">
+  <el-select v-model="val" filterable :disabled="disabled" @change="handleChange" :clearable="true">
     <el-option
       v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
+      :key="item.id"
+      :label="item.viewName"
+      :value="item.id"
     />
   </el-select>
 </template>
@@ -12,24 +12,14 @@
 <script>
 
 export default {
-  name: 'MdmSelect',
+  name: 'ViewSelect',
   props: {
-    code: String,
     value: String,
     disabled: {
       type: Boolean,
       required: false,
       default: false
     },
-    version: {
-      type: Number,
-      required: false
-    },
-    multiple: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
   },
   data() {
     return {
@@ -40,7 +30,6 @@ export default {
   watch: {
     'value': {
       handler(nval, oval) {
-        console.log('MdmSelect value=', nval)
         this.val = nval
       },
       deep: true,
@@ -49,7 +38,6 @@ export default {
     'disabled': {
       handler(nval, oval) {
       },
-      deep: true,
       immediate: true
     }
   },
@@ -57,15 +45,15 @@ export default {
     this.loadData()
   },
   methods: {
-    async loadData() {
-      const mdm = await this.$store.dispatch('mdm/getMdmData', this.$props.code)
-      this.options = JSON.parse(mdm.json)
+    loadData() {
+      this.$store.dispatch('lowCode/getViews').then(ret => {
+        this.options = ret
+      })
     },
     handleChange(nval, oval) {
-      console.log('mdm-select', this.$props.code, 'change to ', nval)
       this.val = nval
-      // this.$emit('change', nval, oval)
       this.$emit('input', nval)
+      this.$emit('change', nval, oval)
     }
   }
 }

@@ -76,7 +76,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -136,10 +136,15 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              this.$store.dispatch('permission/generateRoutes', [])
+            })
+            .then(() => {
               this.$store.dispatch('mdm/getMdmData', '')
             })
             .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              console.log('log success redirect to ', this.redirect || '/')
+              debugger
+              this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
             .catch(() => {

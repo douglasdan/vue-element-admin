@@ -3,6 +3,7 @@
     :is="componentTag()"
     :key="eid"
     :ref="view.refName"
+    :viewData="viewData"
     v-bind="view.props"
     :view="view"
     :ref-name="view.refName"
@@ -10,7 +11,7 @@
 
     {{ view.content }}
 
-    <x-element v-for="item in view.children" :view="item" />
+    <x-element v-for="item in view.children" :view="item" :viewData="viewData"/>
 
   </component>
 </template>
@@ -20,11 +21,14 @@
 import { uuid } from 'vue-uuid'
 
 export default {
-  name: 'XElement',
+  name: 'x-element',
   components: {
   },
   props: {
     view: {
+      type: Object
+    },
+    viewData: {
       type: Object
     }
   },

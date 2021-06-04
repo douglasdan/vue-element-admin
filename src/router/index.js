@@ -71,6 +71,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/backend',
+    component: () => import('@/views/system-switch/backend'),
+    hidden: true
+  },
+  {
+    path: '/front',
+    component: () => import('@/views/system-switch/front'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/',

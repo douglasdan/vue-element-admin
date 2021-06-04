@@ -6,51 +6,50 @@
           <span slot="title">基本信息</span>
         </el-menu-item>
         <el-menu-item index="2">
-          <span slot="title">字段</span>
+          <span slot="title">对象字段</span></span>
         </el-menu-item>
         <el-menu-item index="3">
-          <span slot="title">字段</span>
+          <span slot="title">对象关系</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
 
     <el-container>
-      <el-header style="text-align: right; font-size: 12px; line-height: 60px;  border-bottom: 1px solid #eee;">
-        <el-button type="primary">新增字段</el-button>
-      </el-header>
-
       <el-main>
         <div v-if="selectIndex === '1'">
-          <el-form :model="tableDefine" :inline="true" style="width: 300px;">
-            <el-form-item label="对象名称">
+          <el-form :model="tableDefine" :inline="true" style="width: 400px;" label-width="120px">
+            <el-form-item label="应用:">
+              <app-select v-model="tableDefine.appId" :disabled="shouldDisable"></app-select>
+            </el-form-item>
+            <el-form-item label="对象名称:">
               <el-input v-model="tableDefine.obiectName"></el-input>
             </el-form-item>
-            <el-form-item label="对象代码">
-              <el-input v-model="tableDefine.objectCode"></el-input>
+            <el-form-item label="对象代码:">
+              <el-input v-model="tableDefine.objectCode" :disabled="shouldDisable"></el-input>
             </el-form-item>
-            <el-form-item label="对象类型">
-              <el-select v-model="tableDefine.objectType">
+            <el-form-item label="对象类型:">
+              <el-select v-model="tableDefine.objectType" :disabled="shouldDisable">
                 <el-option label="普通对象" value="1"></el-option>
                 <el-option label="子对象" value="2"></el-option>
               </el-select>
             </el-form-item>
 
             <el-divider></el-divider>
-            <el-form-item label="主键字段">
-              <el-input v-model="tableDefine.idField"></el-input>
+            <el-form-item label="主键字段:">
+              <el-input v-model="tableDefine.idField" :disabled="shouldDisable"></el-input>
             </el-form-item>
-            <el-form-item label="字段类型">
-              <mdm-select v-model="tableDefine.idFieldType" :value="tableDefine.idFieldType" :code="'fieldType'" @change="handleIdTypeChange" />
+            <el-form-item label="字段类型:">
+              <mdm-select v-model="tableDefine.idFieldType" :value="tableDefine.idFieldType" :code="'fieldType'" :disabled="shouldDisable"/>
             </el-form-item>
-            <el-form-item label="名称字段">
+            <!-- <el-form-item label="名称代码:">
               <el-input v-model="tableDefine.labelFieldCode"></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-divider></el-divider>
-            <el-form-item label="版本">
+            <el-form-item label="版本:">
               <el-input v-model="tableDefine.version" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item label="已发布版本">
+            <el-form-item label="已发布版本:">
               <el-input v-model="tableDefine.deployVersion":disabled="true"></el-input>
             </el-form-item>
 
@@ -60,8 +59,9 @@
             </el-form-item>
           </el-form>
         </div>
+
         <div v-else-if="selectIndex === '2'">
-          22
+          <ObjectFieldList :objectId="tableDefine.id"></ObjectFieldList>
         </div>
        <div v-else-if="selectIndex === '3'">
           33
@@ -75,19 +75,33 @@
 
 import { mapState } from 'vuex'
 import { saveObjectDefine } from '@/api/object-define.js'
+import { selectAppPage } from '@/api/app.js'
+import AppSelect from '../AppMgr/AppSelect'
+
+import ObjectFieldList from './ObjectFieldList'
 
 export default {
   name: 'ObjectEditor',
+  components: { AppSelect, ObjectFieldList },
   props: {
     obj: {
       type: Object
     }
   },
+  watch: {
+    'obj': {
+      handler(nval, oval) {
+        this.tableDefine = nval
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data() {
     return {
+      apps:[],
       selectIndex: '1',
       tableDefine:{},
-      tableFieldDefines: [],
     }
   },
   computed: {
@@ -103,8 +117,12 @@ export default {
       const h = (window.innerHeight - 20 - 54) + 'px'
       return h
     },
+    shouldDisable() {
+      return !!this.tableDefine.id
+    },
     editComponent() {
       if (this.selectIndex === 1) {
+        //
 
       }else {
 
@@ -114,9 +132,11 @@ export default {
   methods: {
     loadData(){
       //
+      selectAppPage({}).then(ret => {
+        this.apps = ret.data.rows;
+      })
     },
     handleSelect(key, keyPath) {
-      debugger
       this.selectIndex = key;
     },
     onSubmit1(){
@@ -129,7 +149,6 @@ export default {
     handleIdTypeChange(val) {
       // this.tableDefine.idFieldType = val;
     }
-
   }
 }
 

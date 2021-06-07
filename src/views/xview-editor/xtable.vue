@@ -11,7 +11,7 @@
 <script>
 
 export default {
-  name: 'x-table',
+  name: 'XTable',
   components: {
   },
   props: {

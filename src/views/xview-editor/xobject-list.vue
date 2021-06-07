@@ -1,11 +1,11 @@
 <template>
-  <div></div>
+  <div />
 </template>
 
 <script>
 
 export default {
-  name: 'xobject-list'
+  name: 'XobjectList'
 }
 
 </script>

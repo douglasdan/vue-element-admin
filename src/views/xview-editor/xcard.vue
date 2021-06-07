@@ -2,7 +2,7 @@
   <el-card v-bind="view.props">
     <div slot="header" class="clearfix">
       <span>{{ view.name }}</span>
-      <x-button v-for="item in view.header.buttons" v-bind="item.props" :view="item"></x-button>
+      <x-button v-for="item in view.header.buttons" v-bind="item.props" :view="item" />
     </div>
     <x-element v-for="item in view.children" :view="item" />
   </el-card>
@@ -11,7 +11,7 @@
 <script>
 
 export default {
-  name: 'x-card',
+  name: 'XCard',
   components: {
   },
   props: {

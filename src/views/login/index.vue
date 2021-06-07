@@ -143,7 +143,6 @@ export default {
             })
             .then(() => {
               console.log('log success redirect to ', this.redirect || '/')
-              debugger
               this.$router.replace({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })

@@ -4,8 +4,8 @@
       <i class="rot90 el-icon-sort" @click="handleClick" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item><span style="font-weight: 600;" v-show="sys === 2" @click="switchSys(1)">业务后台系统</span></el-dropdown-item>
-      <el-dropdown-item><span style="font-weight: 600;" v-show="sys === 1" @click="switchSys(2)">业务前台系统</span></el-dropdown-item>
+      <el-dropdown-item><span v-show="sys === 2" style="font-weight: 600;" @click="switchSys(1)">业务后台系统</span></el-dropdown-item>
+      <el-dropdown-item><span v-show="sys === 1" style="font-weight: 600;" @click="switchSys(2)">业务前台系统</span></el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
@@ -22,11 +22,10 @@ export default {
     }
   },
   mounted() {
-    let sys = parseInt(window.localStorage.getItem('SYS'))
+    const sys = parseInt(window.localStorage.getItem('SYS'))
     if (!sys) {
       this.sys = 1
-    }
-    else {
+    } else {
       this.sys = sys
     }
   },
@@ -34,21 +33,21 @@ export default {
     handleClick() {
       //
     },
-    switchSys(val){
+    switchSys(val) {
       window.localStorage.setItem('SYS', val)
 
       this.$store.dispatch('tagsView/delAllViews')
-      .then(ret => {
-        return this.$store.dispatch('permission/clearRoutes')
-      })
-      .then(ret => {
-        return this.$store.dispatch('permission/generateRoutes')
-      })
-      .then(accessRoutes => {
-        resetRouter(accessRoutes)
-        this.sys = val
-        window.location.replace('/#/')
-      })
+        .then(ret => {
+          return this.$store.dispatch('permission/clearRoutes')
+        })
+        .then(ret => {
+          return this.$store.dispatch('permission/generateRoutes')
+        })
+        .then(accessRoutes => {
+          resetRouter(accessRoutes)
+          this.sys = val
+          window.location.replace('/#/')
+        })
     }
   }
 }

@@ -21,10 +21,14 @@ function generateRouteMetaByMenu(menu, path) {
     return []
   }
 
+  if (menu.children && menu.children.lenght > 1) {
+    menu.children = menu.children.sort(sortMenu)
+  }
+
   if (menu.virtual) {
     return generateRouteMetaByMenu(menu.children, path)
   } else if (Array.isArray(menu)) {
-    return Object.values(menu).map(item => {
+    return Object.values(menu.sort(sortMenu)).map(item => {
       return generateRouteMetaByMenu(item, path)
     })
   } else {
@@ -55,6 +59,16 @@ function generateRouteMetaByMenu(menu, path) {
   }
 }
 
+function sortMenu(a,b) {
+  if (!a.menuOrder) {
+    a.menuOrder = 0
+  }
+  if (!b.menuOrder) {
+    b.menuOrder = 0
+  }
+  return a.menuOrder - b.menuOrder
+}
+
 function generateRouteMetaByMenu2(menu) {
   if (!menu) {
     return []
@@ -63,43 +77,47 @@ function generateRouteMetaByMenu2(menu) {
   if (menu.virtual) {
     return generateRouteMetaByMenu2(menu.children)
   } else if (Array.isArray(menu)) {
-    return Object.values(menu).map(item => {
+    return Object.values(menu.sort(sortMenu)).map(item => {
       return generateRouteMetaByMenu2(item)
     })
   } else {
     const route = {
-      path: '/view'+menu.menuId,
+      path: !!menu.menuPath ? menu.menuPath : '/view' + menu.menuId,
       children: generateRouteMetaByMenu2(menu.children),
       name: menu.menuName,
       meta: {
         title: menu.menuName,
-        menuId: menu.menuId,
       }
     }
 
     if (route.children.length > 0) {
-      route.redirect = '/view'+route.children[0].meta.menuId
+      route.redirect = route.children[0].path
+      console.log('redirect from ', route.path, 'to', route.redirect)
       if (menu.depth === 1) {
         route.component = () => import('@/layout/index.vue')
       } else {
         route.component = () => import('@/views/index.vue')
       }
     } else {
-      route.path = menu.path
-      route.component = () => import('@/views/business-backend/ViewMgr/ShowView')
+      if (menu.menuPath) {
+        route.component = routesMap[route.path]
+      } else {
+        route.component = () => import('@/views/business-backend/ViewMgr/ShowView')
+      }
     }
+
+    console.log('generate', route.meta.title, route.path)
     return route
   }
 }
 
 function SYS() {
-  if (!!window.localStorage.getItem('SYS')) {
+  if (window.localStorage.getItem('SYS')) {
     return parseInt(window.localStorage.getItem('SYS'))
   }
   window.localStorage.setItem('SYS', 1)
   return 1
 }
-
 
 const state = {
   routes: [],
@@ -143,15 +161,13 @@ const actions = {
       if (accessedRoutes.length === 0) {
         getRoutes(SYS()).then((response) => {
           if (response.success) {
-
-            if(SYS() != 1) {
+            if (SYS() != 1) {
               accessedRoutes = [].concat(generateRouteMetaByMenu2(response.data.menuTree.root))
               commit('SET_MENU_DEFINES', response.data.menuTree.plainNodeList)
 
               console.log('accessedRoutes ', JSON.stringify(accessedRoutes))
               window.localStorage.setItem('RedirectTo.default', accessedRoutes[0].path)
-            }
-            else {
+            } else {
               accessedRoutes = [].concat(generateRouteMetaByMenu(response.data.menuTree.root, ''))
               window.localStorage.setItem('RedirectTo.default', response.data.redirectTo)
             }
@@ -159,8 +175,7 @@ const actions = {
             if (accessedRoutes.length === 0) {
               reject('您没有被授予任何角色权限，请联系管理员')
             } else {
-
-              if(SYS() === 1) {
+              if (SYS() === 1) {
                 accessedRoutes.push({
                   path: '/profile',
                   component: () => import('@/layout/index.vue'),

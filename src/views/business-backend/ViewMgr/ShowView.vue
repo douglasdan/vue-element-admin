@@ -5,12 +5,10 @@
     </div>
     <div v-if="menu.viewId">
       <div>
-        <x-element :viewData="viewData" :view="viewDefine" />
+        <x-element :view-data="viewData" :view="viewDefine" />
       </div>
     </div>
-    <div v-else="menu.extraUrl">
-
-    </div>
+    <div v-else="menu.extraUrl" />
   </div>
 </template>
 
@@ -32,8 +30,7 @@ export default {
     }
   },
   created() {
-
-    let menuId = (this.$route.path+'').replaceAll('/view', '')
+    const menuId = (this.$route.path + '').replaceAll('/view', '')
 
     this.$store.dispatch('permission/getMenuDefine', menuId).then(ret => {
       this.menu = ret
@@ -44,13 +41,11 @@ export default {
         getViewDefineById(this.menu.viewId).then(ret => {
           this.viewDefine = JSON.parse(ret.data.viewContent)
         })
-      }
-      else if (this.menu.extraUrl) {
+      } else if (this.menu.extraUrl) {
         console.log('diaplay ', this.menu.extraUrl)
       }
     })
-
-  },
+  }
 }
 
 </script>>

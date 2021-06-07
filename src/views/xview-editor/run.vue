@@ -119,8 +119,8 @@ const defaultJson =
               component: 'x-button',
               name: '测试',
               props: {
-                type: "text",
-                style: "float: right; padding: 3px 0"
+                type: 'text',
+                style: 'float: right; padding: 3px 0'
               },
               action: 'alert(123)'
             }
@@ -138,7 +138,7 @@ const defaultJson =
   }
 
 export default {
-  name: 'x-run',
+  name: 'XRun',
   components: {
     vueJsonEditor
   },
@@ -159,8 +159,7 @@ export default {
       handler(nval, oval) {
         if (nval === '') {
           this.viewData = {}
-        }
-        else {
+        } else {
           this.viewData = JSON.parse(nval)
         }
       },
@@ -182,7 +181,7 @@ export default {
       console.log('value:', value)
     },
     getJsonContent() {
-      return JSON.stringify(this.viewData);
+      return JSON.stringify(this.viewData)
     }
   }
 

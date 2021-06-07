@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="val" filterable :disabled="disabled" @change="handleChange" :clearable="true">
+  <el-select v-model="val" filterable :disabled="disabled" :clearable="true" @change="handleChange">
     <el-option
       v-for="item in options"
       :key="item.id"
@@ -19,7 +19,7 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    },
+    }
   },
   data() {
     return {

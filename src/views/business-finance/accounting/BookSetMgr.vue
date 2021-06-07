@@ -1,18 +1,19 @@
 <template>
-  <div>
-
-  </div>
+  <book-set-list></book-set-list>
 </template>
 
 <script>
 
+import BookSetList from './BookSetList'
+
 export default {
-  name: 'fi-book-set',
+  name: 'FiBookSet',
+  components: { BookSetList },
   data() {
     return {
 
     }
-  },
+  }
 }
 
 </script>

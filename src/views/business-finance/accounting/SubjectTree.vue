@@ -7,10 +7,10 @@
 <script>
 
 export default {
-  name: 'fi-cd-select-sender',
+  name: 'fi-chart-tree',
   data() {
     return {
-
+      //
     }
   },
 }

@@ -5,7 +5,7 @@
     </el-row>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="viewName" label="名称" :formatter="formatter"/>
+      <el-table-column prop="viewName" label="名称" :formatter="formatter" />
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -38,7 +38,7 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
-      <view-editor :viewDefine="editForm" @close="() => editDialogVisible = false"></view-editor>
+      <view-editor :view-define="editForm" @close="() => editDialogVisible = false" />
     </el-dialog>
 
   </section>
@@ -54,8 +54,8 @@ import ViewEditor from './ViewEditor'
 
 const DefaultView = {
   id: null,
-  viewName:'',
-  viewContent:'{}',
+  viewName: '',
+  viewContent: '{}'
 }
 
 export default {
@@ -83,7 +83,7 @@ export default {
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
-    },
+    }
   },
   created() {
   },

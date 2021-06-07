@@ -18,7 +18,7 @@ export function saveViewDefine(data) {
 export function deleteViewDefine(id) {
   return request({
     url: `/api/v1/viewDefine/${id}`,
-    method: 'delete',
+    method: 'delete'
   })
 }
 

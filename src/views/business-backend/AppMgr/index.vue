@@ -10,7 +10,7 @@ export default {
   name: '',
   components: {
     AppList
-  },
+  }
 }
 
 </script>

@@ -1,10 +1,12 @@
 <template>
   <section>
     <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
-
+      <el-button type="primary" @click="handleAdd">新增账套</el-button>
     </el-row>
-    <el-table :data="roles" border style="width: 100%;" :height="tableHeight">
+    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
+      <el-table-column prop="setName" label="账套名称" :formatter="formatter" />
+      <el-table-column prop="setYear" label="会计年度" :formatter="formatter" />
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -15,14 +17,10 @@
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+
     <div class="block" style="margin: 5px; float: right;">
       <el-pagination
         :current-page.sync="pageNo"
@@ -34,6 +32,22 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
+      <el-form :inline="true" label-width="120px" style="width: 100%;">
+        <el-form-item label="账套名称">
+          <el-input v-model="editForm.setName" placeholder=""/>
+        </el-form-item>
+        <el-form-item label="会计年度">
+          <el-input type="number" v-model="editForm.setYear" placeholder=""/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelEdit">取消</el-button>
+        <el-button type="primary" @click="submitEdit()">确定</el-button>
+      </div>
+    </el-dialog>
+
   </section>
 </template>
 
@@ -41,21 +55,28 @@
 
 import store from '@/store'
 import { mapState } from 'vuex'
-import { selectFiVoucherPage, saveFiVoucher, deleteFiVoucher } from '@/api/finance'
+import { selectFiBookSetPage, saveFiBookSet } from '@/api/finance'
+
+const DefaultObject = {
+  id: null,
+  setName: '',
+  setYear: new Date().getYear()+1900
+}
 
 export default {
-  name: 'VoucherList',
+  name: 'BookSetList',
+  components: {
+  },
   data() {
     return {
-      roles: [],
+      rows: [],
       total: 0,
       pageSize: 20,
       pageNo: 1,
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: {
-      }
+      editForm: JSON.parse(JSON.stringify(DefaultObject))
     }
   },
   computed: {
@@ -67,6 +88,8 @@ export default {
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
     }
+  },
+  created() {
   },
   mounted() {
     this.loadData()
@@ -82,19 +105,21 @@ export default {
       this.loadData()
     },
     loadData() {
-      selectFiVoucherPage({
-        'pageNo': this.pageNo,
-        'pageSize': this.pageSize
+      selectFiBookSetPage({
+        pageNo: this.pageNo,
+        pageSize: this.pageSize
       }).then(ret => {
-        this.total = ret.data.total
-        this.roles = [].concat(ret.data.rows)
+        if (ret.success) {
+          this.rows = ret.data.rows
+          this.total = ret.data.total
+        }
       })
     },
     handleClose() {
       this.editDialogVisible = false
     },
     cancelEdit() {
-      this.editForm = {}
+      this.editForm = JSON.parse(JSON.stringify(DefaultObject))
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
@@ -102,31 +127,21 @@ export default {
       this.editDialogVisible = true
     },
     handleAdd() {
-      this.editForm = {}
+      this.editForm = JSON.parse(JSON.stringify(DefaultObject))
       this.editDialogVisible = true
     },
     handleDelete(i, row) {
-      deleteFiVoucher(row.roleId).then(ret => {
-        if (ret.success) {
-          this.loadData()
-          this.editDialogVisible = false
-        }
-      })
+    },
+    onJsonChange(str) {
+      this.editForm.json = str
     },
     submitEdit() {
-      saveFiVoucher(this.editForm).then(ret => {
+      saveFiBookSet(this.editForm).then(ret => {
         if (ret.success) {
           this.loadData()
           this.editDialogVisible = false
         }
       })
-    },
-    editPerm(row) {
-      //
-
-    },
-    handleDataPermChange() {
-
     }
   }
 }

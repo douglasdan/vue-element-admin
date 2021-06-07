@@ -1,14 +1,14 @@
 <template>
   <div>
     <div style="width: 100%; padding-left: 10px; padding-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right; font-size: 14px;">
-      名称：<el-input v-model="viewDefine.viewName" style="width: 200px;"></el-input>
+      名称：<el-input v-model="viewDefine.viewName" style="width: 200px;" />
       <div style="display: inline-block; float: right;">
         <el-button type="primary" @click="submitSave">保存</el-button>
       </div>
     </div>
 
     <div style="width: 100%; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
-      <x-run ref="xrun" :viewJson="viewDefine.viewContent"></x-run>
+      <x-run ref="xrun" :view-json="viewDefine.viewContent" />
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     submitSave() {
-      console.log('save json '+this.$refs.xrun.getJsonContent())
+      console.log('save json ' + this.$refs.xrun.getJsonContent())
       this.viewDefine.viewContent = this.$refs.xrun.getJsonContent()
 
       saveViewDefine(this.viewDefine).then(ret => {
@@ -42,7 +42,6 @@ export default {
           this.$emit('close', {})
         }
       })
-
     }
   }
 

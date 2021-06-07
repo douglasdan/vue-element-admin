@@ -138,7 +138,6 @@ export default {
       })
     },
     handleClose() {
-      debugger
       this.editDialogVisible = false
     },
     cancelEdit() {

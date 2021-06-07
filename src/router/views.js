@@ -15,7 +15,7 @@ const routesMap =
   '/view/mgr': () => import('@/views/business-backend/ViewMgr'),
 
   '/finance/bookSetMgr': () => import('@/views/business-finance/accounting/BookSetMgr'),
-  '/finance/chartMgr': () => import('@/views/business-finance/accounting/ChartTree'),
+  '/finance/segmentDefine': () => import('@/views/business-finance/accounting/SegmentDefine'),
   '/finance/voucher': () => import('@/views/business-finance/accounting/VoucherList'),
   '/finance/cost/distribute': () => import('@/views/business-finance/co/CostDistribution'),
 }

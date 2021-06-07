@@ -47,7 +47,6 @@ Vue.component('x-table', XTable)
 Vue.component('x-card', XCard)
 Vue.component('xobject-list', XObjectList)
 
-
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

@@ -1,18 +1,16 @@
 <template>
-  <div>
-
-  </div>
+  <div />
 </template>
 
 <script>
 
 export default {
-  name: 'fi-cd-select-sender',
+  name: 'FiCdSelectSender',
   data() {
     return {
 
     }
-  },
+  }
 
 }
 

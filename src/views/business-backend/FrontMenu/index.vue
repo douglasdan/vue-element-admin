@@ -21,27 +21,27 @@
       </div>
     </el-col>
     <el-col :span="16" style="border-left: 1px solid #eee;">
-      <el-form :model="selectMenu" :inline="true" style="margin-top: 10px; width: 400px;" label-width="120px" v-if="selectMenu">
+      <el-form v-if="selectMenu" :model="selectMenu" :inline="true" style="margin-top: 10px; width: 400px;" label-width="120px">
         <el-form-item label="菜单名称:">
-          <el-input v-model="selectMenu.menuName"></el-input>
+          <el-input v-model="selectMenu.menuName" />
         </el-form-item>
         <el-form-item label="菜单路径:">
-          <el-input v-model="selectMenu.menuPath"></el-input>
+          <el-input v-model="selectMenu.menuPath" />
         </el-form-item>
         <el-form-item label="视图:">
-          <view-select v-model="selectMenu.viewId"></view-select>
+          <view-select v-model="selectMenu.viewId" />
         </el-form-item>
         <el-form-item label="外部地址:">
-          <el-input v-model="selectMenu.extraUrl"></el-input>
+          <el-input v-model="selectMenu.extraUrl" />
         </el-form-item>
         <el-form-item label="状态:">
           <el-switch
             v-model="selectMenu.menuStatus"
-            :active-value='0'
-            :inactive-value='1'
+            :active-value="0"
+            :inactive-value="1"
             active-text="启用"
-            inactive-text="禁用">
-          </el-switch>
+            inactive-text="禁用"
+          />
         </el-form-item>
 
         <el-form-item label=" ">
@@ -58,7 +58,7 @@
 import { getRoutes } from '@/api/user'
 import { saveMenu } from '@/api/back-end'
 
-let DefaultMenu = {
+const DefaultMenu = {
   menuId: null,
   supMenuId: null,
   menuName: '空白菜单',
@@ -68,9 +68,8 @@ let DefaultMenu = {
   extraUrl: '',
   menuStatus: 0,
   menuOrder: 1,
-  children:[]
+  children: []
 }
-
 
 export default {
   name: 'FrontMenu',
@@ -86,30 +85,26 @@ export default {
   },
   methods: {
     loadData() {
-
       getRoutes(2).then(ret => {
-          if (ret.success) {
-            if (!ret.data.menuTree.root) {
-
-              this.menuTree = [JSON.parse(JSON.stringify(DefaultMenu))]
-
+        if (ret.success) {
+          if (!ret.data.menuTree.root) {
+            this.menuTree = [JSON.parse(JSON.stringify(DefaultMenu))]
+          } else {
+            if (ret.data.menuTree.root.virtual) {
+              this.menuTree = [].concat(ret.data.menuTree.root.children)
             } else {
-              if (ret.data.menuTree.root.virtual) {
-                this.menuTree = [].concat(ret.data.menuTree.root.children)
-              }
-              else {
-                this.menuTree = [].concat([ret.data.menuTree.root])
-              }
+              this.menuTree = [].concat([ret.data.menuTree.root])
             }
           }
-        })
+        }
+      })
     },
     handleNodeClick(data) {
       this.selectMenu = data
     },
     submitEdit() {
       //
-      let dd = JSON.parse(JSON.stringify(this.selectMenu))
+      const dd = JSON.parse(JSON.stringify(this.selectMenu))
       delete dd['children']
 
       saveMenu(dd).then(ret => {
@@ -123,11 +118,10 @@ export default {
       if (this.selectMenu.menuId) {
         this.selectMenu.children.push(JSON.parse(JSON.stringify(DefaultMenu)))
 
-        let newMenu = this.selectMenu.children[this.selectMenu.children.length - 1]
+        const newMenu = this.selectMenu.children[this.selectMenu.children.length - 1]
         newMenu.supMenuId = this.selectMenu.menuId
         this.selectMenu = newMenu
-      }
-      else {
+      } else {
         this.$message.error('请先保存')
       }
     }

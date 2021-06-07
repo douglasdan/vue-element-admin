@@ -1,23 +1,23 @@
 <template>
   <section>
     <div style="width: 100%; padding-left: 10px; padding-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right; font-size: 14px;">
-      应用：<app-select v-model="queryForm.appId" @change="handleAppChange()"></app-select>
+      应用：<app-select v-model="queryForm.appId" @change="handleAppChange()" />
       <div style="display: inline-block; float: right;">
         <el-button type="primary" @click="handleAdd">新增对象</el-button>
       </div>
     </div>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="appId" label="应用" :formatter="formatter" width="160px"/>
-      <el-table-column prop="obiectName" label="对象名称" :formatter="formatter" width="200px"/>
-      <el-table-column prop="objectType" label="对象类型" :formatter="formatter"/>
-      <el-table-column prop="objectCode" label="对象编码" :formatter="formatter"/>
-      <el-table-column prop="labelFieldCode" label="名称字段" :formatter="formatter"/>
-      <el-table-column prop="idField" label="ID字段" :formatter="formatter"/>
-      <el-table-column prop="idFieldType" label="ID字段类型" :formatter="formatter"/>
-      <el-table-column prop="objectIcon" label="图标" :formatter="formatter"/>
-      <el-table-column prop="version" label="当前版本" :formatter="formatter"/>
-      <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter"/>
+      <el-table-column prop="appId" label="应用" :formatter="formatter" width="160px" />
+      <el-table-column prop="obiectName" label="对象名称" :formatter="formatter" width="200px" />
+      <el-table-column prop="objectType" label="对象类型" :formatter="formatter" />
+      <el-table-column prop="objectCode" label="对象编码" :formatter="formatter" />
+      <el-table-column prop="labelFieldCode" label="名称字段" :formatter="formatter" />
+      <el-table-column prop="idField" label="ID字段" :formatter="formatter" />
+      <el-table-column prop="idFieldType" label="ID字段类型" :formatter="formatter" />
+      <el-table-column prop="objectIcon" label="图标" :formatter="formatter" />
+      <el-table-column prop="version" label="当前版本" :formatter="formatter" />
+      <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter" />
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -45,7 +45,7 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
-      <object-editor ref="objectEditor" :obj="editForm"></object-editor>
+      <object-editor ref="objectEditor" :obj="editForm" />
     </el-dialog>
 
   </section>
@@ -61,21 +61,21 @@ import AppSelect from '../AppMgr/AppSelect'
 import ObjectEditor from './ObjectEditor'
 
 const DefaultObject = {
-  id: null,
+  id: null
 }
 
 export default {
   name: 'OrgList',
-  components:{
+  components: {
     AppSelect,
     ObjectEditor
   },
   data() {
     return {
       metadata: {
-        apps: [],
+        apps: []
       },
-      queryForm:{
+      queryForm: {
         appId: ''
       },
       rows: [],
@@ -103,7 +103,7 @@ export default {
       return h
     },
     shouldDisableInput() {
-      console.log("shouldDisableInput", typeof(this.editForm.editable))
+      console.log('shouldDisableInput', typeof (this.editForm.editable))
       return !this.editForm.editable
     }
   },
@@ -116,7 +116,7 @@ export default {
   methods: {
     formatter(row, column, cellValue, index) {
       if (column.property === 'appId') {
-        let name = ""
+        let name = ''
         this.metadata.apps.forEach((item) => {
           if (item.id === cellValue) {
             name = item.appName
@@ -127,12 +127,12 @@ export default {
       if (column.property === 'objectType') {
         if (cellValue === '1') {
           return '普通对象'
-        }else if (cellValue === '2') {
+        } else if (cellValue === '2') {
           return '子对象'
         }
       }
       if (column.property === 'idFieldType' && this.mdm['fieldType']) {
-        let name = ""
+        let name = ''
         JSON.parse(this.mdm['fieldType'].json).forEach((item) => {
           if (item.value === cellValue) {
             name = item.label
@@ -151,19 +151,19 @@ export default {
     loadMetaData() {
       this.$store.dispatch('mdm/getMdmData', '')
       selectAppPage({}).then(ret => {
-        this.metadata.apps = ret.data.rows;
+        this.metadata.apps = ret.data.rows
         this.rows = [].concat(this.rows)
       })
     },
     loadData() {
-      let queryObj = {
+      const queryObj = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         conditions: []
       }
 
       if (this.queryForm.appId) {
-        queryObj.conditions = [{field:'app_id', op:'eq', values:[this.queryForm.appId]}]
+        queryObj.conditions = [{ field: 'app_id', op: 'eq', values: [this.queryForm.appId] }]
       }
 
       selectObjectDefinePage(queryObj).then(ret => {
@@ -198,7 +198,7 @@ export default {
           this.editDialogVisible = false
         }
       })
-    },
+    }
   }
 }
 

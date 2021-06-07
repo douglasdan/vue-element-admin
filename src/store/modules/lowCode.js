@@ -25,7 +25,7 @@ const actions = {
             commit('SET_APPS', ret.data.rows)
           }
 
-          let name = ""
+          let name = ''
           state.apps.forEach((item) => {
             if (item.appId === id) {
               name = item.appName
@@ -34,7 +34,7 @@ const actions = {
           resolve(name)
         })
       } else {
-        let name = ""
+        let name = ''
         state.apps.forEach((item) => {
           if (item.appId === id) {
             name = item.appName

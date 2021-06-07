@@ -3,7 +3,7 @@
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.appName"
+      :label="item.setName"
       :value="item.id"
     />
   </el-select>
@@ -11,10 +11,10 @@
 
 <script>
 
-import { selectAppPage } from '@/api/app'
+import { selectFiBookSetPage } from '@/api/finance'
 
 export default {
-  name: 'AppSelect',
+  name: 'BookSetSelect',
   props: {
     value: String,
     disabled: {
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     loadData() {
-      selectAppPage({
+      selectFiBookSetPage({
         pageNo: 1, pageSize: 10000
       }).then(ret => {
         this.options = ret.data.rows

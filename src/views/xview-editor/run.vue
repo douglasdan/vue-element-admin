@@ -1,8 +1,8 @@
 <template>
   <el-row>
-    <el-col :span="12">
+    <el-col :span="8">
       <vue-json-editor
-        v-model="viewData"
+        v-model="viewDefine.viewContent"
         :show-btns="false"
         :mode="'code'"
         lang="zh"
@@ -12,10 +12,16 @@
         @has-error="onError"
       />
     </el-col>
-    <el-col :span="12">
-      <div style="border: 1px rgb(0, 255, 242) solid; width: 800px; min-height: 600px;">
-        <x-element :view="viewData" />
+    <el-col :span="16">
+
+      <div v-if="viewDefine.objectId">
+        <x-object-list v-if="view.viewType == 'object-list'" :viewId="view.id"></x-object-list>
       </div>
+
+      <div style="border: 1px rgb(0, 255, 242) solid; width: 800px; min-height: 600px;">
+        <x-element :view="viewJson" />
+      </div>
+
     </el-col>
   </el-row>
 </template>
@@ -143,46 +149,42 @@ export default {
     vueJsonEditor
   },
   props: {
-    viewJson: {
-      type: String,
+    viewDefine: {
+      type: Object,
       required: true,
-      default: '{}'
-    }
+    },
   },
   data() {
     return {
-      viewData: defaultJson
+      viewJson: null
     }
   },
   watch: {
-    'viewJson': {
+    'viewDefine': {
       handler(nval, oval) {
-        if (nval === '') {
-          this.viewData = {}
-        } else {
-          this.viewData = JSON.parse(nval)
-        }
+        this.viewJson = JSON.parse(nval.viewContent)
       },
       deep: true,
       immediate: true
-    }
+    },
   },
   methods: {
     onJsonChange(value) {
-      console.log('value:', value)
-      this.viewData = JSON.parse(JSON.stringify(this.viewJson))
+      // console.log('value:', value)
+      // this.$props.viewDefine.viewContent = JSON.parse(JSON.stringify(this.viewJson))
+      this.viewJson = JSON.parse(this.$props.viewDefine.viewContent)
     },
     onJsonSave(value) {
       console.log('value:', value)
-      this.viewData = JSON.parse(JSON.stringify(this.viewJson))
+      this.viewJson = JSON.parse(this.$props.viewDefine.viewContent)
       this.$emmit('input', JSON.stringify(this.viewData))
     },
     onError(value) {
       console.log('value:', value)
     },
-    getJsonContent() {
-      return JSON.stringify(this.viewData)
-    }
+    // getJsonContent() {
+    //   return JSON.stringify(this.viewJson)
+    // }
   }
 
 }

@@ -36,16 +36,34 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 Vue.use(TreeSelect)
 
 import XElement from '@/views/xview-editor/xelement'
-import XButton from '@/views/xview-editor/xbutton'
 import XCard from '@/views/xview-editor/xcard'
 import XTable from '@/views/xview-editor/xtable'
-import XObjectList from '@/views/xview-editor/xobject-list'
+
+import XObjectDefineEditor from '@/views/xview/x-object-editor'
+import XFormItem from '@/views/xview/x-form-item'
+
+import XButton from '@/views/xview/x-button'
+import XRowOperator from '@/views/xview/x-row-operator'
+import XObjectList from '@/views/xview/x-object-list'
+import XObjectEditor from '@/views/xview/x-object-editor'
+
+import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
+
 
 Vue.component('x-element', XElement)
 Vue.component('x-button', XButton)
 Vue.component('x-table', XTable)
 Vue.component('x-card', XCard)
-Vue.component('xobject-list', XObjectList)
+
+Vue.component('x-object-define-editor', XObjectDefineEditor)
+Vue.component('x-form-item', XFormItem)
+
+Vue.component('x-button', XButton)
+Vue.component('x-row-operator', XRowOperator)
+Vue.component('x-object-list', XObjectList)
+Vue.component('x-object-editor', XObjectEditor)
+
+Vue.component('x-object-select', ObjectSelect)
 
 /**
  * If you don't want to use mock-server

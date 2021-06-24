@@ -19,7 +19,7 @@
         <div v-if="selectIndex === '1'">
           <el-form :model="tableDefine" :inline="true" style="width: 400px;" label-width="120px">
             <el-form-item label="应用:">
-              <app-select v-model="tableDefine.appId" :disabled="shouldDisable" />
+              <app-select v-model="tableDefine.appId" :disabled="shouldDisable" :appType="filterAppType"/>
             </el-form-item>
             <el-form-item label="对象名称:">
               <el-input v-model="tableDefine.obiectName" />
@@ -34,13 +34,13 @@
               </el-select>
             </el-form-item>
 
-            <el-divider />
+            <!-- <el-divider />
             <el-form-item label="主键字段:">
               <el-input v-model="tableDefine.idField" :disabled="shouldDisable" />
             </el-form-item>
             <el-form-item label="字段类型:">
               <mdm-select v-model="tableDefine.idFieldType" :value="tableDefine.idFieldType" :code="'fieldType'" :disabled="shouldDisable" />
-            </el-form-item>
+            </el-form-item> -->
             <!-- <el-form-item label="名称代码:">
               <el-input v-model="tableDefine.labelFieldCode"></el-input>
             </el-form-item> -->
@@ -92,13 +92,20 @@ export default {
     return {
       apps: [],
       selectIndex: '1',
-      tableDefine: {}
+      tableDefine: {},
+      filterAppType: ''
     }
   },
   watch: {
     'obj': {
       handler(nval, oval) {
         this.tableDefine = nval
+        if (nval.id) {
+          this.filterAppType = ''
+        } else {
+          this.filterAppType = '9'
+        }
+        this.$forceUpdate()
       },
       deep: true,
       immediate: true

@@ -55,6 +55,7 @@ import ViewEditor from './ViewEditor'
 const DefaultView = {
   id: null,
   viewName: '',
+  viewType: '',
   viewContent: '{}'
 }
 

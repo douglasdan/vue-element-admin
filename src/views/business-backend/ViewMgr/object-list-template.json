@@ -1,0 +1,48 @@
+{
+  "rowButtons": [
+    {
+      "name": "编辑",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": "console.log(this)"
+    },
+    {
+      "name": "删除",
+      "props": {
+        "size": "small",
+        "type": "primary",
+        "disabled": false
+      },
+      "action": "console.log(this)"
+    }
+  ],
+  "selectable": true,
+  "showFields": [
+    {
+      "sortable": false,
+      "fieldCode": "id",
+      "formatter": null
+    }
+  ],
+  "viewButtons": [
+    {
+      "name": "重置",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": null
+    },
+    {
+      "name": "查询",
+      "props": {
+        "size": "small",
+        "type": "primary",
+        "disabled": false
+      },
+      "action": null
+    }
+  ]
+}

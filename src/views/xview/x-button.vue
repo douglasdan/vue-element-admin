@@ -13,6 +13,14 @@ export default {
       type: Object
     }
   },
+  watch: {
+    'view': {
+      handler(nval, oval) {
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data() {
     return {}
   },
@@ -27,14 +35,16 @@ export default {
 
     },
     handleClick() {
-      if (this.view.action) {
+      console.log('x-button @click', this.$props.view.name)
+      if (this.$props.view.action) {
+
         // 覆盖后台定义好的action
-        const action = this.view.action
+        const action = this.$props.view.action
         // let code = `function runit(){${this.view.action}}`
         const fun = new Function(`return function(){${action}}`)()
         console.log(fun)
 
-        fun.bind(this).apply()
+        fun()
       } else {
 
       }

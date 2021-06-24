@@ -13,7 +13,7 @@ const state = {
   sideBarWidth: 210,
   navbarHeight: 50,
   tagsViewHeight: 34,
-  tableFuncBarHeight: 42,
+  tableFuncBarHeight: 32,
   tablePaginationHeight: 42
 }
 

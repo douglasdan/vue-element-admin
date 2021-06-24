@@ -1,5 +1,5 @@
 <template>
-  <book-set-list></book-set-list>
+  <book-set-list />
 </template>
 
 <script>

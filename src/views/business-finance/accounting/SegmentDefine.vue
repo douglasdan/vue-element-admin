@@ -11,7 +11,7 @@
 
     <el-row v-for="(seg, idx) in rows">
       <div style="display: inline-flex; line-height: 30px; font-size: 14px; margin-top: 10px; margin-bottom: 10px;">
-        <div style="width: 100px; text-align: right;">段名-{{ idx+1 }}：</div>
+        <div style="width: 100px; text-align: right;">段-{{ idx+1 }}：</div>
         <div><el-input v-model="seg.name" placeholder="" size="small"></el-input></div>
         <div style="width: 20px;"></div>
         <div>
@@ -147,6 +147,14 @@ export default {
     },
     saveDefine() {
       this.rows.forEach(async (item) => {
+        let vs = JSON.parse(item.valueSet)
+        if (!vs.values) {
+          vs.values = []
+        }
+        if (!vs.groups) {
+          vs.groups = {}
+        }
+        item.valueSet = JSON.stringify(vs)
         await saveFiSegmentDefine(item).then(ret => {
           if (ret.success) {
             this.loadData()

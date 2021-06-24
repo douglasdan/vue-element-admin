@@ -31,14 +31,17 @@
         <el-form-item label="视图:">
           <view-select v-model="selectMenu.viewId" />
         </el-form-item>
+        <el-form-item label="顺序:">
+          <el-input v-model="selectMenu.menuOrder" />
+        </el-form-item>
         <el-form-item label="外部地址:">
           <el-input v-model="selectMenu.extraUrl" />
         </el-form-item>
         <el-form-item label="状态:">
           <el-switch
             v-model="selectMenu.menuStatus"
-            :active-value="0"
-            :inactive-value="1"
+            :active-value="'0'"
+            :inactive-value="'1'"
             active-text="启用"
             inactive-text="禁用"
           />
@@ -106,6 +109,10 @@ export default {
       //
       const dd = JSON.parse(JSON.stringify(this.selectMenu))
       delete dd['children']
+      delete dd['id']
+      delete dd['depth']
+      delete dd['virtual']
+      delete dd['supId']
 
       saveMenu(dd).then(ret => {
         if (ret.success) {

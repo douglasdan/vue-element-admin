@@ -163,7 +163,7 @@ export default {
 
       saveUser(this.editForm).then(ret => {
         if (ret.success) {
-          this.loadData();
+          this.loadData()
         }
       })
     }

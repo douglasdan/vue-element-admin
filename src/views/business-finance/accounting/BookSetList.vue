@@ -36,10 +36,10 @@
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
       <el-form :inline="true" label-width="120px" style="width: 100%;">
         <el-form-item label="账套名称">
-          <el-input v-model="editForm.setName" placeholder=""/>
+          <el-input v-model="editForm.setName" placeholder="" />
         </el-form-item>
         <el-form-item label="会计年度">
-          <el-input type="number" v-model="editForm.setYear" placeholder=""/>
+          <el-input v-model="editForm.setYear" type="number" placeholder="" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -60,7 +60,7 @@ import { selectFiBookSetPage, saveFiBookSet } from '@/api/finance'
 const DefaultObject = {
   id: null,
   setName: '',
-  setYear: new Date().getYear()+1900
+  setYear: new Date().getYear() + 1900
 }
 
 export default {

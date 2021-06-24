@@ -12,9 +12,11 @@
       <el-table-column prop="obiectName" label="对象名称" :formatter="formatter" width="200px" />
       <el-table-column prop="objectType" label="对象类型" :formatter="formatter" />
       <el-table-column prop="objectCode" label="对象编码" :formatter="formatter" />
+      <!--
       <el-table-column prop="labelFieldCode" label="名称字段" :formatter="formatter" />
       <el-table-column prop="idField" label="ID字段" :formatter="formatter" />
       <el-table-column prop="idFieldType" label="ID字段类型" :formatter="formatter" />
+      -->
       <el-table-column prop="objectIcon" label="图标" :formatter="formatter" />
       <el-table-column prop="version" label="当前版本" :formatter="formatter" />
       <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter" />

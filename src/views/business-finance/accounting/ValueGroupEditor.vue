@@ -2,21 +2,25 @@
   <div>
     <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px;">
       <span style="margin-left: 10px;">数据组：</span>
-      <el-button type="primary" @click="handleAddGroup" style="margin-right: 10px; float: right;">新增</el-button>
-      <el-button type="primary" @click="handleSubmit" style="margin-right: 10px; float: right;">保存</el-button>
+      <el-button type="primary" style="margin-right: 10px; float: right;" @click="handleAddGroup">新增</el-button>
+      <el-button type="primary" style="margin-right: 10px; float: right;" @click="handleSubmit">保存</el-button>
     </el-row>
 
-    <el-tag v-for="(v, a) in groups"
-        closable @close="removeGroup(a)" @click="selectGroup(a, v)"
-        style="margin-top:8px; margin-bottom:8px; margin-left: 10px;">{{ a }}</el-tag>
+    <el-tag
+      v-for="(v, a) in groups"
+      closable
+      style="margin-top:8px; margin-bottom:8px; margin-left: 10px;"
+      @close="removeGroup(a)"
+      @click="selectGroup(a, v)"
+    >{{ a }}</el-tag>
 
     <div v-if="editName != null">
-      <el-divider></el-divider>
+      <el-divider />
       <el-row>
-        组名：<el-input placeholder="" type="small" style="width: 200px;" v-model="editName"></el-input>
+        组名：<el-input v-model="editName" placeholder="" type="small" style="width: 200px;" />
       </el-row>
       <div v-for="(item, i) in editValues" style="margin-top:8px; margin-bottom:8px; margin-left: 10px;">
-        <el-input placeholder="" type="small" style="width: 200px;" v-model="editValues[i]"></el-input>
+        <el-input v-model="editValues[i]" placeholder="" type="small" style="width: 200px;" />
         <i class="el-icon-minus" style="font-weight: 600; margin: 8px;" size="mini" @click="handleDelete(i)" />
         <i class="el-icon-plus" style="font-weight: 600; margin: 8px;" size="mini" @click="handleAdd(i)" />
       </div>
@@ -28,7 +32,7 @@
 <script>
 
 export default {
-  name: 'value-set-editor',
+  name: 'ValueSetEditor',
   props: {
     value: Object
   },
@@ -46,7 +50,7 @@ export default {
       },
       deep: true,
       immediate: true
-    },
+    }
   },
   methods: {
     handleAddGroup() {
@@ -63,20 +67,20 @@ export default {
       }
     },
     removeGroup(a) {
-      this.$delete(this.groups, a);
+      this.$delete(this.groups, a)
     },
     handleAdd(i) {
-      this.editValues.splice(i+1, 0, '');
+      this.editValues.splice(i + 1, 0, '')
     },
     handleDelete(vals, i) {
-      this.editValues.splice(i, 1);
+      this.editValues.splice(i, 1)
       if (this.editValues.length === 0) {
         this.editValues = [].concat('')
       }
     },
     save() {
       if (this.editName) {
-        this.editValues = [].concat(this.editValues.filter(x=>x))
+        this.editValues = [].concat(this.editValues.filter(x => x))
         this.$set(this.groups, this.editName, this.editValues)
         this.groups[this.editName] = this.editValues
         this.$emit('input', this.groups)
@@ -91,6 +95,5 @@ export default {
     }
   }
 }
-
 
 </script>

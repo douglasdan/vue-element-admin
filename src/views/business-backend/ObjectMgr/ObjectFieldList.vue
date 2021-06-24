@@ -106,7 +106,7 @@ export default {
   components: {
   },
   props: {
-    objectId: Number
+    objectId: String
   },
   data() {
     return {
@@ -139,6 +139,13 @@ export default {
     }
   },
   watch: {
+    'objectId': {
+      handler(nval, oval) {
+        this.loadData()
+      },
+      deep: true,
+      immediate: true
+    }
   },
   created() {
   },
@@ -167,7 +174,12 @@ export default {
     loadData() {
       selectObjectFieldDefinePage({
         pageNo: this.pageNo,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        conditions:[
+          {
+            field: "oid", op:"eq", values:[this.$props.objectId]
+          }
+        ]
       }).then(ret => {
         if (ret.success) {
           this.rows = ret.data.rows

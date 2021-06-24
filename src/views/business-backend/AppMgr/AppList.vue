@@ -6,13 +6,14 @@
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
       <el-table-column prop="appName" label="名称" :formatter="formatter"/>
+      <el-table-column prop="appType" label="类型" :formatter="formatter"/>
       <el-table-column prop="appDesc" label="描述" :formatter="formatter"/>
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <el-button
+          <el-button v-if="scope.row.appType == '9'"
             size="mini"
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
@@ -62,6 +63,7 @@ import { getAppById, saveApp, selectAppPage } from '@/api/app'
 const DefaultApp = {
   id: null,
   appName:'',
+  appType: '9',
   appDesc:'',
 }
 
@@ -78,7 +80,12 @@ export default {
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: JSON.parse(JSON.stringify(DefaultApp))
+      editForm: {
+        id: null,
+        appName:'',
+        appType: '',
+        appDesc:'',
+      }
     }
   },
   computed: {
@@ -105,6 +112,17 @@ export default {
   },
   methods: {
     formatter(row, column, cellValue, index) {
+      if (column.property == 'appType') {
+        if (cellValue === '0') {
+          return '系统'
+        }
+        if (cellValue === '1') {
+          return '标准应用'
+        }
+        if (cellValue === '9') {
+          return '低代码应用'
+        }
+      }
       return cellValue
     },
     handleSizeChange(val) {

@@ -59,7 +59,7 @@ function generateRouteMetaByMenu(menu, path) {
   }
 }
 
-function sortMenu(a,b) {
+function sortMenu(a, b) {
   if (!a.menuOrder) {
     a.menuOrder = 0
   }
@@ -82,11 +82,11 @@ function generateRouteMetaByMenu2(menu) {
     })
   } else {
     const route = {
-      path: !!menu.menuPath ? menu.menuPath : '/view' + menu.menuId,
+      path: menu.menuPath ? menu.menuPath : '/view' + menu.menuId,
       children: generateRouteMetaByMenu2(menu.children),
       name: menu.menuName,
       meta: {
-        title: menu.menuName,
+        title: menu.menuName
       }
     }
 

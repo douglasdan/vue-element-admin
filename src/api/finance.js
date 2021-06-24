@@ -23,7 +23,6 @@ export function deleteFiBookSet(id) {
   })
 }
 
-
 export function selectFiSegmentDefinePage(data) {
   return request({
     url: '/api/v1/fiSegmentDefine/query',
@@ -46,7 +45,6 @@ export function deleteFiSegmentDefine(id) {
     method: 'delete'
   })
 }
-
 
 export function selectFiVoucherPage(data) {
   return request({

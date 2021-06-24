@@ -3,19 +3,18 @@
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.appName"
+      :label="item.obiectName"
       :value="item.id"
-      :disabled="appType && item.appType != appType"
     />
   </el-select>
 </template>
 
 <script>
 
-import { selectAppPage } from '@/api/app'
+import { selectObjectDefinePage } from '@/api/object-define'
 
 export default {
-  name: 'AppSelect',
+  name: 'ObjectSelect',
   props: {
     value: String,
     disabled: {
@@ -23,10 +22,10 @@ export default {
       required: false,
       default: false
     },
-    appType: {
+    appId: {
       type: String,
       required: false,
-    },
+    }
   },
   data() {
     return {
@@ -47,28 +46,32 @@ export default {
       },
       immediate: true
     },
-    'appType': {
+    'appId': {
       handler(nval, oval) {
-        console.log('appType ====>'+nval)
-        this.$forceUpdate()
+        this.loadData()
       },
       immediate: true
-    }
+    },
   },
   mounted() {
     this.loadData()
   },
   methods: {
     loadData() {
-      selectAppPage({
-        pageNo: 1, pageSize: 10000
-      }).then(ret => {
-        if (this.$props.appType) {
-          this.options = ret.data.rows
-        }
-        else {
-          this.options = ret.data.rows
-        }
+
+      let query = {
+        pageNo: 1, pageSize: 10000,
+        conditions: []
+      }
+
+      if (this.$props.appId) {
+        query.conditions.push({
+          field: 'app_id', op: 'eq', values:[this.$props.appId]
+        })
+      }
+
+      selectObjectDefinePage(query).then(ret => {
+        this.options = ret.data.rows
       })
     },
     handleChange(nval, oval) {

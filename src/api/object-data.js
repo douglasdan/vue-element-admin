@@ -18,7 +18,7 @@ export function saveObjectData(oid, data) {
 export function deleteObjectData(oid, id) {
   return request({
     url: `/api/v1/object/${oid}/${id}`,
-    method: 'delete',
+    method: 'delete'
   })
 }
 

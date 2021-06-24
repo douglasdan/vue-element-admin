@@ -1,14 +1,14 @@
 <template>
   <div>
     <el-steps :active="active" finish-status="success" simple style="margin-top: 20px">
-      <el-step title="选择分摊对象" ></el-step>
-      <el-step title="选择分摊因子" ></el-step>
-      <el-step title="试算运行" ></el-step>
+      <el-step title="选择分摊对象" />
+      <el-step title="选择分摊因子" />
+      <el-step title="试算运行" />
     </el-steps>
 
     <div v-if="active === 0">
       <div style="width: 100%; padding-left: 10px; padding-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size: 14px;">
-        账套：<book-set-select v-model="setId" @change="handleBookSetChange()"/>
+        账套：<book-set-select v-model="setId" @change="handleBookSetChange()" />
       </div>
 
       <!-- <el-row>
@@ -26,30 +26,29 @@
           <div style="width: 100px; text-align: right;">{{ seg.name }}：</div>
           <div>
             <el-select v-model="send.types[idx]" placeholder="">
-              <el-option label="循环" :value="'L'"></el-option>
-              <el-option label="等于" :value="'C'"></el-option>
-              <el-option label="求和" :value="'S'"></el-option>
+              <el-option label="循环" :value="'L'" />
+              <el-option label="等于" :value="'C'" />
+              <el-option label="求和" :value="'S'" />
             </el-select>
           </div>
-          <div style="width: 10px;">
-          </div>
+          <div style="width: 10px;" />
           <div>
-            <segment-value-select v-model="send.values[idx]" :valueSet="seg.valueSet" ></segment-value-select>
+            <segment-value-select v-model="send.values[idx]" :value-set="seg.valueSet" />
           </div>
         </div>
       </el-row>
     </div>
-    <div v-if="active === 1" type="flex" >
+    <div v-if="active === 1" type="flex">
       <div style="display: inline-flex;">
         选择对象：
       </div>
       <div style="display: inline-flex;">
         <el-select v-model="distribute.object" placeholder="选择对象">
-          <el-option label="机构" :value="''"></el-option>
-          <el-option label="部门" :value="''"></el-option>
-          <el-option label="客户" :value="''"></el-option>
-          <el-option label="客户经理" :value="''"></el-option>
-          <el-option label="产品" :value="''"></el-option>
+          <el-option label="机构" :value="''" />
+          <el-option label="部门" :value="''" />
+          <el-option label="客户" :value="''" />
+          <el-option label="客户经理" :value="''" />
+          <el-option label="产品" :value="''" />
         </el-select>
       </div>
       <div style="display: inline-flex;">
@@ -57,13 +56,12 @@
       </div>
       <div style="display: inline-flex;">
         <el-select v-model="distribute.field" placeholder="选择属性">
-          <el-option label="办公地面积" :value="'SQRT'"></el-option>
-          <el-option label="产品" :value="'RROD'"></el-option>
+          <el-option label="办公地面积" :value="'SQRT'" />
+          <el-option label="产品" :value="'RROD'" />
         </el-select>
       </div>
     </div>
-    <div v-if="active === 2">
-    </div>
+    <div v-if="active === 2" />
 
     <el-row justify="center" type="flex" style="margin-top: 20px;">
       <el-button type="primary" @click="prev()">上一步</el-button>
@@ -79,7 +77,7 @@ import BookSetSelect from '../accounting/BookSetSelect'
 import SegmentValueSelect from '../accounting/SegmentValueSelect'
 
 export default {
-  name: 'fi-cost-distribute',
+  name: 'FiCostDistribute',
   components: {
     BookSetSelect, SegmentValueSelect
   },
@@ -90,9 +88,9 @@ export default {
       defines: [],
 
       enableBatch: false,
-      batchs:[100],
-      send:{
-        values:[],
+      batchs: [100],
+      send: {
+        values: [],
         types: []
       },
 
@@ -107,10 +105,10 @@ export default {
   },
   methods: {
     prev() {
-      if (this.active-- < 0) this.active = 0;
+      if (this.active-- < 0) this.active = 0
     },
     next() {
-      if (this.active++ > 2) this.active = 2;
+      if (this.active++ > 2) this.active = 2
     },
     handleBookSetChange() {
       this.loadData()
@@ -123,7 +121,7 @@ export default {
       }
 
       if (this.setId) {
-        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.setId]}]
+        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.setId] }]
       }
 
       selectFiSegmentDefinePage(queryObj).then(ret => {
@@ -134,7 +132,7 @@ export default {
           this.defines = [].concat(ret.data.rows)
         }
       })
-    },
+    }
 
   }
 }

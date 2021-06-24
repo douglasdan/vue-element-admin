@@ -2,6 +2,7 @@
   "rowButtons": [
     {
       "name": "编辑",
+      "code": "edit",
       "props": {
         "size": "small",
         "disabled": false
@@ -10,6 +11,7 @@
     },
     {
       "name": "删除",
+      "code": "delete",
       "props": {
         "size": "small",
         "type": "primary",
@@ -29,6 +31,7 @@
   "viewButtons": [
     {
       "name": "重置",
+      "code": "",
       "props": {
         "size": "small",
         "disabled": false
@@ -37,6 +40,7 @@
     },
     {
       "name": "查询",
+      "code": "",
       "props": {
         "size": "small",
         "type": "primary",

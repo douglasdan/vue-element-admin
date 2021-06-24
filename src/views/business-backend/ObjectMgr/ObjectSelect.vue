@@ -24,7 +24,7 @@ export default {
     },
     appId: {
       type: String,
-      required: false,
+      required: false
     }
   },
   data() {
@@ -51,22 +51,21 @@ export default {
         this.loadData()
       },
       immediate: true
-    },
+    }
   },
   mounted() {
     this.loadData()
   },
   methods: {
     loadData() {
-
-      let query = {
+      const query = {
         pageNo: 1, pageSize: 10000,
         conditions: []
       }
 
       if (this.$props.appId) {
         query.conditions.push({
-          field: 'app_id', op: 'eq', values:[this.$props.appId]
+          field: 'app_id', op: 'eq', values: [this.$props.appId]
         })
       }
 

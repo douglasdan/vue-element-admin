@@ -1,20 +1,21 @@
 <template>
   <section>
-    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
+    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;" v-if="mode != 'select'">
       <el-button type="primary" @click="handleAdd">新增字段</el-button>
     </el-row>
-    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
+    <el-table ref="table" :data="rows" border style="width: 100%;" :height="tableHeight" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" v-if="mode == 'select'"/>
       <el-table-column type="index" label="序号" />
       <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" />
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" />
-      <el-table-column prop="fieldTip" label="提示" :formatter="formatter" />
-      <el-table-column prop="fieldDesc" label="描述" :formatter="formatter" />
-      <el-table-column prop="fieldUnique" label="是否唯一" :formatter="formatter" />
-      <el-table-column prop="fieldLength" label="最大长度" :formatter="formatter" />
-      <el-table-column prop="decicmalLength" label="小数位" :formatter="formatter" />
-      <el-table-column prop="version" label="版本" :formatter="formatter" />
-      <el-table-column width="240">
+      <el-table-column prop="fieldTip" label="提示" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column prop="fieldDesc" label="描述" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column prop="fieldUnique" label="是否唯一" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column prop="fieldLength" label="最大长度" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column prop="decicmalLength" label="小数位" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column prop="version" label="版本" :formatter="formatter" v-if="mode != 'select'"/>
+      <el-table-column width="240" v-if="mode != 'select'">
         <template slot="header">
           <span>操作</span>
         </template>
@@ -28,7 +29,7 @@
       </el-table-column>
     </el-table>
 
-    <div class="block" style="margin: 5px; float: right;">
+    <div class="block" style="margin: 5px; float: right;" v-if="mode != 'select'">
       <el-pagination
         :current-page.sync="pageNo"
         :page-sizes="pageSizes"
@@ -106,7 +107,9 @@ export default {
   components: {
   },
   props: {
-    objectId: String
+    objectId: String,
+    height: Number,
+    mode: String
   },
   data() {
     return {
@@ -117,7 +120,9 @@ export default {
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: JSON.parse(JSON.stringify(DefaultField))
+      editForm: JSON.parse(JSON.stringify(DefaultField)),
+
+      sels:[]
     }
   },
   computed: {
@@ -127,12 +132,17 @@ export default {
       }
     }),
     tableHeight() {
-      const h = (window.innerHeight - 22 -
+      if (this.$props.height > 0) {
+        return this.$props.height+'px'
+      }
+      else {
+        const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
+      }
     },
     shouldDisableInput() {
       return !!this.editForm.id
@@ -145,6 +155,18 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'mode': {
+      handler(nval, oval) {
+        if (nval == 'select') {
+          this.pageSize = 1000
+        } else {
+          this.pageSize = 20
+        }
+        this.loadData()
+      },
+      deep: true,
+      immediate: true
     }
   },
   created() {
@@ -153,6 +175,7 @@ export default {
     this.loadData()
   },
   methods: {
+
     formatter(row, column, cellValue, index) {
       if (column.property === 'fieldType' && this.mdm['fieldType']) {
         let name = ''
@@ -172,12 +195,13 @@ export default {
       this.loadData()
     },
     loadData() {
+
       selectObjectFieldDefinePage({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        conditions:[
+        conditions: [
           {
-            field: "oid", op:"eq", values:[this.$props.objectId]
+            field: 'oid', op: 'eq', values: [this.$props.objectId]
           }
         ]
       }).then(ret => {
@@ -211,9 +235,31 @@ export default {
         if (ret.success) {
           this.editDialogVisible = false
           this.loadData()
+
+          this.$store.dispatch('lowCode/updateObjectDefine', this.$props.objectId)
         }
       })
-    }
+    },
+
+    loaded() {
+      return this.rows.length > 0
+    },
+    handleSelectionChange(sels) {
+      this.sels = sels
+      this.$emit('selection-change', this.sels)
+    },
+    clearSelection() {
+      this.$refs.table.clearSelection()
+    },
+    toggleRowSelection(codes, selected) {
+      this.clearSelection()
+      console.log('toggleRowSelection ',selected, codes.length+'/'+this.rows.length)
+      this.rows.forEach((row) => {
+        if (codes.indexOf(row.fieldCode) > -1) {
+          this.$refs.table.toggleRowSelection(row, selected)
+        }
+      })
+    },
   }
 }
 

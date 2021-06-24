@@ -25,8 +25,8 @@ export default {
     },
     appType: {
       type: String,
-      required: false,
-    },
+      required: false
+    }
   },
   data() {
     return {
@@ -49,7 +49,7 @@ export default {
     },
     'appType': {
       handler(nval, oval) {
-        console.log('appType ====>'+nval)
+        console.log('appType ====>' + nval)
         this.$forceUpdate()
       },
       immediate: true
@@ -65,8 +65,7 @@ export default {
       }).then(ret => {
         if (this.$props.appType) {
           this.options = ret.data.rows
-        }
-        else {
+        } else {
           this.options = ret.data.rows
         }
       })

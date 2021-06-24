@@ -1,9 +1,16 @@
 import { selectViewDefinePage } from '@/api/view-define.js'
 
+import { getObjectDefineById, deleteObjectDefine, saveObjectDefine } from '@/api/object-define'
+import { selectObjectFieldDefinePage, deleteObjectFieldDefine, saveObjectFieldDefine } from '@/api/object-field-define'
+
 const state = {
   apps: [],
-  objects: [],
-  views: []
+  views: [],
+
+  objects: {
+
+  },
+
 }
 
 const mutations = {
@@ -12,7 +19,13 @@ const mutations = {
   },
   SET_VIEWS: (state, data) => {
     state.views = data
-  }
+  },
+  SET_OBJECT_DEFINE: (state, oid, data) => {
+    state.objects[oid] = data
+  },
+  UPDATE_OBJECT_DEFINE: (state, oid) => {
+    delete state.objects[oid]
+  },
 }
 
 const actions = {
@@ -57,6 +70,32 @@ const actions = {
       } else {
         resolve(state.views)
       }
+    })
+  },
+
+  getObjectDefine({ commit }, oid) {
+
+    console.log('lowCode/getObjectDefine '+oid)
+
+    return new Promise((resolve, reject) => {
+      if (!state.objects[''+oid]) {
+        getObjectDefineById(oid).then(ret => {
+          if (ret.success) {
+            commit('SET_OBJECT_DEFINE', oid, ret.data)
+          }
+          resolve(ret.data)
+        })
+      }
+      else {
+        resolve(state.objects[''+oid])
+      }
+    })
+  },
+
+  updateObjectDefine({ commit }, oid) {
+    return new Promise((resolve, reject) => {
+      commit('UPDATE_OBJECT_DEFINE', oid)
+      resolve(true)
     })
   }
 

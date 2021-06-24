@@ -1,0 +1,111 @@
+{
+  "component": "el-col",
+  "props": {
+    "span": 24
+  },
+  "children": [
+    {
+      "component": "el-row",
+      "props": {
+        "style": "height: 40px;"
+      },
+      "children": [
+        {
+          "component": "el-col",
+          "props": {
+            "span": 12
+          },
+          "children": [
+            {
+              "component": "p",
+              "content": "AAA"
+            }
+          ]
+        },
+        {
+          "component": "el-col",
+          "props": {
+            "span": 12
+          },
+          "children": [
+            {
+              "component": "p",
+              "content": "BBB",
+              "style": {
+                "color": "red"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "component": "el-card",
+      "props": {
+        "style": "width: 100%;",
+        "size": "small",
+        "title": "输入表单",
+        "extra": "更多"
+      },
+      "children": [
+        {
+          "component": "el-form",
+          "props": {
+            "label-col": { "span": 8 },
+            "wrapper-col": { "span": 16 }
+          },
+          "children": [
+            {
+              "component": "el-form-item",
+              "props": {
+                "label": "name"
+              },
+              "children": [
+                {
+                  "component": "el-input"
+                }
+              ]
+            },
+            {
+              "component": "el-form-item",
+              "props": {
+                "label": "password"
+              },
+              "children": [
+                {
+                  "component": "el-input"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "component": "x-card",
+      "name": "卡片zzz",
+      "props": {
+      },
+      "header": {
+        "buttons": [
+          {
+            "component": "x-button",
+            "name": "测试",
+            "props": {
+              "type": "text",
+              "style": "float: right; padding: 3px 0"
+            },
+            "action": "alert(123)"
+          }
+        ]
+      },
+      "children": [
+        {
+          "component": "p",
+          "content": "content is here"
+        }
+      ]
+    }
+
+  ]
+}

@@ -7,19 +7,19 @@
         <el-button type="primary" @click="saveDefine">保存</el-button>
       </div>
     </div>
-    <el-row style="border-top: 1px solid #eee;"></el-row>
+    <el-row style="border-top: 1px solid #eee;" />
 
     <el-row v-for="(seg, idx) in rows">
       <div style="display: inline-flex; line-height: 30px; font-size: 14px; margin-top: 10px; margin-bottom: 10px;">
         <div style="width: 100px; text-align: right;">段-{{ idx+1 }}：</div>
-        <div><el-input v-model="seg.name" placeholder="" size="small"></el-input></div>
-        <div style="width: 20px;"></div>
+        <div><el-input v-model="seg.name" placeholder="" size="small" /></div>
+        <div style="width: 20px;" />
         <div>
           <i class="el-icon-minus" style="font-weight: 600; margin: 8px;" size="mini" @click="handleDeleteSeg(idx)" />
           <i class="el-icon-plus" style="font-weight: 600; margin: 8px;" size="mini" @click="handleAddSeg(idx)" />
 
-          <el-link type="primary" @click="showEditValues(seg)" style="margin-left: 10px;">数据项</el-link>
-          <el-link type="primary" @click="showEditGroup(seg)" style="margin-left: 10px;">数据组</el-link>
+          <el-link type="primary" style="margin-left: 10px;" @click="showEditValues(seg)">数据项</el-link>
+          <el-link type="primary" style="margin-left: 10px;" @click="showEditGroup(seg)">数据组</el-link>
         </div>
       </div>
     </el-row>
@@ -29,10 +29,11 @@
       :visible.sync="drawer"
       :destroy-on-close="true"
       :close-on-press-escape="false"
-      :direction="direction">
+      :direction="direction"
+    >
 
       <template scope="scope">
-        <value-set-editor v-model="valueSet.values" @submit="handleSubmit1"></value-set-editor>
+        <value-set-editor v-model="valueSet.values" @submit="handleSubmit1" />
       </template>
     </el-drawer>
 
@@ -41,10 +42,11 @@
       :visible.sync="drawer2"
       :destroy-on-close="true"
       :close-on-press-escape="false"
-      :direction="direction">
+      :direction="direction"
+    >
 
       <template scope="scope">
-        <value-group-editor v-model="valueSet.groups" @submit="handleSubmit2"></value-group-editor>
+        <value-group-editor v-model="valueSet.groups" @submit="handleSubmit2" />
       </template>
     </el-drawer>
 
@@ -69,10 +71,10 @@ export default {
     ValueGroupEditor
   },
   data() {
-    let THIS = this
+    const THIS = this
     return {
       queryForm: {
-        bookSetId: null,
+        bookSetId: null
       },
       rows: [],
       drawer: false,
@@ -81,8 +83,8 @@ export default {
 
       selected: null,
       valueSet: {
-        values:[],
-        groups:{}
+        values: [],
+        groups: {}
       }
     }
   },
@@ -95,7 +97,7 @@ export default {
       }
 
       if (this.queryForm.appId) {
-        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.queryForm.bookSetId]}]
+        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.queryForm.bookSetId] }]
       }
 
       selectFiSegmentDefinePage(queryObj).then(ret => {
@@ -128,26 +130,26 @@ export default {
 
     handleSubmit1() {
       this.selected.valueSet = JSON.stringify(this.valueSet)
-      this.drawer = false;
+      this.drawer = false
     },
     handleSubmit2() {
       this.selected.valueSet = JSON.stringify(this.valueSet)
-      this.drawer2 = false;
+      this.drawer2 = false
     },
 
     handleDeleteSeg(i) {
       this.rows.splice(i, 1)
     },
     handleAddSeg(i) {
-      this.rows.splice(i+1, 0, {
+      this.rows.splice(i + 1, 0, {
         setId: this.queryForm.bookSetId,
         name: '段1',
         valueSet: '{}'
       })
     },
     saveDefine() {
-      this.rows.forEach(async (item) => {
-        let vs = JSON.parse(item.valueSet)
+      this.rows.forEach(async(item) => {
+        const vs = JSON.parse(item.valueSet)
         if (!vs.values) {
           vs.values = []
         }
@@ -161,7 +163,7 @@ export default {
           }
         })
       })
-    },
+    }
   }
 }
 

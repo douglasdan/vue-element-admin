@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div v-if="!view">
-    </div>
+    <div v-if="!view" />
     <div v-else>
       <div v-if="view.objectId">
-        <x-object-list v-if="view.viewType == 'object-list'" :viewId="view.id"></x-object-list>
+        <x-object-list v-if="view.viewType == 'object-list'" :view-id="view.id" />
       </div>
       <div v-else-if="menu.extraUrl">
-        <iframe ref="iframe" :src="menu.extraUrl" @load="loaded" ></iframe>
+        <iframe ref="iframe" :src="menu.extraUrl" @load="loaded" />
       </div>
       <div v-else>
         <x-element :view-data="viewData" :view="viewContent" />
@@ -29,15 +28,6 @@ export default {
       required: false
     }
   },
-  watch: {
-    'viewDefine': {
-      handler(nval, oval) {
-        this.view = JSON.parse(JSON.stringify(nval))
-      },
-      deep: true,
-      immediate: true
-    },
-  },
   data() {
     return {
       menu: {},
@@ -47,7 +37,18 @@ export default {
         name: '',
         password: ''
       },
-      viewContent: null,
+      viewContent: null
+    }
+  },
+  watch: {
+    'viewDefine': {
+      handler(nval, oval) {
+        if (nval) {
+          this.view = JSON.parse(JSON.stringify(nval))
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   created() {
@@ -68,8 +69,7 @@ export default {
           console.log('diaplay ', this.menu.extraUrl)
         }
       })
-    }
-    else if (this.$props.viewDefine) {
+    } else if (this.$props.viewDefine) {
       this.view = this.$props.viewDefine
     }
   },

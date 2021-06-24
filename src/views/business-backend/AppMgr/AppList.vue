@@ -5,15 +5,16 @@
     </el-row>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
-      <el-table-column prop="appName" label="名称" :formatter="formatter"/>
-      <el-table-column prop="appType" label="类型" :formatter="formatter"/>
-      <el-table-column prop="appDesc" label="描述" :formatter="formatter"/>
+      <el-table-column prop="appName" label="名称" :formatter="formatter" />
+      <el-table-column prop="appType" label="类型" :formatter="formatter" />
+      <el-table-column prop="appDesc" label="描述" :formatter="formatter" />
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <el-button v-if="scope.row.appType == '9'"
+          <el-button
+            v-if="scope.row.appType == '9'"
             size="mini"
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
@@ -37,13 +38,13 @@
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
       <el-form :inline="true" label-width="120px" style="width: 100%;">
         <el-form-item label="名称">
-          <el-input v-model="editForm.appName" placeholder=""/>
+          <el-input v-model="editForm.appName" placeholder="" />
         </el-form-item>
-        <div></div>
+        <div />
         <el-form-item label="描述">
-          <el-input type="textarea" v-model="editForm.appDesc" style="width: 380px;" placeholder=""/>
+          <el-input v-model="editForm.appDesc" type="textarea" style="width: 380px;" placeholder="" />
         </el-form-item>
-        <div></div>
+        <div />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取消</el-button>
@@ -62,14 +63,14 @@ import { getAppById, saveApp, selectAppPage } from '@/api/app'
 
 const DefaultApp = {
   id: null,
-  appName:'',
+  appName: '',
   appType: '9',
-  appDesc:'',
+  appDesc: ''
 }
 
 export default {
   name: 'AppList',
-  components:{
+  components: {
   },
   data() {
     return {
@@ -82,9 +83,9 @@ export default {
       editDialogVisible: false,
       editForm: {
         id: null,
-        appName:'',
+        appName: '',
         appType: '',
-        appDesc:'',
+        appDesc: ''
       }
     }
   },
@@ -101,7 +102,7 @@ export default {
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
-    },
+    }
   },
   watch: {
   },
@@ -134,7 +135,7 @@ export default {
     loadData() {
       selectAppPage({
         pageNo: this.pageNo,
-        pageSize: this.pageSize,
+        pageSize: this.pageSize
       }).then(ret => {
         if (ret.success) {
           this.total = ret.data.total
@@ -166,7 +167,7 @@ export default {
           this.editDialogVisible = false
         }
       })
-    },
+    }
   }
 }
 

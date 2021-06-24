@@ -38,7 +38,7 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
-      <view-editor :view-define="editForm" @close="() => editDialogVisible = false" />
+      <view-editor :view-define="editForm" @close="handleViewEditorClose" />
     </el-dialog>
 
   </section>
@@ -120,6 +120,12 @@ export default {
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
+
+      if (!row.viewContent || row.viewContent == '{}') {
+        //
+
+      }
+
       this.editForm = JSON.parse(JSON.stringify(row))
       this.editDialogVisible = true
     },
@@ -146,6 +152,10 @@ export default {
           this.editDialogVisible = false
         }
       })
+    },
+    handleViewEditorClose() {
+      this.editDialogVisible = false
+      this.loadData()
     }
   }
 }

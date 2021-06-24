@@ -5,12 +5,15 @@
     </div>
     <div>
       <x-form-item v-for="(item, i) in showFields" :label="fieldDefine(item).fieldName">
-        <mdm-select v-model="values[i]" :code="fieldDefine(item).mdmCode"
-          v-if="fieldDefine(item).fieldType =='select' && fieldDefine(item).mdmCode "/>
-        <el-input v-model="values[i]" placeholder="" v-else-if="fieldDefine(item).fieldType == 'text'"></el-input>
-        <el-input type="number" v-model="values[i]" placeholder="" v-else-if="fieldDefine(item).fieldType == 'decimal'"></el-input>
-        <el-date-picker value-format="yyyy-MM-dd" type="date" v-model="values[i]" placeholder="" v-else-if="fieldDefine(item).fieldType == 'date'"></el-date-picker>
-        <div v-else></div>
+        <mdm-select
+          v-if="fieldDefine(item).fieldType =='select' && fieldDefine(item).mdmCode "
+          v-model="values[i]"
+          :code="fieldDefine(item).mdmCode"
+        />
+        <el-input v-else-if="fieldDefine(item).fieldType == 'text'" v-model="values[i]" placeholder="" />
+        <el-input v-else-if="fieldDefine(item).fieldType == 'decimal'" v-model="values[i]" type="number" placeholder="" />
+        <el-date-picker v-else-if="fieldDefine(item).fieldType == 'date'" v-model="values[i]" value-format="yyyy-MM-dd" type="date" placeholder="" />
+        <div v-else />
       </x-form-item>
     </div>
 
@@ -28,15 +31,15 @@ import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 
 export default {
-  name: 'xobject-editor',
+  name: 'XobjectEditor',
   props: {
     objectId: {
       type: Number,
-      required: true,
+      required: true
     },
     showFields: {
       type: Array,
-      required: true,
+      required: true
     },
     beforeSubmit: {
       type: Function
@@ -47,6 +50,25 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    return {
+      values: [],
+
+      viewDefine: {
+        bindObjId: null,
+        fields: [
+          { fieldName: '抬头', fieldCode: 'title', fieldType: 'text' },
+          { fieldName: '金额', fieldCode: 'amount', fieldType: 'decimal' },
+          { fieldName: '会计年度', fieldCode: 'acYear', fieldType: 'select', mdmCode: 'year' }
+        ]
+      }
+    }
+  },
+  computed: {
+    title() {
+      return '编辑' + this.viewDefine.obiectName
     }
   },
   watch: {
@@ -82,25 +104,6 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-  },
-  data() {
-    return {
-      values: [],
-
-      viewDefine: {
-        bindObjId: null,
-        fields: [
-          {fieldName: '抬头', fieldCode: 'title', fieldType: 'text'},
-          {fieldName: '金额', fieldCode: 'amount', fieldType: 'decimal'},
-          {fieldName: '会计年度', fieldCode: 'acYear', fieldType: 'select', mdmCode: 'year'}
-        ]
-      }
-    }
-  },
-  computed: {
-    title() {
-      return '编辑'+this.viewDefine.obiectName
     }
   },
   mounted() {
@@ -109,7 +112,7 @@ export default {
   methods: {
     fieldDefine(fieldCode) {
       let f = null
-      this.viewDefine.fields.forEach((item,i) => {
+      this.viewDefine.fields.forEach((item, i) => {
         if (!f && item.fieldCode === fieldCode) {
           f = item
         }
@@ -129,15 +132,15 @@ export default {
     },
     loadObjectDefineFields() {
       selectObjectFieldDefinePage({
-        conditions:[{ field: 'oid', op: 'eq', values: [this.$props.objectId]}]
+        conditions: [{ field: 'oid', op: 'eq', values: [this.$props.objectId] }]
       }).then(ret => {
         this.viewDefine.fields = [].concat(ret.data.rows)
       })
     },
-    cancelEdit(){
+    cancelEdit() {
       this.$props.visible = false
     },
-    submitEdit(){
+    submitEdit() {
       if (this.$props.beforeSubmit) {
         //
         if (!this.$props.beforeSubmit.bind(this).apply()) {
@@ -145,7 +148,6 @@ export default {
         }
       }
       //
-
     }
   }
 }

@@ -2,7 +2,7 @@
   <section>
     <el-row style="margin: 10px; font-size: 14px;" type="flex">
       <div style="display: flex-inline;">
-        账套：<book-set-select v-model="queryForm.setId" @change="handleBookSetChange()"/>
+        账套：<book-set-select v-model="queryForm.setId" @change="handleBookSetChange()" />
       </div>
       <div style="right: 10px; float: right; position: absolute;">
         <el-button type="primary" @click="handleAdd">新增凭证</el-button>
@@ -40,32 +40,32 @@
       />
     </div>
 
-    <x-object-define-editor :object-id="4" :show-fields="['invoiceCode', 'invoiceNo', 'billingDate', 'amountWithoutTax']"
-      :visible.sync="editDialogVisible2"></x-object-define-editor>
-
+    <x-object-define-editor
+      :object-id="4"
+      :show-fields="['invoiceCode', 'invoiceNo', 'billingDate', 'amountWithoutTax']"
+      :visible.sync="editDialogVisible2"
+    />
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
-      <el-col :span=12>
+      <el-col :span="12">
         <x-form-item label="会计年度" :label-width="120">
-          <mdm-select v-model="editForm.acYear" :code="'year'"/>
+          <mdm-select v-model="editForm.acYear" :code="'year'" />
         </x-form-item>
         <x-form-item label="账期" :label-width="120">
-          <mdm-select v-model="editForm.acMonth" :code="'month'"/>
+          <mdm-select v-model="editForm.acMonth" :code="'month'" />
         </x-form-item>
         <x-form-item label="借贷方向" :label-width="120">
-          <mdm-select v-model="editForm.lending" :code="'lending'"/>
+          <mdm-select v-model="editForm.lending" :code="'lending'" />
         </x-form-item>
         <x-form-item label="币种" :label-width="120">
-          <mdm-select v-model="editForm.currency" :code="'currency'"/>
+          <mdm-select v-model="editForm.currency" :code="'currency'" />
         </x-form-item>
         <x-form-item label="数值" :label-width="120">
-          <el-input v-model="editForm.amount" placeholder=""></el-input>
+          <el-input v-model="editForm.amount" placeholder="" />
         </x-form-item>
       </el-col>
 
-      <el-col :span=12>
-
-      </el-col>
+      <el-col :span="12" />
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取消</el-button>
@@ -119,8 +119,8 @@ export default {
         segment7: '',
         segment8: '',
         segment9: '',
-        segment10: '',
-      },
+        segment10: ''
+      }
     }
   },
   computed: {
@@ -147,7 +147,6 @@ export default {
       this.loadData()
     },
     loadData() {
-
       const queryObj = {
         pageNo: 1,
         pageSize: 100,
@@ -155,7 +154,7 @@ export default {
       }
 
       if (this.queryForm.setId) {
-        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.queryForm.setId]}]
+        queryObj.conditions = [{ field: 'set_id', op: 'eq', values: [this.queryForm.setId] }]
       }
 
       selectFiVoucherPage(queryObj).then(ret => {
@@ -191,7 +190,6 @@ export default {
       })
     },
     submitEdit() {
-
       console.log(this.editObjectFields)
 
       // saveFiVoucher(this.editForm).then(ret => {

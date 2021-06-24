@@ -49,7 +49,6 @@ import XObjectEditor from '@/views/xview/x-object-editor'
 
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
 
-
 Vue.component('x-element', XElement)
 Vue.component('x-button', XButton)
 Vue.component('x-table', XTable)

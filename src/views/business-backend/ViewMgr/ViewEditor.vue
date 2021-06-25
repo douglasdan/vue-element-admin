@@ -46,28 +46,24 @@ export default {
   },
   methods: {
     handleViewTypeChange() {
-
       debugger
       if (this.$props.viewDefine.objectId && !this.$props.viewDefine.viewContent || this.$props.viewDefine.viewContent == '{}') {
-
         if (this.$props.viewDefine.viewType == 'object-list') {
-
-          let templateCode = JSON.parse(JSON.stringify(ObjectListTemplate))
+          const templateCode = JSON.parse(JSON.stringify(ObjectListTemplate))
 
           debugger
           this.$store.dispatch('lowCode/getObjectDefine', this.$props.viewDefine.objectId).then(ret => {
-
             debugger
             if (ret) {
               templateCode.showFields = []
 
               ret.fields.forEach((item) => {
-                console.log('auto show field '+item.fieldCode)
+                console.log('auto show field ' + item.fieldCode)
                 templateCode.showFields.push(
                   {
-                    "sortable": false,
-                    "fieldCode": item.fieldCode,
-                    "formatter": null
+                    'sortable': false,
+                    'fieldCode': item.fieldCode,
+                    'formatter': null
                   }
                 )
               })
@@ -75,14 +71,13 @@ export default {
               this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(templateCode))
             }
           })
-
         } else if (this.$props.viewDefine.viewType == 'object-edit') {
           //
         }
       }
     },
     submitSave() {
-      console.log('save json ' + typeof(this.$props.viewDefine.viewContent)+' '+this.$props.viewDefine.viewContent)
+      console.log('save json ' + typeof (this.$props.viewDefine.viewContent) + ' ' + this.$props.viewDefine.viewContent)
       saveViewDefine(this.viewDefine).then(ret => {
         if (ret.success) {
           this.$emit('close', {})

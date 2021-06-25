@@ -41,13 +41,12 @@ export default {
     handleCommand(command) {
       console.log('click on item ' + command + ' ' + this.$props.idx + ' ' + JSON.stringify(this.$props.row))
 
-      let btn = this.$props.buttons.filter(a => a.name == command)[0]
+      const btn = this.$props.buttons.filter(a => a.name == command)[0]
 
       const fun = new Function(`return function(row){${btn.action}}`)()
       console.log(fun)
 
       fun.call(this.$props.self, this.$props.row)
-
     }
   }
 }

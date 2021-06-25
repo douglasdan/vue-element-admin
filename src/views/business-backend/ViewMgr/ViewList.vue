@@ -120,7 +120,6 @@ export default {
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
-
       if (!row.viewContent || row.viewContent == '{}') {
         //
 

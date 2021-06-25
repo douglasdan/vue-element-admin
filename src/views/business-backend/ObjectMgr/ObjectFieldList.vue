@@ -1,21 +1,30 @@
 <template>
-  <section>
-    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;" v-if="mode != 'select'">
+  <section :class="eid">
+    <el-row v-if="mode != 'select'" style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
       <el-button type="primary" @click="handleAdd">新增字段</el-button>
     </el-row>
-    <el-table ref="table" :data="rows" border style="width: 100%;" :height="tableHeight" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" v-if="mode == 'select'"/>
-      <el-table-column type="index" label="序号" />
+    <el-table ref="table"
+      :row-key="'id'"
+      :data="showFields" border style="width: 100%;"
+      :height="tableHeight"
+      @selection-change="handleSelectionChange">
+      <el-table-column v-if="mode == 'select'" type="selection" width="55" />
+      <el-table-column v-if="mode != 'select'" type="index" label="序号" />
       <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" />
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" />
-      <el-table-column prop="fieldTip" label="提示" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column prop="fieldDesc" label="描述" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column prop="fieldUnique" label="是否唯一" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column prop="fieldLength" label="最大长度" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column prop="decicmalLength" label="小数位" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column prop="version" label="版本" :formatter="formatter" v-if="mode != 'select'"/>
-      <el-table-column width="240" v-if="mode != 'select'">
+      <el-table-column v-if="mode != 'select'" prop="fieldTip" label="提示" :formatter="formatter" />
+      <el-table-column v-if="mode != 'select'" prop="fieldDesc" label="描述" :formatter="formatter" />
+      <el-table-column v-if="mode != 'select'" prop="fieldUnique" label="是否唯一" :formatter="formatter" />
+      <el-table-column v-if="mode != 'select'" prop="fieldLength" label="最大长度" :formatter="formatter" />
+      <el-table-column v-if="mode != 'select'" prop="decicmalLength" label="小数位" :formatter="formatter" />
+      <el-table-column v-if="mode != 'select'" prop="version" label="版本" :formatter="formatter" />
+
+      <slot>
+
+      </slot>
+
+      <el-table-column v-if="mode != 'select'" width="240">
         <template slot="header">
           <span>操作</span>
         </template>
@@ -29,7 +38,7 @@
       </el-table-column>
     </el-table>
 
-    <div class="block" style="margin: 5px; float: right;" v-if="mode != 'select'">
+    <div v-if="mode != 'select'" class="block" style="margin: 5px; float: right;">
       <el-pagination
         :current-page.sync="pageNo"
         :page-sizes="pageSizes"
@@ -83,6 +92,9 @@ import store from '@/store'
 import { mapState } from 'vuex'
 import { selectObjectFieldDefinePage, saveObjectFieldDefine } from '@/api/object-field-define'
 
+import { uuid } from 'vue-uuid'
+import Sortable from 'sortablejs'
+
 const DefaultField = {
   id: null,
   oid: null,
@@ -109,11 +121,18 @@ export default {
   props: {
     objectId: String,
     height: Number,
-    mode: String
+    mode: String,
+    dragSort: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
+      eid: 'e' + uuid.v1(),
+      showFields:[],
       rows: [],
+
       total: 0,
       pageSize: 20,
       pageNo: 1,
@@ -122,7 +141,7 @@ export default {
       editDialogVisible: false,
       editForm: JSON.parse(JSON.stringify(DefaultField)),
 
-      sels:[]
+      sels: []
     }
   },
   computed: {
@@ -133,15 +152,14 @@ export default {
     }),
     tableHeight() {
       if (this.$props.height > 0) {
-        return this.$props.height+'px'
-      }
-      else {
+        return this.$props.height + 'px'
+      } else {
         const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
-      return h
+        return h
       }
     },
     shouldDisableInput() {
@@ -172,9 +190,37 @@ export default {
   created() {
   },
   mounted() {
+    if (this.$props.dragSort) {
+      this.enableRowDrag()
+    }
     this.loadData()
   },
   methods: {
+
+    enableRowDrag() {
+      const tbody = document.querySelector('.' + this.eid + ' .el-table__body-wrapper table tbody')
+      const _this = this
+      Sortable.create(tbody, {
+        onEnd({ newIndex, oldIndex }) {
+          const currRow = _this.showFields.splice(oldIndex, 1)[0]
+          _this.showFields.splice(newIndex, 0, currRow)
+
+          console.log('drag end: '+JSON.stringify(_this.showFields.map(a => a.fieldCode)))
+
+          //实时同步给父组件this.$emit('selection-change', this.sels)
+
+          let selectFieldCodes = _this.sels.map(a => a.fieldCode)
+          let newSels = []
+          _this.showFields.forEach((row) => {
+            if (selectFieldCodes.indexOf(row.fieldCode) > -1) {
+              newSels.push(row)
+            }
+          })
+
+          _this.handleSelectionChange(newSels)
+        }
+      })
+    },
 
     formatter(row, column, cellValue, index) {
       if (column.property === 'fieldType' && this.mdm['fieldType']) {
@@ -195,7 +241,6 @@ export default {
       this.loadData()
     },
     loadData() {
-
       selectObjectFieldDefinePage({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
@@ -207,6 +252,7 @@ export default {
       }).then(ret => {
         if (ret.success) {
           this.rows = ret.data.rows
+          this.showFields = ret.data.rows
           this.total = ret.data.total
         }
       })
@@ -245,21 +291,50 @@ export default {
       return this.rows.length > 0
     },
     handleSelectionChange(sels) {
+      // this.sels.splice(0, this.sels.length)
+      // this.sels.push(...newSels)
       this.sels = sels
       this.$emit('selection-change', this.sels)
+    },
+    handleHeaderDragend() {
+
     },
     clearSelection() {
       this.$refs.table.clearSelection()
     },
     toggleRowSelection(codes, selected) {
+
+      console.log('toggleRowSelection ', selected, codes.length + '/' + this.rows.length)
+
       this.clearSelection()
-      console.log('toggleRowSelection ',selected, codes.length+'/'+this.rows.length)
+      this.showFields = []
+
+      codes.forEach((code) => {
+
+        this.rows.forEach((row) => {
+          if (code == row.fieldCode) {
+            this.showFields.push(row)
+            console.log('toggleRowSelection show ', row.fieldCode)
+          }
+        })
+      })
+
       this.rows.forEach((row) => {
-        if (codes.indexOf(row.fieldCode) > -1) {
-          this.$refs.table.toggleRowSelection(row, selected)
+        if (codes.indexOf(row.fieldCode) == -1) {
+          this.showFields.push(row)
+          console.log('toggleRowSelection hide ', row.fieldCode)
         }
       })
-    },
+
+      this.$nextTick(() => {
+        this.showFields.forEach((row) => {
+          if (codes.indexOf(row.fieldCode) > -1) {
+            this.$refs.table.toggleRowSelection(row, selected)
+          }
+        })
+      })
+
+    }
   }
 }
 

@@ -48,5 +48,11 @@
       },
       "action": null
     }
-  ]
+  ],
+  "queryDefine": {
+    "labelWidth": 100,
+    "conditions":[
+
+    ]
+  }
 }

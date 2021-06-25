@@ -12,8 +12,8 @@
         @has-error="onError"
       /> -->
 
-      <div style="margin-left: 10px; margin-right: 10px;" v-if="">
-        <x-object-list-json-editor v-if="viewDefine.viewType == 'object-list' && (viewDefine.id || viewDefine.viewContent)" :object-id="viewDefine.objectId" :viewJson="viewJson"></x-object-list-json-editor>
+      <div v-if="" style="margin-left: 10px; margin-right: 10px;">
+        <x-object-list-json-editor v-if="viewDefine.viewType == 'object-list' && (viewDefine.id || viewDefine.viewContent)" :object-id="viewDefine.objectId" :view-json="viewJson" />
       </div>
 
     </el-col>
@@ -21,7 +21,11 @@
     <el-col :span="16" style="border: 1px solid; min-height: 600px;">
 
       <div v-if="viewDefine.objectId">
-        <x-object-list v-if="viewDefine.viewType == 'object-list' && (viewDefine.id || viewDefine.viewContent)" :view-id="viewDefine.id" :viewDefine="viewDefine"/>
+        <x-object-list v-if="viewDefine.viewType == 'object-list' && (viewDefine.id || viewDefine.viewContent)"
+          :view-id="viewDefine.id"
+          :view-define="viewDefine"
+          @set-field-width="handleFieldWidth"
+          />
       </div>
 
       <div v-else>
@@ -58,6 +62,13 @@ export default {
       handler(nval, oval) {
         console.log('run watch viewDefine changed')
         this.viewJson = JSON.parse(nval.viewContent)
+
+        if (!this.viewJson.queryDefine) {
+          this.$set(this.viewJson, 'queryDefine', {
+            labelWidth: 100, conditions: []
+          })
+          this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(this.viewJson))
+        }
       },
       deep: true,
       immediate: true
@@ -84,6 +95,17 @@ export default {
     },
     onError(value) {
       console.log('value:', value)
+    },
+    handleFieldWidth(e) {
+
+      this.viewJson.showFields.forEach((field)=>{
+        if (e.fieldCode === field.fieldCode) {
+          field.width = e.width
+        }
+      })
+
+      this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(this.viewJson))
+
     },
     // getJsonContent() {
     //   return JSON.stringify(this.viewJson)

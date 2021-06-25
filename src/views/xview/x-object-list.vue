@@ -1,29 +1,43 @@
 <template>
   <section>
-    <el-row style="margin: 10px; font-size: 14px; height: 32px;" type="flex" v-if="metadata.viewButtons && metadata.viewButtons.length > 0">
-      <div style="display: flex-inline;" />
+    <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+      <div style="display: flex-inline;" >
+        <el-link type="primary" style="line-height: 32px;" @click="toggleQueryPanel">筛选</el-link>
+      </div>
       <div style="right: 10px; float: right; position: absolute;">
-        <x-button v-for="(btn, index) in metadata.viewButtons" :view="btn" :self="self"/>
+        <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
       </div>
     </el-row>
-    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
+
+    <x-object-filter v-show="queryPanelVisible" :object-id="objectId" :viewJson="viewJson">
+    </x-object-filter>
+
+    <el-table :data="rows" border style="width: 100%;"
+      highlight-current-row
+      @header-dragend="handleHeaderDragend"
+      :height="tableHeight">
 
       <el-table-column type="selection" width="55" />
       <el-table-column type="index" label="序号" />
-      <el-table-column v-for="(f, i) in metadata.showFields" :prop="f.fieldCode"
-                :label="fieldName(f.fieldCode)"
-                :show-overflow-tooltip="sholdTooltip(f.fieldCode)"
-                width="120" :formatter="formatter" />
+      <el-table-column
+        v-for="(f, i) in viewJson.showFields"
+        :prop="f.fieldCode"
+        :label="fieldName(f.fieldCode)"
+        :show-overflow-tooltip="sholdTooltip(f.fieldCode)"
+        :width=" !!f.width ? f.width : 100"
+        :formatter="formatter"
+      />
 
       <el-table-column width="45">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <x-row-operator :buttons="metadata.rowButtons" :idx="scope.$index" :row="scope.row" :self="self"/>
+          <x-row-operator :buttons="viewJson.rowButtons" :idx="scope.$index" :row="scope.row" :self="self" />
         </template>
       </el-table-column>
     </el-table>
+
     <div class="block" style="margin: 5px; float: right;">
       <el-pagination
         :current-page.sync="pageNo"
@@ -35,6 +49,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
   </section>
 </template>
 
@@ -45,8 +60,13 @@ import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 import { selectObjectDataPage } from '@/api/object-data'
 
+import xObjectFilter from '@/views/xview/x-object-filter'
+
 export default {
   name: 'XObjectList',
+  components: {
+    'x-object-filter': xObjectFilter
+  },
   props: {
     viewId: {
       type: String,
@@ -57,43 +77,29 @@ export default {
       required: false
     }
   },
-  watch: {
-    'viewId': {
-      handler(nval, oval) {
-        this.loadMetaData()
-      },
-      deep: true,
-      immediate: true
-    },
-    'viewDefine': {
-      handler(nval, oval) {
-        this.loadViewDefine()
-      },
-      deep: true,
-      immediate: true
-    }
-  },
   data() {
     return {
       self: this,
-      metadata: {
-        viewId: 1,
-        objectId: 1,
-        objectDefine: null,
-        objectFieldDefine: null,
+      objectId: '',
+      objectDefine: null,
+      objectFieldDefine: null,
+      objectFieldDefineMap: {},
 
-        selectable: true,
+      viewJson: {
+        selectable: false,
+        viewButtons:[],
         showFields: [],
-        viewButtons: [],
-        rowButtons: []
-      },
-      objectFieldDefineMap: {
+        rowButtons: [],
+        queryDefine: {
+          labelWidth: 100,
+          conditions: []
+        }
       },
 
+      queryPanelVisible: false,
       query: {
-
+        //
       },
-
       rows: [],
       total: 0,
       pageSize: 20,
@@ -113,111 +119,78 @@ export default {
       return h
     }
   },
+  watch: {
+    'viewId': {
+      handler(nval, oval) {
+        this.loadView()
+      },
+      deep: true,
+      immediate: true
+    },
+    'viewDefine': {
+      handler(nval, oval) {
+        this.loadViewJson()
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   created() {
-    this.loadMetaData()
-    this.loadViewDefine()
   },
   methods: {
+    toggleQueryPanel() {
+      this.queryPanelVisible = !this.queryPanelVisible
+      console.log('toggle query panel')
+    },
     handleSizeChange(val) {
       this.loadData()
     },
     handleCurrentChange() {
       this.loadData()
     },
-    loadMetaData() {
-      if (!this.$props.viewId) {
-        return
+    handleHeaderDragend(newWidth, oldWidth, column, event) {
+      let a = {
+        objectId: this.metadata.objectId,
+        fieldCode: column.property,
+        width: newWidth,
       }
-
-      getViewDefineById(this.$props.viewId).then(ret => {
-        if (ret.success) {
-          const viewContent = JSON.parse(ret.data.viewContent)
-
-          this.metadata.objectId = ret.data.objectId
-
-          this.metadata.selectable = viewContent.selectable
-          this.metadata.showFields = viewContent.showFields
-          this.metadata.viewButtons = viewContent.viewButtons
-          this.metadata.rowButtons = viewContent.rowButtons
-          return ret.data.objectId
-        } else {
-          return null
-        }
-      }
-      )
-        .then(objectId => {
-          if (objectId) {
-            return getObjectDefineById(objectId).then(ret => {
-              if (ret.success) {
-                this.metadata.objectDefine = ret.data
-                return objectId
-              } else {
-                return null
-              }
-            })
+      this.$emit('set-field-width', a)
+    },
+    loadView() {
+      if (this.$props.viewId) {
+        getViewDefineById(this.$props.viewId).then(ret => {
+          if (ret.success) {
+            this.viewJson = JSON.parse(ret.data.viewContent)
+            this.objectId = ret.data.objectId
+            this.loadObject()
+            return this.objectId
           }
         })
-        .then(objectId => {
-          if (objectId) {
-            return this.$store.dispatch('lowCode/getObjectDefine', objectId).then(ret => {
-              this.metadata.objectFieldDefine = ret.fields
-              return objectId
-            })
-          }
-        })
-        .then(objectId => {
-        //
+      }
+    },
+    loadObject() {
+      if (this.objectId) {
+        this.$store.dispatch('lowCode/getObjectDefine', this.objectId).then(ret => {
+          this.objectDefine = ret
+          this.objectFieldDefine = ret.fields
+
           this.objectFieldDefineMap = {}
-
-          this.metadata.objectFieldDefine.forEach((item, index) => {
+          this.objectFieldDefine.forEach((item, index) => {
             this.objectFieldDefineMap[item.fieldCode] = item
           })
-
-          return null
-        })
-        .then(ret => {
-          this.loadData()
-        })
-    },
-    loadViewDefine() {
-
-      console.log('loadViewDefine')
-
-      if (this.$props.viewDefine && this.$props.viewDefine.objectId && this.$props.viewDefine.viewContent) {
-
-        const viewContent = JSON.parse(this.$props.viewDefine.viewContent)
-
-        this.metadata.objectId = this.$props.viewDefine.objectId
-
-        this.metadata.selectable = viewContent.selectable
-        this.metadata.showFields = viewContent.showFields
-        this.metadata.viewButtons = viewContent.viewButtons
-        this.metadata.rowButtons = viewContent.rowButtons
-
-        getObjectDefineById(this.metadata.objectId).then(ret => {
-          if (ret.success) {
-            this.metadata.objectDefine = ret.data
-          }
         })
 
-        this.$store.dispatch('lowCode/getObjectDefine', this.$props.viewDefine.objectId).then(ret => {
-
-          if (ret) {
-            this.metadata.objectFieldDefine = ret.fields
-
-            this.objectFieldDefineMap = {}
-
-            this.metadata.objectFieldDefine.forEach((item, index) => {
-              this.objectFieldDefineMap[item.fieldCode] = item
-            })
-          }
-
-        })
-        .then(ret => {
-          this.loadData()
-        })
+        this.loadData()
       }
     },
+    loadViewJson() {
+      if (this.$props.viewDefine && this.$props.viewDefine.objectId) {
+        this.viewJson = JSON.parse(this.$props.viewDefine.viewContent)
+        this.objectId = this.$props.viewDefine.objectId
+        this.loadObject()
+      }
+    },
+
     fieldName(code) {
       if (this.objectFieldDefineMap[code]) {
         return this.objectFieldDefineMap[code].fieldName
@@ -225,7 +198,7 @@ export default {
       return ''
     },
     sholdTooltip(code) {
-      let fieldDefine = this.objectFieldDefineMap[code]
+      const fieldDefine = this.objectFieldDefineMap[code]
       if (fieldDefine) {
         if (fieldDefine.fieldType == 'text' && fieldDefine.fieldLength >= 20) {
           return true
@@ -239,7 +212,7 @@ export default {
       return cellValue
     },
     loadData() {
-      selectObjectDataPage(this.metadata.objectId, {
+      selectObjectDataPage(this.objectId, {
         conditions: []
       }).then(ret => {
         if (ret.success) {
@@ -247,7 +220,8 @@ export default {
           this.rows = ret.data.rows
         }
       })
-    }
+    },
+
   }
 
 }

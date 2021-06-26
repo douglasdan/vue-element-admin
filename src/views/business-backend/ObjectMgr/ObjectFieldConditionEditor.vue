@@ -1,5 +1,10 @@
 <template>
-  <section>
+  <section :class="eid">
+    <el-row style="margin-bottom: 10px;">
+      标签宽度：<el-input v-model="viewJson.queryDefine.labelWidth"
+        @change="refreshConditions"
+        placeholder="" style="width: 200px;" size="small"></el-input>
+    </el-row>
     <el-table ref="table"
       :data="rows"
       :row-key="'fieldCode'"
@@ -7,19 +12,10 @@
       <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" />
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="160"/>
-
       <el-table-column width="300">
         <template scope="scope">
-          <div style="display: flex;">
-            <div style="width: 120px;">
-              <el-col :span="24">
-                <x-query-op-select v-model="scope.row.opType" @change="refreshRow"></x-query-op-select>
-              </el-col>
-            </div>
-            <div v-if="scope.row.opType === ''">
-              <el-input size="mini" v-model="scope.row.values" placeholder="多个值用逗号分隔" @change="handleValueChange"/>
-            </div>
-          </div>
+          <x-object-field-cond-editor :object-id="objectId" :cond="scope.row" @change="refreshConditions">
+          </x-object-field-cond-editor>
         </template>
       </el-table-column>
 
@@ -29,16 +25,19 @@
 
 <script>
 
+import { uuid } from 'vue-uuid'
 import store from '@/store'
 import { mapState } from 'vuex'
 import { selectObjectFieldDefinePage, saveObjectFieldDefine } from '@/api/object-field-define'
 
-import  xQueryOpSelect from '@/views/xview/x-query-op-select'
+import xObjectFieldCondEditor from '@/views/xview/x-object-field-cond-editor'
+
+import Sortable from 'sortablejs'
 
 export default {
   name: 'ObjectFieldConditionEditor',
   components: {
-    xQueryOpSelect
+    xObjectFieldCondEditor
   },
   props: {
     objectId: String,
@@ -49,6 +48,7 @@ export default {
   },
   data() {
     return {
+      eid: 'e' + uuid.v1(),
       fieldMap: {},
       rows: [],
     }
@@ -82,6 +82,7 @@ export default {
     },
     'viewJson': {
       handler(nval, oval) {
+        console.log('ObjectFieldConditionEditor watch viewJson changed')
         if (!oval && nval) {
           this.syncFilterField()
         }
@@ -98,9 +99,21 @@ export default {
   created() {
   },
   mounted() {
+    this.enableRowDrag()
     this.loadData()
   },
   methods: {
+    enableRowDrag() {
+      const tbody = document.querySelector('.' + this.eid + ' .el-table__body-wrapper table tbody')
+      const _this = this
+      Sortable.create(tbody, {
+        onEnd({ newIndex, oldIndex }) {
+          const currRow = _this.rows.splice(oldIndex, 1)[0]
+          _this.rows.splice(newIndex, 0, currRow)
+          _this.refreshConditions()
+        }
+      })
+    },
     formatter(row, column, cellValue, index) {
       if (column.property === 'fieldType' && this.mdm['fieldType']) {
         let name = ''
@@ -116,12 +129,17 @@ export default {
     loadData() {
       this.$store.dispatch('lowCode/getObjectDefine', this.$props.objectId).then(ret => {
         if (ret) {
-          this.rows = ret.fields
-
-          this.rows.forEach((row, i) => {
-            row.opType = ''
-            row.sortNo = i
-            row.values = ''
+          this.rows = []
+          ret.fields.forEach((item,i) => {
+            this.rows.push({
+              fieldName: item.fieldName,
+              fieldCode: item.fieldCode,
+              fieldType: item.fieldType,
+              opType: '',
+              sortNo: i,
+              values: '',
+              visible: false
+            })
           })
 
           this.syncFilterField()
@@ -138,13 +156,15 @@ export default {
 
         let temp = []
         this.rows.forEach((row) => {
+          console.log('syncFilterField init field', row.fieldCode)
           temp.push({
             fieldName: row.fieldName,
             fieldCode: row.fieldCode,
             fieldType: row.fieldType,
             opType: '',
             sortNo: row.sortNo,
-            values: ''
+            values: '',
+            visible: row.visible
           })
         })
 
@@ -152,6 +172,18 @@ export default {
       }
       else {
         this.rows = this.$props.viewJson.queryDefine.conditions
+        this.rows.forEach((row) => {
+          console.log('syncFilterField check field', row.fieldCode)
+          if (typeof(row.visible) == undefined) {
+            if (row.opType) {
+              row.visible = true
+            }
+            else {
+              row.visible = false
+            }
+          }
+        })
+        this.$set(this.$props.viewJson.queryDefine, 'conditions', this.rows)
       }
 
     },
@@ -166,12 +198,19 @@ export default {
 
       return null
     },
-    refreshRow(nval) {
-      console.log('====> '+nval)
-      this.rows = [].concat(this.rows)
+    refreshConditions() {
+      //当condtion发生变化时，需要同步更新viewJson.queryDefine, 刷新预览的视图
+      console.log('condition change refresh ')
+
+      this.rows.forEach((row,i) => {
+        row.sortNo = i
+      })
+
+      this.$set(this.$props.viewJson.queryDefine, 'conditions', JSON.parse(JSON.stringify(this.rows)))
     },
     handleValueChange(nval, oval) {
       console.log(oval+"===>"+nval)
+      this.refreshConditions()
     }
   }
 }

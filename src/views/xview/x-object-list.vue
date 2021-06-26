@@ -2,14 +2,16 @@
   <section>
     <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
       <div style="display: flex-inline;" >
-        <el-link type="primary" style="line-height: 32px;" @click="toggleQueryPanel">筛选</el-link>
+        <el-link type="primary" style="line-height: 32px;" @click="toggleQueryPanel" v-show="queryBtnVisible()">筛选</el-link>
       </div>
       <div style="right: 10px; float: right; position: absolute;">
         <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
       </div>
     </el-row>
 
-    <x-object-filter v-show="queryPanelVisible" :object-id="objectId" :viewJson="viewJson">
+    <x-object-filter :object-id="objectId" :viewJson="viewJson"
+      ref="refObjectFilter"
+      v-show="queryPanelVisible" >
     </x-object-filter>
 
     <el-table :data="rows" border style="width: 100%;"
@@ -138,6 +140,12 @@ export default {
   created() {
   },
   methods: {
+    queryBtnVisible() {
+      if (this.viewJson.queryDefine && this.viewJson.queryDefine.conditions) {
+        return this.viewJson.queryDefine.conditions.filter(a => a.visible && a.visible && a.opType != '').length > 0
+      }
+      return false
+    },
     toggleQueryPanel() {
       this.queryPanelVisible = !this.queryPanelVisible
       console.log('toggle query panel')
@@ -211,10 +219,32 @@ export default {
       // }
       return cellValue
     },
+    resetQueryCond() {
+      if (!this.$refs.refObjectFilter) {
+        this.$nextTick(() => {
+          this.resetQueryCond()
+        })
+        return
+      }
+
+      this.$refs.refObjectFilter.resetValues()
+
+    },
     loadData() {
-      selectObjectDataPage(this.objectId, {
+
+      if (!this.$refs.refObjectFilter) {
+        this.$nextTick(() => {
+          this.loadData()
+        })
+        return
+      }
+
+      let queryObj = {
         conditions: []
-      }).then(ret => {
+      }
+      queryObj.conditions = this.$refs.refObjectFilter.getConditions()
+
+      selectObjectDataPage(this.objectId, queryObj).then(ret => {
         if (ret.success) {
           this.total = ret.data.total
           this.rows = ret.data.rows

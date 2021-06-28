@@ -60,86 +60,78 @@ export default {
     },
     'viewJson': {
       handler(nval, oval) {
-        if (!nval.queryDefine) {
-          this.$set(this.$props.viewJson, 'queryDefine', {
-            labelWidth: 100,
-            conditions: []
-          })
-        }
-        else {
-          this.queryValues = {}
+        this.queryValues = {}
 
-          this.$props.viewJson.queryDefine.conditions.forEach((cond) => {
+        this.$props.viewJson.queryDefine.conditions.forEach((cond) => {
 
-            let values = ''
+          let values = ''
 
-            if (cond.opType) {
-              if (cond.fieldType == 'text') {
-                if (cond.opType == 'eq' || cond.opType == 'like') {
+          if (cond.opType) {
+            if (cond.fieldType == 'text') {
+              if (cond.opType == 'eq' || cond.opType == 'like') {
+                values = ''
+              }
+            }
+            else if (cond.fieldType == 'int') {
+              if (cond.opType == 'eq' || cond.opType == 'gt' || cond.opType == 'ge'
+                || cond.opType == 'lt' || cond.opType == 'le') {
                   values = ''
-                }
               }
-              else if (cond.fieldType == 'int') {
-                if (cond.opType == 'eq' || cond.opType == 'gt' || cond.opType == 'ge'
-                  || cond.opType == 'lt' || cond.opType == 'le') {
-                    values = ''
-                }
-                else if (cond.opType == 'between') {
-                  values = {
-                    begin: '',
-                    end: ''
-                  }
-                }
-              }
-              else if (cond.fieldType == 'decimal') {
-                if (cond.opType == 'eq' || cond.opType == 'gt' || cond.opType == 'ge'
-                  || cond.opType == 'lt' || cond.opType == 'le') {
-                    values = ''
-                }
-                else if (cond.opType == 'between') {
-                  values = {
-                    begin: '',
-                    end: ''
-                  }
-                }
-              }
-              else if (cond.fieldType == 'date') {
-                if (cond.opType == 'eq') {
-                  values = ''
-                }
-                else if (cond.opType == 'between') {
-                  values = {
-                    begin: '',
-                    end: ''
-                  }
-                }
-              }
-              else if (cond.fieldType == 'datetime') {
-                if (cond.opType == 'eq') {
-                  values = ''
-                }
-                else if (cond.opType == 'between') {
-                  values = {
-                    begin: '',
-                    end: ''
-                  }
+              else if (cond.opType == 'between') {
+                values = {
+                  begin: '',
+                  end: ''
                 }
               }
             }
-            else {
-              //目前只会是字符串
-              //TODO 后续还要处理多个值，数组的情况
-              values = cond.values
+            else if (cond.fieldType == 'decimal') {
+              if (cond.opType == 'eq' || cond.opType == 'gt' || cond.opType == 'ge'
+                || cond.opType == 'lt' || cond.opType == 'le') {
+                  values = ''
+              }
+              else if (cond.opType == 'between') {
+                values = {
+                  begin: '',
+                  end: ''
+                }
+              }
             }
+            else if (cond.fieldType == 'date') {
+              if (cond.opType == 'eq') {
+                values = ''
+              }
+              else if (cond.opType == 'between') {
+                values = {
+                  begin: '',
+                  end: ''
+                }
+              }
+            }
+            else if (cond.fieldType == 'datetime') {
+              if (cond.opType == 'eq') {
+                values = ''
+              }
+              else if (cond.opType == 'between') {
+                values = {
+                  begin: '',
+                  end: ''
+                }
+              }
+            }
+          }
+          else {
+            //目前只会是字符串
+            //TODO 后续还要处理多个值，数组的情况
+            values = cond.values
+          }
 
-            this.$set(this.queryValues, cond.fieldCode, {
-              field: cond.fieldCode,
-              op: cond.opType,
-              values: values
-            })
+          this.$set(this.queryValues, cond.fieldCode, {
+            field: cond.fieldCode,
+            op: cond.opType,
+            values: values
           })
+        })
 
-        }
       },
       deep: true,
       immediate: true
@@ -246,26 +238,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-.cond-parent {
-  margin: 10px;
-  width: 100%;
-  display: flex;
-  font-size: 12px;
-  flex-flow: row wrap;
-  align-content: flex-start;
-}
-
-.cond-child {
-  margin: 10px;
-  box-sizing: border-box;
-  background-color: white;
-  display: flex;
-  flex: 0 0 25%;
-  /* border: 1px dotted grey; */
-  list-style: none;
-}
-
-</style>

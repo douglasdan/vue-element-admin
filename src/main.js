@@ -43,26 +43,41 @@ import XObjectDefineEditor from '@/views/xview/x-object-editor'
 import XFormItem from '@/views/xview/x-form-item'
 
 import XButton from '@/views/xview/x-button'
-import XRowOperator from '@/views/xview/x-row-operator'
-import XObjectList from '@/views/xview/x-object-list'
+
 import XObjectEditor from '@/views/xview/x-object-editor'
 
+//对象选择器
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
+Vue.component('x-object-select', ObjectSelect)
+
+//对象列表展示
+import XObjectListView from '@/views/xview/components/x-object-list-view'
+Vue.component('x-object-list-view', XObjectListView)
+
+//对象编辑展示
+import XObjectEditView from '@/views/xview/components/x-object-edit-view'
+Vue.component('x-object-edit-view', XObjectEditView)
+
+//视图，数据行功能按钮
+import XRowOperator from '@/views/xview/components/x-row-operator'
+Vue.component('x-row-operator', XRowOperator)
+
+//显示页面
+import ShowView from '@/views/business-backend/ViewMgr/ShowView'
+Vue.component('show-view', ShowView)
+
+
+
 
 Vue.component('x-element', XElement)
 Vue.component('x-button', XButton)
 Vue.component('x-table', XTable)
 Vue.component('x-card', XCard)
-
 Vue.component('x-object-define-editor', XObjectDefineEditor)
 Vue.component('x-form-item', XFormItem)
-
 Vue.component('x-button', XButton)
-Vue.component('x-row-operator', XRowOperator)
-Vue.component('x-object-list', XObjectList)
 Vue.component('x-object-editor', XObjectEditor)
 
-Vue.component('x-object-select', ObjectSelect)
 
 /**
  * If you don't want to use mock-server

@@ -38,7 +38,7 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
-      <view-editor :view-define="editForm" @close="handleViewEditorClose" />
+      <x-view-editor :view-define="editForm" @close="handleViewEditorClose" />
     </el-dialog>
 
   </section>
@@ -50,7 +50,7 @@ import store from '@/store'
 import { mapState } from 'vuex'
 import { selectViewDefinePage, saveViewDefine, deleteViewDefine } from '@/api/view-define'
 
-import ViewEditor from './ViewEditor'
+import XViewEditor from '@/views/xview/x-view-editor'
 
 const DefaultView = {
   id: null,
@@ -62,7 +62,7 @@ const DefaultView = {
 export default {
   name: 'ViewList',
   components: {
-    ViewEditor
+    XViewEditor
   },
   data() {
     return {

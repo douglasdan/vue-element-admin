@@ -195,3 +195,22 @@ aside {
 .el-dialog__body {
   padding: 10px;
 }
+
+.cond-parent {
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  flex-flow: row wrap;
+  align-content: flex-start;
+}
+
+.cond-child {
+  margin: 10px;
+  box-sizing: border-box;
+  background-color: white;
+  display: flex;
+  flex: 0 0 200px;
+  /* border: 1px dotted grey; */
+  list-style: none;
+}

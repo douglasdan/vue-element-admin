@@ -23,16 +23,19 @@
 
 <script>
 
-import XPreview from '@/views/xview-editor/xpreview'
+import xPreview from '@/views/xview/x-preview'
 import { saveViewDefine } from '@/api/view-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 
-import ObjectListTemplate from './object-list-template.json'
-import ObjectEditTemplate from './object-edit-template.json'
+import ObjectListTemplate from './template/object-list-template.json'
+import ObjectEditTemplate from './template/object-edit-template.json'
+
+import { repairObjectListViewJson } from './template/object-list-template-compatible.js'
+import { repairObjectEditViewJson } from './template/object-edit-template-compatible.js'
 
 export default {
-  name: 'ViewList',
-  components: { XPreview },
+  name: 'x-view-editor',
+  components: { xPreview },
   props: {
     viewDefine: {
       type: Object,
@@ -45,39 +48,40 @@ export default {
     }
   },
   methods: {
-    handleViewTypeChange() {
-      debugger
-      if (this.$props.viewDefine.objectId && !this.$props.viewDefine.viewContent || this.$props.viewDefine.viewContent == '{}') {
+    handleViewTypeChange(nval, oval) {
+
+      if (this.$props.viewDefine.objectId) {
+
         if (this.$props.viewDefine.viewType == 'object-list') {
-          const templateCode = JSON.parse(JSON.stringify(ObjectListTemplate))
 
-          debugger
-          this.$store.dispatch('lowCode/getObjectDefine', this.$props.viewDefine.objectId).then(ret => {
-            debugger
-            if (ret) {
-              templateCode.showFields = []
+          if (!this.$props.viewDefine.viewContent || this.$props.viewDefine.viewContent == '{}') {
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(ObjectListTemplate))
+          }
+          else {
+            let viewJson = JSON.parse(this.$props.viewDefine.viewContent)
 
-              ret.fields.forEach((item) => {
-                console.log('auto show field ' + item.fieldCode)
-                templateCode.showFields.push(
-                  {
-                    'sortable': false,
-                    'fieldCode': item.fieldCode,
-                    'formatter': null
-                  }
-                )
-              })
+            repairObjectListViewJson(viewJson)
 
-              this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(templateCode))
-            }
-          })
-        } else if (this.$props.viewDefine.viewType == 'object-edit') {
-          //
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(viewJson))
+          }
+        }
+        else if (this.$props.viewDefine.viewType == 'object-edit') {
+
+          if (!this.$props.viewDefine.viewContent || this.$props.viewDefine.viewContent == '{}') {
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(ObjectEditTemplate))
+          }
+          else {
+            let viewJson = JSON.parse(this.$props.viewDefine.viewContent)
+
+            repairObjectEditViewJson(viewJson)
+
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(viewJson))
+          }
         }
       }
     },
     submitSave() {
-      console.log('save json ' + typeof (this.$props.viewDefine.viewContent) + ' ' + this.$props.viewDefine.viewContent)
+      console.log('x-view-editor save json', this.$props.viewDefine.viewContent)
       saveViewDefine(this.viewDefine).then(ret => {
         if (ret.success) {
           this.$emit('close', {})

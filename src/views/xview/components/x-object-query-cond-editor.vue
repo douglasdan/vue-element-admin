@@ -28,7 +28,7 @@
 <script>
 
 export default {
-  name: 'x-object-field-cond-editor',
+  name: 'x-object-query-cond-editor',
   props: {
     objectId: {
       type: String

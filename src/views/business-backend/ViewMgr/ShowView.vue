@@ -1,17 +1,20 @@
 <template>
   <div>
-    <div v-if="!view" />
-    <div v-else>
-      <div v-if="view.objectId">
-        <x-object-list v-if="view.viewType == 'object-list'" :view-id="view.id" />
-      </div>
-      <div v-else-if="menu.extraUrl">
-        <iframe ref="iframe" :src="menu.extraUrl" @load="loaded" />
-      </div>
-      <div v-else>
-        <x-element :view-data="viewData" :view="viewContent" />
-      </div>
+
+    <div v-if="objectId">
+      <x-object-list-view v-if="viewType == 'object-list'"
+        :object-id="objectId"
+        :view-json="viewJson"
+        />
+      <x-object-edit-view v-if="viewType == 'object-edit'"
+        :object-id="objectId"
+        :view-json="viewJson"
+        />
     </div>
+    <div v-else-if="menu.extraUrl">
+      <iframe ref="iframe" :src="menu.extraUrl" @load="loaded" />
+    </div>
+
   </div>
 </template>
 
@@ -31,20 +34,21 @@ export default {
   data() {
     return {
       menu: {},
-      view: null,
 
-      viewData: {
-        name: '',
-        password: ''
-      },
-      viewContent: null
+      viewId: '',
+      viewType: '',
+      objectId: '',
+      viewJson: null
     }
   },
   watch: {
     'viewDefine': {
       handler(nval, oval) {
         if (nval) {
-          this.view = JSON.parse(JSON.stringify(nval))
+          this.viewId = nval.viewId
+          this.viewType = nval.viewType
+          this.objectId = nval.objectId
+          this.viewJson = JSON.parse(nval.viewContent)
         }
       },
       deep: true,
@@ -52,9 +56,11 @@ export default {
     }
   },
   created() {
-    const menuId = (this.$route.path + '').replaceAll('/view', '')
+    let reg = new RegExp("^/view[0-9]*$");
 
-    if (menuId) {
+    if (reg.test(this.$route.path)) {
+      const menuId = (this.$route.path + '').replaceAll('/view', '')
+
       this.$store.dispatch('permission/getMenuDefine', menuId).then(ret => {
         this.menu = ret
 
@@ -69,8 +75,6 @@ export default {
           console.log('diaplay ', this.menu.extraUrl)
         }
       })
-    } else if (this.$props.viewDefine) {
-      this.view = this.$props.viewDefine
     }
   },
   methods: {

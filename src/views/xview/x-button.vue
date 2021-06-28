@@ -38,15 +38,22 @@ export default {
     handleClick() {
       console.log('x-button @click', this.$props.view.name)
       if (this.$props.view.action) {
-        // 覆盖后台定义好的action
-        const action = this.$props.view.action
-        // let code = `function runit(){${this.view.action}}`
-        const fun = new Function(`return function(){${action}}`)()
-        console.log(fun)
 
-        fun.bind(this.$props.self).apply()
-      } else {
+        let actionDefine = JSON.parse(this.$props.view.action)
 
+        if (actionDefine.type == '1') {
+          this.$props.self.openView(actionDefine.viewId)
+        }
+        else if (actionDefine.type == '2') {
+          const fun = new Function(`return function(){${actionDefine.script}}`)()
+          console.log(fun)
+
+          fun.bind(this.$props.self).apply()
+        }
+
+      }
+      else {
+        this.$message.error('未定义按钮功能逻辑')
       }
     }
   }

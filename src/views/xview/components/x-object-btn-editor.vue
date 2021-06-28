@@ -40,7 +40,7 @@
       </el-form>
       <el-form :inline="true" label-width="120px" style="width: 800px;">
         <el-form-item label="动作：">
-          <el-input v-model="editForm.action" type="textarea" placeholder="" />
+          <x-object-btn-func-editor v-model="editForm.action"></x-object-btn-func-editor>
         </el-form-item>
       </el-form>
 
@@ -58,8 +58,13 @@
 import { uuid } from 'vue-uuid'
 import Sortable from 'sortablejs'
 
+import xObjectBtnFuncEditor from '@/views/xview/components/x-object-btn-func-editor'
+
 export default {
   name: 'XObjectBtnEditor',
+  components: {
+    xObjectBtnFuncEditor
+  },
   props: {
     btns: {
       type: Array,
@@ -79,7 +84,6 @@ export default {
       },
       editIndex: null,
       editDialogVisible: false
-
     }
   },
   computed: {

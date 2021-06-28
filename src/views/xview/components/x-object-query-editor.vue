@@ -14,8 +14,8 @@
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="160"/>
       <el-table-column width="300">
         <template scope="scope">
-          <x-object-field-cond-editor :object-id="objectId" :cond="scope.row" @change="refreshConditions">
-          </x-object-field-cond-editor>
+          <x-object-query-cond-editor :object-id="objectId" :cond="scope.row" @change="refreshConditions">
+          </x-object-query-cond-editor>
         </template>
       </el-table-column>
 
@@ -30,14 +30,14 @@ import store from '@/store'
 import { mapState } from 'vuex'
 import { selectObjectFieldDefinePage, saveObjectFieldDefine } from '@/api/object-field-define'
 
-import xObjectFieldCondEditor from '@/views/xview/x-object-field-cond-editor'
+import xObjectQueryCondEditor from '@/views/xview/components/x-object-query-cond-editor'
 
 import Sortable from 'sortablejs'
 
 export default {
-  name: 'ObjectFieldConditionEditor',
+  name: 'x-object-query-editor',
   components: {
-    xObjectFieldCondEditor
+    xObjectQueryCondEditor
   },
   props: {
     objectId: String,
@@ -82,7 +82,7 @@ export default {
     },
     'viewJson': {
       handler(nval, oval) {
-        console.log('ObjectFieldConditionEditor watch viewJson changed')
+        console.log('x-object-query-editor watch viewJson changed')
         if (!oval && nval) {
           this.syncFilterField()
         }

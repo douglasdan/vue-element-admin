@@ -3,9 +3,10 @@
     <el-collapse-item title="字段显示" name="1">
       <ObjectFieldList
         ref="objectFieldSelector"
-        :mode="'select'"
+        :mode="'edit-view'"
         :height="400"
         :object-id="objectId"
+        :viewJson="viewJson"
         :dragSort="true"
         @selection-change="handleFieldChange"
       />
@@ -21,14 +22,14 @@
 
     <el-collapse-item title="查询条件" name="4">
 
-      <ObjectFieldConditionEditor
+      <x-object-query-editor
         ref="queryConditionEditor"
         :mode="'select'"
         :height="400"
         :viewJson="viewJson"
         :object-id="objectId"
       >
-      </ObjectFieldConditionEditor>
+      </x-object-query-editor>
     </el-collapse-item>
 
   </el-collapse>
@@ -42,13 +43,14 @@
 // showFields
 
 import ObjectFieldList from '@/views/business-backend/ObjectMgr/ObjectFieldList'
-import ObjectFieldConditionEditor from '@/views/business-backend/ObjectMgr/ObjectFieldConditionEditor'
+
+import xObjectQueryEditor from '@/views/xview/components/x-object-query-editor'
 import ObjectBtnEditor from './x-object-btn-editor'
 
 export default {
-  name: 'XObjectListJsonEditor',
+  name: 'x-object-list-json-editor',
   components: {
-    ObjectFieldList, ObjectBtnEditor, ObjectFieldConditionEditor
+    ObjectFieldList, ObjectBtnEditor, xObjectQueryEditor
   },
   props: {
     objectId: {
@@ -68,36 +70,21 @@ export default {
   watch: {
     'viewJson': {
       handler(nval, oval) {
-        //
       },
       deep: true,
       immediate: true
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.sync()
-    })
   },
   methods: {
-    sync() {
-      console.log('x-object-list-json-editor sync field selection')
-      if (this.$refs.objectFieldSelector && this.$props.viewJson.showFields && this.$refs.objectFieldSelector.loaded()) {
-        const codes = this.$props.viewJson.showFields.map(a => a.fieldCode)
-        this.$refs.objectFieldSelector.toggleRowSelection(codes, true)
-      } else {
-        setTimeout(() => {
-          this.sync()
-        }, 500)
-      }
-    },
     handleFieldChange(sels) {
 
       let temp = {}
       this.$props.viewJson.showFields.forEach((field)=>{
         temp[field.fieldCode] = field
       })
-
+      debugger
       this.$set(this.$props.viewJson, 'showFields', sels.map(s => {
         return {
           'sortable': false,

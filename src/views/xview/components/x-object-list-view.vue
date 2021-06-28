@@ -25,7 +25,7 @@
         v-for="(f, i) in viewJson.showFields"
         :prop="f.fieldCode"
         :label="fieldName(f.fieldCode)"
-        :show-overflow-tooltip="sholdTooltip(f.fieldCode)"
+        :show-overflow-tooltip="showTooltip(f.fieldCode)"
         :width=" !!f.width ? f.width : 100"
         :formatter="formatter"
       />
@@ -52,51 +52,48 @@
       />
     </div>
 
+    <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body>
+      <show-view :view-define="showView.viewDefine">
+      </show-view>
+    </el-dialog>
+
   </section>
 </template>
 
 <script>
 
-import { getViewDefineById } from '@/api/view-define'
 import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 import { selectObjectDataPage } from '@/api/object-data'
+import { getViewDefineById } from '@/api/view-define'
 
 import xObjectFilter from '@/views/xview/x-object-filter'
 
 export default {
-  name: 'XObjectList',
+  name: 'x-object-list-view',
   components: {
     'x-object-filter': xObjectFilter
   },
   props: {
-    viewId: {
+    objectId: {
       type: String,
       required: false
     },
-    viewDefine: {
+    viewJson: {
       type: Object,
       required: false
+    },
+    edit: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       self: this,
-      objectId: '',
       objectDefine: null,
       objectFieldDefine: null,
       objectFieldDefineMap: {},
-
-      viewJson: {
-        selectable: false,
-        viewButtons:[],
-        showFields: [],
-        rowButtons: [],
-        queryDefine: {
-          labelWidth: 100,
-          conditions: []
-        }
-      },
 
       queryPanelVisible: false,
       query: {
@@ -108,7 +105,13 @@ export default {
       pageNo: 1,
       pageSizes: [10, 20, 40],
 
-      sels: []
+      sels: [],
+
+      showView: {
+        visible: false,
+        viewDefine: null
+      }
+
     }
   },
   computed: {
@@ -122,16 +125,16 @@ export default {
     }
   },
   watch: {
-    'viewId': {
+    'objectId': {
       handler(nval, oval) {
-        this.loadView()
+        this.loadObject()
       },
       deep: true,
       immediate: true
     },
-    'viewDefine': {
+    'viewJson': {
       handler(nval, oval) {
-        this.loadViewJson()
+        //
       },
       deep: true,
       immediate: true
@@ -157,24 +160,11 @@ export default {
       this.loadData()
     },
     handleHeaderDragend(newWidth, oldWidth, column, event) {
-      let a = {
-        objectId: this.metadata.objectId,
-        fieldCode: column.property,
-        width: newWidth,
-      }
-      this.$emit('set-field-width', a)
-    },
-    loadView() {
-      if (this.$props.viewId) {
-        getViewDefineById(this.$props.viewId).then(ret => {
-          if (ret.success) {
-            this.viewJson = JSON.parse(ret.data.viewContent)
-            this.objectId = ret.data.objectId
-            this.loadObject()
-            return this.objectId
-          }
-        })
-      }
+      this.$props.viewJson.showFields.forEach((item) => {
+        if (item.fieldCode == column.property) {
+          item.width = newWidth
+        }
+      })
     },
     loadObject() {
       if (this.objectId) {
@@ -191,13 +181,6 @@ export default {
         this.loadData()
       }
     },
-    loadViewJson() {
-      if (this.$props.viewDefine && this.$props.viewDefine.objectId) {
-        this.viewJson = JSON.parse(this.$props.viewDefine.viewContent)
-        this.objectId = this.$props.viewDefine.objectId
-        this.loadObject()
-      }
-    },
 
     fieldName(code) {
       if (this.objectFieldDefineMap[code]) {
@@ -205,7 +188,7 @@ export default {
       }
       return ''
     },
-    sholdTooltip(code) {
+    showTooltip(code) {
       const fieldDefine = this.objectFieldDefineMap[code]
       if (fieldDefine) {
         if (fieldDefine.fieldType == 'text' && fieldDefine.fieldLength >= 20) {
@@ -228,8 +211,8 @@ export default {
       }
 
       this.$refs.refObjectFilter.resetValues()
-
     },
+
     loadData() {
 
       if (!this.$refs.refObjectFilter) {
@@ -251,6 +234,32 @@ export default {
         }
       })
     },
+
+    openView(viewId) {
+      //
+      console.log('x-object-list-view showView', viewId)
+
+      if (viewId) {
+
+        getViewDefineById(viewId).then(ret => {
+          if (ret.success) {
+            this.showView.viewDefine = ret.data
+            this.showView.visible = true
+          }
+          else {
+            //
+          }
+
+        })
+
+      }
+      //
+    },
+
+    deleteDataRow() {
+      //TODO
+
+    }
 
   }
 

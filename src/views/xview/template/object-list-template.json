@@ -22,11 +22,7 @@
   ],
   "selectable": true,
   "showFields": [
-    {
-      "sortable": false,
-      "fieldCode": "id",
-      "formatter": null
-    }
+
   ],
   "viewButtons": [
     {

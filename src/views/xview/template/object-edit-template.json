@@ -1,0 +1,27 @@
+{
+  "labelWidth": 120,
+  "showFields": [
+
+  ],
+  "viewButtons": [
+    {
+      "name": "保存",
+      "code": "",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": null
+    },
+    {
+      "name": "取消",
+      "code": "",
+      "props": {
+        "size": "small",
+        "type": "primary",
+        "disabled": false
+      },
+      "action": null
+    }
+  ]
+}

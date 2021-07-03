@@ -10,6 +10,12 @@
         :object-id="objectId"
         :view-json="viewJson"
         />
+      <x-object-view-view v-if="viewType == 'object-view'"
+        :object-id="objectId"
+        :object-data-id="dataId"
+        :view-json="viewJson"
+        />
+
     </div>
     <div v-else-if="menu.extraUrl">
       <iframe ref="iframe" :src="menu.extraUrl" @load="loaded" />
@@ -23,13 +29,18 @@
 import { param2Obj } from '@/utils'
 import { getViewDefineById } from '@/api/view-define'
 
+import { repairObjectListViewJson } from '@/views/xview/template/object-list-template-compatible.js'
+import { repairObjectEditViewJson } from '@/views/xview/template/object-edit-template-compatible.js'
+import { repairObjectViewJson } from '@/views/xview/template/object-view-template-compatible.js'
+
 export default {
   name: 'ShowView',
   props: {
     viewDefine: {
       type: Object,
       required: false
-    }
+    },
+    dataId: [String, Number]
   },
   data() {
     return {
@@ -58,7 +69,11 @@ export default {
   created() {
     let reg = new RegExp("^/view[0-9]*$");
 
-    if (reg.test(this.$route.path)) {
+    if (this.$props.viewDefine) {
+      //
+
+    }
+    else if (reg.test(this.$route.path)) {
       const menuId = (this.$route.path + '').replaceAll('/view', '')
 
       this.$store.dispatch('permission/getMenuDefine', menuId).then(ret => {
@@ -69,7 +84,22 @@ export default {
 
           getViewDefineById(this.menu.viewId).then(ret => {
             this.view = ret.data
-            this.viewContent = JSON.parse(ret.data.viewContent)
+            this.viewType = this.view.viewType
+            this.objectId = this.view.objectId
+
+            let viewJson = JSON.parse(ret.data.viewContent)
+
+            if (this.viewType == 'object-list') {
+              repairObjectListViewJson(viewJson)
+            }
+            else if (this.viewType == 'object-edit') {
+              repairObjectEditViewJson(viewJson)
+            }
+            else if (this.viewType == 'object-view') {
+              repairObjectViewJson(viewJson)
+            }
+            debugger
+            this.viewJson = viewJson
           })
         } else if (this.menu.extraUrl) {
           console.log('diaplay ', this.menu.extraUrl)

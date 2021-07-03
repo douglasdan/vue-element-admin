@@ -39,14 +39,25 @@ export default {
   },
   methods: {
     handleCommand(command) {
-      console.log('click on item ' + command + ' ' + this.$props.idx + ' ' + JSON.stringify(this.$props.row))
+      console.log('x-row-operator @click', command)
+      if (this.$props.view.action) {
 
-      const btn = this.$props.buttons.filter(a => a.name == command)[0]
+        let actionDefine = JSON.parse(this.$props.view.action)
 
-      const fun = new Function(`return function(row){${btn.action}}`)()
-      console.log(fun)
+        if (actionDefine.type == '1') {
+          this.$props.self.openView(actionDefine.viewId, this.$props.row)
+        }
+        else if (actionDefine.type == '2') {
+          const fun = new Function(`return function(){${actionDefine.script}}`)()
+          console.log(fun)
 
-      fun.call(this.$props.self, this.$props.row)
+          fun.bind(this.$props.self).apply()
+        }
+
+      }
+      else {
+        this.$message.error('未定义按钮功能逻辑')
+      }
     }
   }
 }

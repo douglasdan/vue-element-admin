@@ -74,11 +74,14 @@ export default {
     }
   },
   mounted() {
+    let _this = this
     this.loadData()
   },
   methods: {
     loadData() {
       if (this.$props.objectId) {
+        console.log('x-object-query-cond-editor', this.$props.objectId)
+
         this.$store.dispatch('lowCode/getObjectDefine', this.$props.objectId).then(ret => {
           if (ret) {
             this.fieldDefines = ret.fields

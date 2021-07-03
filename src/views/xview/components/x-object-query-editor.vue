@@ -14,7 +14,7 @@
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="160"/>
       <el-table-column width="300">
         <template scope="scope">
-          <x-object-query-cond-editor :object-id="objectId" :cond="scope.row" @change="refreshConditions">
+          <x-object-query-cond-editor :object-id="objectId" :cond="scope.row" @change="refreshConditions" v-if="objectDefineLoaded">
           </x-object-query-cond-editor>
         </template>
       </el-table-column>
@@ -51,6 +51,8 @@ export default {
       eid: 'e' + uuid.v1(),
       fieldMap: {},
       rows: [],
+
+      objectDefineLoaded: false
     }
   },
   computed: {
@@ -129,6 +131,7 @@ export default {
     loadData() {
       this.$store.dispatch('lowCode/getObjectDefine', this.$props.objectId).then(ret => {
         if (ret) {
+          this.objectDefineLoaded = true
           this.rows = []
           ret.fields.forEach((item,i) => {
             this.rows.push({

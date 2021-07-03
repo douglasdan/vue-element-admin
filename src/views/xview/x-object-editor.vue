@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     title() {
-      return '编辑' + this.viewDefine.obiectName
+      return '编辑' + this.viewDefine.objectName
     }
   },
   watch: {

@@ -18,6 +18,9 @@
 
         <x-object-edit-json-editor v-if="viewDefine.viewType == 'object-edit' && (viewDefine.id || viewDefine.viewContent)"
           :object-id="viewDefine.objectId" :view-json="viewJson" />
+
+        <x-object-view-json-editor v-if="viewDefine.viewType == 'object-view' && (viewDefine.id || viewDefine.viewContent)"
+          :object-id="viewDefine.objectId" :view-json="viewJson" />
       </div>
 
     </el-col>
@@ -30,6 +33,11 @@
           :view-json="viewJson"
           />
         <x-object-edit-view v-if="viewDefine.viewType == 'object-edit' && (viewDefine.id || viewDefine.viewContent)"
+          :object-id="viewDefine.objectId"
+          :view-json="viewJson"
+          />
+        <x-object-view-view v-if="viewDefine.viewType == 'object-view' && (viewDefine.id || viewDefine.viewContent)"
+          :object-data-id="3"
           :object-id="viewDefine.objectId"
           :view-json="viewJson"
           />
@@ -48,11 +56,12 @@
 import vueJsonEditor from 'vue-json-editor'
 import XObjectListJsonEditor from './components/x-object-list-json-editor'
 import XObjectEditJsonEditor from './components/x-object-edit-json-editor'
+import XObjectViewJsonEditor from './components/x-object-view-json-editor'
 
 export default {
   name: 'x-preview',
   components: {
-    vueJsonEditor, XObjectListJsonEditor, XObjectEditJsonEditor
+    vueJsonEditor, XObjectListJsonEditor, XObjectEditJsonEditor, XObjectViewJsonEditor
   },
   props: {
     viewDefine: {

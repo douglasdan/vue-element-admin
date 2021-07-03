@@ -20,7 +20,7 @@ const mutations = {
   SET_VIEWS: (state, data) => {
     state.views = data
   },
-  SET_OBJECT_DEFINE: (state, oid, data) => {
+  SET_OBJECT_DEFINE: (state, {oid, data}) => {
     state.objects[oid] = data
   },
   UPDATE_OBJECT_DEFINE: (state, oid) => {
@@ -75,13 +75,17 @@ const actions = {
 
   getObjectDefine({ commit }, oid) {
 
-    console.log('lowCode/getObjectDefine '+oid)
+    console.log(new Date(),'lowCode/getObjectDefine '+oid)
 
     return new Promise((resolve, reject) => {
       if (!state.objects[''+oid]) {
+        // console.log(`state.objects[''+${oid}]`, 'not exists')
         getObjectDefineById(oid).then(ret => {
           if (ret.success) {
-            commit('SET_OBJECT_DEFINE', oid, ret.data)
+            commit('SET_OBJECT_DEFINE', {
+              oid: ''+oid,
+              data: ret.data
+            })
           }
           resolve(ret.data)
         })
@@ -92,7 +96,7 @@ const actions = {
     })
   },
 
-  updateObjectDefine({ commit }, oid) {
+  updateObjectDefineupdateObjectDefine({ commit }, oid) {
     return new Promise((resolve, reject) => {
       commit('UPDATE_OBJECT_DEFINE', oid)
       resolve(true)

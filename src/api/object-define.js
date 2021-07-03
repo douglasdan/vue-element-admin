@@ -30,3 +30,9 @@ export function selectObjectDefinePage(data) {
   })
 }
 
+export function syncObjectDefineToDB(id) {
+  return request({
+    url: `/api/v1/objectDefine/${id}/syncdb`,
+    method: 'get'
+  })
+}

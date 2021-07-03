@@ -52,6 +52,10 @@ import { selectViewDefinePage, saveViewDefine, deleteViewDefine } from '@/api/vi
 
 import XViewEditor from '@/views/xview/x-view-editor'
 
+import { repairObjectListViewJson } from '@/views/xview/template/object-list-template-compatible.js'
+import { repairObjectEditViewJson } from '@/views/xview/template/object-edit-template-compatible.js'
+import { repairObjectViewJson } from '@/views/xview/template/object-view-template-compatible.js'
+
 const DefaultView = {
   id: null,
   viewName: '',
@@ -120,9 +124,20 @@ export default {
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
-      if (!row.viewContent || row.viewContent == '{}') {
-        //
-
+      if (row.viewContent) {
+        let viewJson = JSON.parse(row.viewContent)
+        if (row.viewType == 'object-list') {
+          repairObjectListViewJson(viewJson)
+          row.viewContent = JSON.stringify(viewJson)
+        }
+        else if (row.viewType == 'object-edit') {
+          repairObjectEditViewJson(viewJson)
+          row.viewContent = JSON.stringify(viewJson)
+        }
+        else if (row.viewType == 'object-view') {
+          repairObjectViewJson(viewJson)
+          row.viewContent = JSON.stringify(viewJson)
+        }
       }
 
       this.editForm = JSON.parse(JSON.stringify(row))

@@ -25,7 +25,7 @@ import ObjectFieldList from '@/views/business-backend/ObjectMgr/ObjectFieldList'
 import ObjectBtnEditor from './x-object-btn-editor'
 
 export default {
-  name: 'XObjectListJsonEditor',
+  name: 'XObjectEditJsonEditor',
   components: {
     ObjectFieldList, ObjectBtnEditor
   },

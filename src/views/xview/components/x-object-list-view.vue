@@ -30,12 +30,13 @@
         :formatter="formatter"
       />
 
-      <el-table-column width="45">
+      <el-table-column width="45" prop="operate" :width=" (viewJson.operate && viewJson.operate.width) ? viewJson.operate.width : 100">
         <template slot="header">
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <x-row-operator :buttons="viewJson.rowButtons" :idx="scope.$index" :row="scope.row" :self="self" />
+          <x-button :size="'mini'" v-for="(btn, index) in viewJson.rowButtons" :view="btn" :self="self" />
+          <!-- <x-row-operator :buttons="viewJson.rowButtons" :idx="scope.$index" :row="scope.row" :self="self" /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -53,7 +54,8 @@
     </div>
 
     <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body>
-      <show-view :view-define="showView.viewDefine">
+      <show-view :view-define="showView.viewDefine" :data-id="showView.dataId" v-if="showView.visible"
+        style="max-height: 600px;">
       </show-view>
     </el-dialog>
 
@@ -109,7 +111,8 @@ export default {
 
       showView: {
         visible: false,
-        viewDefine: null
+        viewDefine: null,
+        dataId: null,
       }
 
     }
@@ -160,11 +163,18 @@ export default {
       this.loadData()
     },
     handleHeaderDragend(newWidth, oldWidth, column, event) {
-      this.$props.viewJson.showFields.forEach((item) => {
-        if (item.fieldCode == column.property) {
-          item.width = newWidth
-        }
-      })
+      console.log('x-object-list-view handleHeaderDragend', column)
+
+      if (column.property == 'operate') {
+        this.$props.viewJson.operate.width = newWidth
+      }
+      else {
+        this.$props.viewJson.showFields.forEach((item) => {
+          if (item.fieldCode == column.property) {
+            item.width = newWidth
+          }
+        })
+      }
     },
     loadObject() {
       if (this.objectId) {
@@ -235,7 +245,7 @@ export default {
       })
     },
 
-    openView(viewId) {
+    openView(viewId, row) {
       //
       console.log('x-object-list-view showView', viewId)
 
@@ -243,21 +253,25 @@ export default {
 
         getViewDefineById(viewId).then(ret => {
           if (ret.success) {
+            if (row) {
+              this.showView.dataId = row.id
+            }
             this.showView.viewDefine = ret.data
             this.showView.visible = true
           }
           else {
             //
+            this.$message.error('试图定义错误')
           }
-
         })
 
       }
       //
     },
 
-    deleteDataRow() {
+    deleteDataRow(row) {
       //TODO
+
 
     }
 

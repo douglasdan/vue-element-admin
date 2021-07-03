@@ -214,3 +214,17 @@ aside {
   /* border: 1px dotted grey; */
   list-style: none;
 }
+
+.field-content {
+  display: block;
+  text-align:left;
+  line-height: 30px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+}
+
+.field-content:hover {
+  display: -webkit-box;
+}

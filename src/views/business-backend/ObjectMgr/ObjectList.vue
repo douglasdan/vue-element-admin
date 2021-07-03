@@ -9,7 +9,7 @@
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
       <el-table-column prop="appId" label="应用" :formatter="formatter" width="160px" />
-      <el-table-column prop="obiectName" label="对象名称" :formatter="formatter" width="200px" />
+      <el-table-column prop="objectName" label="对象名称" :formatter="formatter" width="200px" />
       <el-table-column prop="objectType" label="对象类型" :formatter="formatter" />
       <el-table-column prop="objectCode" label="对象编码" :formatter="formatter" />
       <!--
@@ -30,6 +30,11 @@
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="createObjectDefaultViews(scope.$index, scope.row)"
+          >创建默认视图</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,9 +63,14 @@
 import store from '@/store'
 import { mapState } from 'vuex'
 import { selectObjectDefinePage, saveObjectDefine, deleteObjectDefine } from '@/api/object-define'
+import { selectViewDefinePage, saveViewDefine } from '@/api/view-define'
 import { selectAppPage } from '@/api/app'
 import AppSelect from '../AppMgr/AppSelect'
 import ObjectEditor from './ObjectEditor'
+
+import objectListTemplate from '@/views/xview/template/object-list-template'
+import objectEditTemplate from '@/views/xview/template/object-edit-template'
+import objectViewTemplate from '@/views/xview/template/object-view-template'
 
 const DefaultObject = {
   id: null
@@ -189,6 +199,147 @@ export default {
       this.editForm = row
       this.editDialogVisible = true
     },
+    async createObjectDefaultViews(i, row) {
+
+      if (row.id) {
+
+        let editViewId = await this.createDefaultEditView(row)
+        let viewId = await this.createDefaultViewView(row)
+
+        if (editViewId && viewId) {
+          this.createDefaultListView(row, editViewId, viewId)
+        }
+      }
+
+    },
+    createDefaultEditView(od) {
+      debugger
+
+      return new Promise((resolve, reject) => {
+
+        selectViewDefinePage({
+          conditions: [
+            {field: 'object_id', op:'eq', values:[''+od.id]},
+            {field: 'view_type', op:'eq', values:['object-edit']},
+          ]
+        }).then(ret => {
+
+          if (ret.success) {
+
+            if (ret.data.rows.length == 0) {
+              saveViewDefine({
+                viewName: '创建 '+od.objectName,
+                viewType: 'object-edit',
+                objectId: od.id,
+                viewContent: JSON.stringify(objectEditTemplate)
+              })
+              .then(ret => {
+                if (ret.success) {
+                  resolve(ret.data.id)
+                }
+                else {
+                  reject(null)
+                }
+              })
+            }
+            else {
+              resolve(ret.data.rows[0].id)
+            }
+          } else {
+            reject(null)
+          }
+        })
+
+      })
+
+    },
+    createDefaultViewView(od) {
+
+      return new Promise((resolve, reject) => {
+
+        selectViewDefinePage({
+          conditions: [
+            {field: 'object_id', op:'eq', values:[''+od.id]},
+            {field: 'view_type', op:'eq', values:['object-view']},
+          ]
+        }).then(ret => {
+
+          if (ret.success) {
+
+            if (ret.data.rows.length == 0) {
+              saveViewDefine({
+                viewName: '查看 '+od.objectName,
+                viewType: 'object-view',
+                objectId: od.id,
+                viewContent: JSON.stringify(objectViewTemplate)
+              })
+              .then(ret => {
+                if (ret.success) {
+                  resolve(ret.data.id)
+                }
+                else {
+                  reject(null)
+                }
+              })
+            }
+            else {
+              resolve(ret.data.rows[0].id)
+            }
+          } else {
+            reject(null)
+          }
+        })
+
+      })
+
+    },
+    createDefaultListView(od, editViewId, viewId) {
+
+      return new Promise((resolve, reject) => {
+
+        selectViewDefinePage({
+          conditions: [
+            {field: 'object_id', op:'eq', values:[''+od.id]},
+            {field: 'view_type', op:'eq', values:['object-list']},
+          ]
+        }).then(ret => {
+
+          if (ret.success) {
+
+            if (ret.data.rows.length == 0) {
+
+              let viewJson = JSON.parse(JSON.stringify(objectListTemplate))
+              viewJson.viewButtons[0].action.viewId = editViewId
+
+              //TODO 设置查看对象跳转的处理
+
+              saveViewDefine({
+                viewName: '列表 '+od.objectName,
+                viewType: 'object-list',
+                objectId: od.id,
+                viewContent: JSON.stringify(viewJson)
+              })
+              .then(ret => {
+                if (ret.success) {
+                  resolve(ret.data.id)
+                }
+                else {
+                  reject(null)
+                }
+              })
+            }
+            else {
+              resolve(ret.data.rows[0].id)
+            }
+          } else {
+            reject(null)
+          }
+        })
+
+      })
+
+    },
+
     handleAdd() {
       this.editForm = JSON.parse(JSON.stringify(DefaultObject))
       this.editDialogVisible = true

@@ -1,4 +1,10 @@
 {
+  "width": 0,
+  "height": 0,
+  "minHeight": 0,
+  "minWidth": 0,
+  "maxHeight": 0,
+  "maxWidth": 0,
   "rowButtons": [
     {
       "name": "编辑",
@@ -24,7 +30,24 @@
   "showFields": [
 
   ],
+  "operate": {
+    "width": 120
+  },
   "viewButtons": [
+    {
+      "code":"add_new",
+      "name":"新增",
+      "props":{
+          "size":"small",
+          "type":"primary",
+          "disabled":false
+      },
+      "action": {
+        "type": "1",
+        "viewId": "",
+        "script": ""
+      }
+    },
     {
       "name": "重置",
       "code": "",
@@ -32,7 +55,11 @@
         "size": "small",
         "disabled": false
       },
-      "action": null
+      "action": {
+        "type": "2",
+        "viewId": "",
+        "script": "this.resetQueryCond(); this.loadData();"
+      }
     },
     {
       "name": "查询",
@@ -42,7 +69,11 @@
         "type": "primary",
         "disabled": false
       },
-      "action": null
+      "action": {
+        "type": "2",
+        "viewId": "",
+        "script": "this.loadData();"
+      }
     }
   ],
   "queryDefine": {

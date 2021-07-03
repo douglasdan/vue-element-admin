@@ -5,7 +5,8 @@
       对象：<x-object-select v-model="viewDefine.objectId" :app-id="selectAppId" />
       类型：<el-select v-model="viewDefine.viewType" placeholder="请选择" @change="handleViewTypeChange">
         <el-option :key="'object-list'" :label="'对象列表'" :value="'object-list'" />
-        <el-option :key="'object-edit'" :label="'对象视图'" :value="'object-edit'" />
+        <el-option :key="'object-edit'" :label="'新建对象'" :value="'object-edit'" />
+        <el-option :key="'object-view'" :label="'查看对象'" :value="'object-view'" />
         <el-option :key="'custom'" :label="'自定义'" :value="'custom'" />
       </el-select>
       名称：<el-input v-model="viewDefine.viewName" style="width: 200px;" />
@@ -29,9 +30,11 @@ import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 
 import ObjectListTemplate from './template/object-list-template.json'
 import ObjectEditTemplate from './template/object-edit-template.json'
+import ObjectViewTemplate from './template/object-view-template.json'
 
 import { repairObjectListViewJson } from './template/object-list-template-compatible.js'
 import { repairObjectEditViewJson } from './template/object-edit-template-compatible.js'
+import { repairObjectViewJson } from './template/object-view-template-compatible.js'
 
 export default {
   name: 'x-view-editor',
@@ -77,6 +80,20 @@ export default {
 
             this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(viewJson))
           }
+        }
+        else if (this.$props.viewDefine.viewType == 'object-view') {
+
+          if (!this.$props.viewDefine.viewContent || this.$props.viewDefine.viewContent == '{}') {
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(ObjectViewTemplate))
+          }
+          else {
+            let viewJson = JSON.parse(this.$props.viewDefine.viewContent)
+
+            repairObjectViewJson(viewJson)
+
+            this.$set(this.$props.viewDefine, 'viewContent', JSON.stringify(viewJson))
+          }
+
         }
       }
     },

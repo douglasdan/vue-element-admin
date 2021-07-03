@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div>
-      <el-input v-model="searchText" placeholder="请输入内容" prefix-icon="el-icon-search" />
-    </div>
     <el-col :span="8">
+      <div style="margin: 10px;">
+        <el-input v-model="searchText" placeholder="请输入内容" prefix-icon="el-icon-search" />
+      </div>
       <div class="custom-tree-container">
         <div class="block" style="margin-top:10px;">
           <el-tree

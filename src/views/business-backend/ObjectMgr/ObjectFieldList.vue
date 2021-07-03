@@ -13,7 +13,7 @@
       <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" />
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
       <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" />
-      <el-table-column prop="visible" label="是否显示">
+      <el-table-column prop="visible" label="是否显示" v-if="forViewEdit">
         <template scope="scope">
           <el-switch v-model="scope.row.visible"
             active-color="#13ce66" inactive-color="#ff4949"
@@ -344,7 +344,7 @@ export default {
 
     syncViewJsonFields() {
 
-      if (this.forViewEdit && this.$props.viewJson.showFields.length > 0) {
+      if (this.forViewEdit && this.$props.viewJson.showFields.length > 0 && this.rows.length > 0) {
 
         let fieldMap = {}
         this.rows.forEach((item) => {
@@ -354,12 +354,17 @@ export default {
         let temp = []
         let tempMap = {}
         this.$props.viewJson.showFields.forEach((item, i) => {
-          fieldMap[item.fieldCode].sortNo = i
-          fieldMap[item.fieldCode].width = item.width
-          fieldMap[item.fieldCode].visible = item.visible
+          try {
+            fieldMap[item.fieldCode].sortNo = i
+            fieldMap[item.fieldCode].width = item.width
+            fieldMap[item.fieldCode].visible = item.visible
 
-          temp.push(fieldMap[item.fieldCode])
-          tempMap[item.fieldCode] = fieldMap[item.fieldCode]
+            temp.push(fieldMap[item.fieldCode])
+            tempMap[item.fieldCode] = fieldMap[item.fieldCode]
+          }
+          catch(e) {
+            console.error(item.fieldCode, e)
+          }
         })
 
         this.rows.forEach((item, i) => {

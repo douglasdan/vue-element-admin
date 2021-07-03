@@ -58,6 +58,10 @@ Vue.component('x-object-list-view', XObjectListView)
 import XObjectEditView from '@/views/xview/components/x-object-edit-view'
 Vue.component('x-object-edit-view', XObjectEditView)
 
+//对象展示视图
+import XObjectViewView from '@/views/xview/components/x-object-view-view'
+Vue.component('x-object-view-view', XObjectViewView)
+
 //视图，数据行功能按钮
 import XRowOperator from '@/views/xview/components/x-row-operator'
 Vue.component('x-row-operator', XRowOperator)

@@ -20,6 +20,11 @@
           >编辑</el-button>
           <el-button
             size="mini"
+            type="primary"
+            @click="handleEdit(scope.$index, scope.row)"
+          >角色</el-button>
+          <el-button
+            size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
@@ -41,21 +46,21 @@
     <el-dialog title="编辑" :visible.sync="editDialogVisible">
       <el-row>
         <el-form :inline="true">
-          <el-form-item label="所属组织">
+          <el-form-item label="所属组织：">
             <org-tree-select v-model="editForm.orgId" @change="handleOrgSelect" />
           </el-form-item>
         </el-form>
       </el-row>
       <el-row>
         <el-form :inline="true">
-          <el-form-item label="用户名称">
+          <el-form-item label="用户名称：">
             <el-input v-model="editForm.userName" placeholder="" />
           </el-form-item>
         </el-form>
       </el-row>
       <el-row>
         <el-form :inline="true">
-          <el-form-item label="用户账号">
+          <el-form-item label="用户账号：">
             <el-input v-model="editForm.userAccount" placeholder="" />
           </el-form-item>
         </el-form>
@@ -64,6 +69,10 @@
         <el-button @click="cancelEdit">取消</el-button>
         <el-button type="primary" @click="submitEdit()">确定</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog>
+
     </el-dialog>
   </section>
 </template>

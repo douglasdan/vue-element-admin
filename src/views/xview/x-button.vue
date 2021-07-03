@@ -1,5 +1,5 @@
 <template>
-  <el-button v-bind="view.props" @click="handleClick">{{ view.name }}</el-button>
+  <el-button :size="size ? size : 'small'"v-bind="view.props" @click="handleClick">{{ view.name }}</el-button>
 </template>
 
 <script>
@@ -14,7 +14,8 @@ export default {
     },
     self: {
       type: Object
-    }
+    },
+    size: String
   },
   data() {
     return {}
@@ -39,7 +40,20 @@ export default {
       console.log('x-button @click', this.$props.view.name)
       if (this.$props.view.action) {
 
-        let actionDefine = JSON.parse(this.$props.view.action)
+        let actionDefine = {}
+        if (typeof (this.$props.view.action) == 'string') {
+          if (this.$props.view.action.indexOf('{') == 0) {
+            actionDefine = JSON.parse(this.$props.view.action)
+          }
+          else {
+            actionDefine = {
+              type: '2',
+              script: this.$props.view.action
+            }
+          }
+        }else {
+          actionDefine = this.$props.view.action
+        }
 
         if (actionDefine.type == '1') {
           this.$props.self.openView(actionDefine.viewId)

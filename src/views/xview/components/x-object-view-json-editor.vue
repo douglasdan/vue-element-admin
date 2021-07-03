@@ -1,6 +1,19 @@
 <template>
   <el-collapse v-model="activeNames">
     <el-collapse-item title="字段显示" name="1">
+      <el-row style="margin-bottom: 10px;">
+        显示字段名称：<el-input v-model="viewJson.labelWidth"
+          placeholder="" style="width: 200px;" size="small"></el-input>
+      </el-row>
+      <el-row style="margin-bottom: 10px;">
+        显示字段值宽度：<el-input v-model="viewJson.contentWidth"
+          placeholder="" style="width: 200px;" size="small"></el-input>
+      </el-row>
+      <el-row style="margin-bottom: 10px;">
+        显示列数：<el-input v-model="viewJson.cols"
+          placeholder="" style="width: 200px;" size="small"></el-input>
+      </el-row>
+
       <ObjectFieldList
         ref="objectFieldSelector"
         :mode="'edit-view'"
@@ -16,44 +29,18 @@
       <ObjectBtnEditor :height="400" :btns="viewJson.viewButtons" />
     </el-collapse-item>
 
-    <el-collapse-item v-if="viewJson.rowButtons" title="数据行功能按钮" name="3">
-      <el-row>
-        操作栏宽度：<el-input v-model="viewJson.operate.width" placeholder="" style="width: 200px;" size="small"></el-input>
-      </el-row>
-      <ObjectBtnEditor :height="400" :btns="viewJson.rowButtons" />
-    </el-collapse-item>
-
-    <el-collapse-item title="查询条件" name="4">
-
-      <x-object-query-editor
-        ref="queryConditionEditor"
-        :mode="'select'"
-        :height="400"
-        :viewJson="viewJson"
-        :object-id="objectId"
-      >
-      </x-object-query-editor>
-    </el-collapse-item>
-
   </el-collapse>
 </template>
 
 <script>
 
-// viewButtons
-// rowButtons
-// selectable
-// showFields
-
 import ObjectFieldList from '@/views/business-backend/ObjectMgr/ObjectFieldList'
-
-import xObjectQueryEditor from '@/views/xview/components/x-object-query-editor'
 import ObjectBtnEditor from './x-object-btn-editor'
 
 export default {
-  name: 'x-object-list-json-editor',
+  name: 'XObjectViewJsonEditor',
   components: {
-    ObjectFieldList, ObjectBtnEditor, xObjectQueryEditor
+    ObjectFieldList, ObjectBtnEditor
   },
   props: {
     objectId: {
@@ -73,6 +60,7 @@ export default {
   watch: {
     'viewJson': {
       handler(nval, oval) {
+        //
       },
       deep: true,
       immediate: true
@@ -90,11 +78,8 @@ export default {
 
       this.$set(this.$props.viewJson, 'showFields', sels.map(s => {
         return {
-          'sortable': false,
           'fieldCode': s.fieldCode,
           'fieldName': s.fieldName,
-          'formatter': null,
-          'width': temp[s.fieldCode] ? temp[s.fieldCode].width : 100
         }
       }))
     }

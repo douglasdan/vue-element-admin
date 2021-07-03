@@ -43,27 +43,19 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible">
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="角色名称">
-            <el-input v-model="editForm.roleName" placeholder="" />
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="角色描述">
-            <el-input v-model="editForm.roleDesc" type="textarea" autosize placeholder="" />
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-form :inline="true">
-          <el-form-item label="数据权限范围">
-            <mdm-data :value="editForm.dataPermType" :code="'dataPermType'" @change="handleDataPermChange" />
-          </el-form-item>
-        </el-form>
-      </el-row>
+
+      <el-form :inline="true" width="400px" label-width="120px">
+        <el-form-item label="角色名称：">
+          <el-input v-model="editForm.roleName" placeholder="" />
+        </el-form-item>
+        <el-form-item label="角色名称：">
+          <el-input v-model="editForm.roleName" placeholder="" />
+        </el-form-item>
+        <el-form-item label="数据权限范围：">
+          <mdm-data :value="editForm.dataPermType" :code="'dataPermType'" @change="handleDataPermChange" />
+        </el-form-item>
+      </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取消</el-button>
         <el-button type="primary" @click="submitEdit()">确定</el-button>

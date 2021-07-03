@@ -1,5 +1,5 @@
 
-export function repairObjectEditViewJson(viewJson) {
+export function repairObjectViewJson(viewJson) {
 
   if (!viewJson.hasOwnProperty('width')) {
     viewJson.width = 0
@@ -21,22 +21,5 @@ export function repairObjectEditViewJson(viewJson) {
   if (!viewJson.hasOwnProperty('maxWidth')) {
     viewJson.maxWidth = 0
   }
-
-  if (viewJson.hasOwnProperty('viewButtons')) {
-    viewJson.viewButtons.forEach((btn) => {
-      if (btn.hasOwnProperty('type')) {
-        btn.type = 'primary'
-      }
-    })
-  }
-
-  if (viewJson.hasOwnProperty('rowButtons')) {
-    viewJson.rowButtons.forEach((btn) => {
-      if (btn.hasOwnProperty('type')) {
-        btn.type = 'primary'
-      }
-    })
-  }
-
 }
 

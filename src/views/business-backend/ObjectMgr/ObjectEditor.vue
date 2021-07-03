@@ -22,7 +22,7 @@
               <app-select v-model="tableDefine.appId" :disabled="shouldDisable" :app-type="filterAppType" />
             </el-form-item>
             <el-form-item label="对象名称:">
-              <el-input v-model="tableDefine.obiectName" />
+              <el-input v-model="tableDefine.objectName" />
             </el-form-item>
             <el-form-item label="对象代码:">
               <el-input v-model="tableDefine.objectCode" :disabled="shouldDisable" />

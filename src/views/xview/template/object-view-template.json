@@ -1,0 +1,41 @@
+{
+  "labelWidth": 120,
+  "contentWidth": 140,
+  "cols": 2,
+  "showFields": [
+
+  ],
+  "ers": {
+
+  },
+  "viewButtons": [
+    {
+      "name": "保存",
+      "code": "",
+      "props": {
+        "size": "small",
+        "type": "primary",
+        "disabled": false
+      },
+      "action": null
+    },
+    {
+      "name": "取消",
+      "code": "",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": null
+    },
+    {
+      "name": "编辑",
+      "code": "",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": "this.editing = true"
+    }
+  ]
+}

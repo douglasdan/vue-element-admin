@@ -111,6 +111,7 @@ export default {
     loadObject() {
       if (this.objectId) {
         this.$store.dispatch('lowCode/getObjectDefine', this.objectId).then(ret => {
+          debugger
           this.objectDefine = ret
           this.objectFieldDefine = ret.fields
 

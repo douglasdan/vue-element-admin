@@ -36,6 +36,13 @@ export function getRoutes(sys) {
   })
 }
 
+export function getAllRoutes(sys) {
+  return request({
+    url: `/api/v1/menu/tree/${sys}`,
+    method: 'get'
+  })
+}
+
 export function selectUserPage(data) {
   return request({
     url: '/api/v1/user/query',

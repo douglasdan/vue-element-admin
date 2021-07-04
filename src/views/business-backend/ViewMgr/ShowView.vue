@@ -12,7 +12,7 @@
         />
       <x-object-view-view v-if="viewType == 'object-view'"
         :object-id="objectId"
-        :object-data-id="dataId"
+        :object-data-id="objectDataId"
         :view-json="viewJson"
         />
 
@@ -49,7 +49,8 @@ export default {
       viewId: '',
       viewType: '',
       objectId: '',
-      viewJson: null
+      viewJson: null,
+      objectDataId: null
     }
   },
   watch: {
@@ -64,52 +65,88 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'dataId': {
+      handler(nval, oval) {
+        this.objectDataId = nval
+      },
+      deep: true,
+      immediate: true
     }
   },
   created() {
+
     let reg = new RegExp("^/view[0-9]*$");
-
     if (this.$props.viewDefine) {
-      //
+      // 由外部传递viewContent，来渲染页面
 
+    }
+    else if (this.$route.params.viewId) {
+      // 从后台获取viewContent来渲染
+      this.viewId = this.$route.params.viewId
+      this.getAndShowViewById()
     }
     else if (reg.test(this.$route.path)) {
       const menuId = (this.$route.path + '').replaceAll('/view', '')
 
       this.$store.dispatch('permission/getMenuDefine', menuId).then(ret => {
         this.menu = ret
-
-        if (this.menu.viewId) {
-          console.log('diaplay ', this.menu.viewId)
-
-          getViewDefineById(this.menu.viewId).then(ret => {
-            this.view = ret.data
-            this.viewType = this.view.viewType
-            this.objectId = this.view.objectId
-
-            let viewJson = JSON.parse(ret.data.viewContent)
-
-            if (this.viewType == 'object-list') {
-              repairObjectListViewJson(viewJson)
-            }
-            else if (this.viewType == 'object-edit') {
-              repairObjectEditViewJson(viewJson)
-            }
-            else if (this.viewType == 'object-view') {
-              repairObjectViewJson(viewJson)
-            }
-            debugger
-            this.viewJson = viewJson
-          })
-        } else if (this.menu.extraUrl) {
-          console.log('diaplay ', this.menu.extraUrl)
-        }
+        this.viewId = this.menu.viewId
+        this.getAndShowViewById()
       })
     }
   },
   methods: {
     loaded() {
       //
+    },
+    getAndShowViewById() {
+      if (!this.viewId) {
+        return
+      }
+      getViewDefineById(this.viewId).then(ret => {
+        if (ret.success) {
+          this.view = ret.data
+          this.viewType = this.view.viewType
+
+          if (this.view.viewType == 'object-view' && !this.$route.params.dataId) {
+            this.$message.error('参数错误：必须指定数据ID');
+            return
+          }
+
+          this.objectDataId = this.$route.params.dataId
+
+          this.objectId = this.view.objectId
+
+          let viewJson = JSON.parse(ret.data.viewContent)
+
+          if (this.viewType == 'object-list') {
+            repairObjectListViewJson(viewJson)
+          }
+          else if (this.viewType == 'object-edit') {
+            repairObjectEditViewJson(viewJson)
+          }
+          else if (this.viewType == 'object-view') {
+            repairObjectViewJson(viewJson)
+          }
+          this.viewJson = viewJson
+
+          if (!this.menu.menuId) {
+            console.log(this.$route)
+            console.log(this.$route.meta.title,'||', this.view.viewName)
+
+            let tagsView = Object.assign({}, this.$route, {
+              meta:{
+                title: this.$route.meta.title || this.view.viewName
+              }
+            })
+            this.$store.dispatch('tagsView/addView', tagsView)
+          }
+        }
+        else {
+          this.$message.error('页面不存在');
+        }
+      })
     }
   }
 }

@@ -19,7 +19,7 @@
         <div v-if="selectIndex === '1'">
           <el-form :model="tableDefine" :inline="true" style="width: 400px;" label-width="120px">
             <el-form-item label="应用:">
-              <app-select v-model="tableDefine.appId" :disabled="shouldDisable" :app-type="filterAppType" />
+              <app-select v-model="tableDefine.appId" :disabled="shouldDisable"/>
             </el-form-item>
             <el-form-item label="对象名称:">
               <el-input v-model="tableDefine.objectName" />

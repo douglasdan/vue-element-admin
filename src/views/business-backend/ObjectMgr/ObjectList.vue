@@ -2,6 +2,7 @@
   <section>
     <div style="width: 100%; padding-left: 10px; padding-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right; font-size: 14px;">
       应用：<app-select v-model="queryForm.appId" @change="handleAppChange()" />
+      对象来源：<mdm-select v-model="queryForm.objectSource" :code="'objectDefineSource'" @change="handleAppChange()"/>
       <div style="display: inline-block; float: right;">
         <el-button type="primary" @click="handleAdd">新增对象</el-button>
       </div>
@@ -9,6 +10,7 @@
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
       <el-table-column prop="appId" label="应用" :formatter="formatter" width="160px" />
+      <el-table-column prop="objectSource" label="对象定义来源" :formatter="formatter" />
       <el-table-column prop="objectName" label="对象名称" :formatter="formatter" width="200px" />
       <el-table-column prop="objectType" label="对象类型" :formatter="formatter" />
       <el-table-column prop="objectCode" label="对象编码" :formatter="formatter" />
@@ -73,7 +75,8 @@ import objectEditTemplate from '@/views/xview/template/object-edit-template'
 import objectViewTemplate from '@/views/xview/template/object-view-template'
 
 const DefaultObject = {
-  id: null
+  id: null,
+  objectSource: '9'
 }
 
 export default {
@@ -88,7 +91,8 @@ export default {
         apps: []
       },
       queryForm: {
-        appId: ''
+        appId: '',
+        objectSource: '',
       },
       rows: [],
       total: 0,
@@ -152,6 +156,15 @@ export default {
         })
         return name
       }
+      if (column.property === 'objectSource' && this.mdm['objectDefineSource']) {
+        let name = ''
+        JSON.parse(this.mdm['objectDefineSource'].json).forEach((item) => {
+          if (item.value === cellValue) {
+            name = item.label
+          }
+        })
+        return name
+      }
       return cellValue
     },
     handleSizeChange(val) {
@@ -175,7 +188,10 @@ export default {
       }
 
       if (this.queryForm.appId) {
-        queryObj.conditions = [{ field: 'app_id', op: 'eq', values: [this.queryForm.appId] }]
+        queryObj.conditions.push({ field: 'app_id', op: 'eq', values: [this.queryForm.appId] })
+      }
+      if (this.queryForm.objectSource) {
+        queryObj.conditions.push({ field: 'object_source', op: 'eq', values: [this.queryForm.objectSource] })
       }
 
       selectObjectDefinePage(queryObj).then(ret => {
@@ -213,7 +229,6 @@ export default {
 
     },
     createDefaultEditView(od) {
-      debugger
 
       return new Promise((resolve, reject) => {
 

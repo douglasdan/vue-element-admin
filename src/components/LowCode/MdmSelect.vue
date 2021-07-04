@@ -64,8 +64,8 @@ export default {
     handleChange(nval, oval) {
       console.log('mdm-select', this.$props.code, 'change to ', nval)
       this.val = nval
-      // this.$emit('change', nval, oval)
       this.$emit('input', nval)
+      this.$emit('change', nval, oval)
     }
   }
 }

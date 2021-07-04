@@ -5,7 +5,7 @@
       :key="item.id"
       :label="item.appName"
       :value="item.id"
-      :disabled="appType && item.appType != appType"
+      :disabled="disabled"
     />
   </el-select>
 </template>
@@ -22,10 +22,6 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    },
-    appType: {
-      type: String,
-      required: false
     }
   },
   data() {
@@ -44,13 +40,6 @@ export default {
     },
     'disabled': {
       handler(nval, oval) {
-      },
-      immediate: true
-    },
-    'appType': {
-      handler(nval, oval) {
-        console.log('appType ====>' + nval)
-        this.$forceUpdate()
       },
       immediate: true
     }

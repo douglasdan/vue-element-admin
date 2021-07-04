@@ -58,7 +58,7 @@
 
 <script>
 
-import { getRoutes } from '@/api/user'
+import { getRoutes, getAllRoutes } from '@/api/user'
 import { saveMenu } from '@/api/back-end'
 
 const DefaultMenu = {
@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     loadData() {
-      getRoutes(2).then(ret => {
+      getAllRoutes(2).then(ret => {
         if (ret.success) {
           if (!ret.data.menuTree.root) {
             this.menuTree = [JSON.parse(JSON.stringify(DefaultMenu))]

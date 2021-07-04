@@ -81,6 +81,21 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/singleview',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/singleview/:viewId(.*)/:dataId(.*)',
+        component: () => import('@/views/business-backend/ViewMgr/ShowView'),
+      },
+      {
+        path: '/singleview/:viewId(.*)',
+        component: () => import('@/views/business-backend/ViewMgr/ShowView'),
+      }
+    ]
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/',

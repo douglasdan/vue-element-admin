@@ -260,12 +260,17 @@ export default {
     },
 
     loadObjectData() {
-      if (this.objectId && this.objectDataId) {
-        getObjectDataById(this.objectId, this.objectDataId).then(ret => {
-          if ( ret.success && ret.data) {
-            this.objectData = ret.data
-          }
-        })
+      if (this.objectId) {
+        if (!this.objectDataId) {
+          this.$message.error('未指定数据ID')
+        }
+        else {
+          getObjectDataById(this.objectId, this.objectDataId).then(ret => {
+            if ( ret.success && ret.data) {
+              this.objectData = ret.data
+            }
+          })
+        }
       }
     },
 

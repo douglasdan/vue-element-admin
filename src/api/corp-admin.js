@@ -28,3 +28,4 @@ export function deleteOrg(orgId) {
     method: 'delete'
   })
 }
+

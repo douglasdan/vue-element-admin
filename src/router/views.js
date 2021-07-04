@@ -17,7 +17,9 @@ const routesMap =
   '/finance/bookSetMgr': () => import('@/views/business-finance/accounting/BookSetMgr'),
   '/finance/segmentDefine': () => import('@/views/business-finance/accounting/SegmentDefine'),
   '/finance/voucher': () => import('@/views/business-finance/accounting/VoucherList'),
-  '/finance/cost/distribute': () => import('@/views/business-finance/co/CostDistribution')
+  '/finance/cost/distribute': () => import('@/views/business-finance/fico/CostDistribution'),
+
+  '/fico/costsharing/method': () => import('@/views/business-finance/fico/SharingStrategyList'),
 }
 
 export { routesMap }

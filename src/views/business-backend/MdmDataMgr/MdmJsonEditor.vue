@@ -56,15 +56,25 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'json': {
+      handler(nval, oval) {
+       this.parseJsonData()
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
-    this.tableData = JSON.parse(this.$props.json)
-    if (this.$props.type === '3') {
-      this.tableData = [{ label: '', value: '' }]
-    }
+    this.parseJsonData()
   },
   methods: {
+    parseJsonData() {
+      this.tableData = JSON.parse(this.$props.json)
+      if (this.$props.type === '3') {
+        this.tableData = [{ label: '', value: '' }]
+      }
+    },
     handleAdd(index) {
       this.tableData.splice(index, 1, { label: '', value: '' })
     },

@@ -1,14 +1,18 @@
 <template>
   <section>
-    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;">
+    <el-row style="margin-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right;" v-if="!renderForSelect">
       <el-button type="primary" @click="handleAdd">新增主数据</el-button>
     </el-row>
-    <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
+    <el-table :data="rows" border style="width: 100%;" :height="tableHeight"
+      @selection-change="handleSelectionChange"
+      @row-dbclick="handleRowDbclick"
+      >
       <el-table-column type="index" label="序号" />
+      <el-table-column type="selection" width="55" v-if="renderForSelect" />
       <el-table-column prop="mdmName" label="名称" :formatter="formatter"/>
       <el-table-column prop="mdmType" label="类型" :formatter="formatter"/>
       <el-table-column prop="mdmCode" label="编码" :formatter="formatter"/>
-      <el-table-column width="240">
+      <el-table-column width="240" prop="operate" v-if="!renderForSelect">
         <template slot="header">
           <span>操作</span>
         </template>
@@ -43,6 +47,12 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <el-row v-if="renderForSelect" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+      <div style="right: 10px; float: right; position: absolute;">
+        <el-button size="small" type="primary" @click="handleSelectClick">确定</el-button>
+      </div>
+    </el-row>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">
       <el-form :inline="true" label-width="120px" style="width: 100%;">
@@ -103,6 +113,10 @@ export default {
   components:{
     MdmJsonEditor
   },
+  props: {
+    mode: String,  //select 选择模式
+    mdmType: String
+  },
   data() {
     return {
       MdmTypeOptions: MdmTypeOptions,
@@ -123,18 +137,38 @@ export default {
         return state.mdm.data
       }
     }),
+    checkShowInDialog() {
+      let flag = false
+      let p = this.$parent
+      while(p) {
+        if (p.$options._componentTag == 'el-dialog') {
+          flag = true
+          break
+        }
+        p = p.$parent
+      }
+      return flag
+    },
     tableHeight() {
-      const h = (window.innerHeight - 22 -
-          this.$store.state.settings.navbarHeight -
-          this.$store.state.settings.tagsViewHeight -
-          this.$store.state.settings.tableFuncBarHeight -
-          this.$store.state.settings.tablePaginationHeight) + 'px'
-      return h
+      if (this.checkShowInDialog) {
+        const h = (window.innerHeight - 22 -
+            this.$store.state.settings.navbarHeight -
+            this.$store.state.settings.tagsViewHeight -
+            this.$store.state.settings.tableFuncBarHeight -
+            this.$store.state.settings.tablePaginationHeight) + 'px'
+        return h
+      }
+      else {
+        return (window.innerHeight/2)+'px'
+      }
+    },
+    renderForSelect() {
+      return this.$props.mode == 'select'
     },
     shouldDisableInput() {
       console.log("shouldDisableInput", typeof(this.editForm.editable))
       return !this.editForm.editable
-    }
+    },
   },
   watch: {
   },
@@ -157,7 +191,7 @@ export default {
       this.loadData()
     },
     loadData() {
-      getMdmTypeAll().then(ret => {
+      getMdmTypeAll(this.$props.mdmType).then(ret => {
         if (ret.success) {
           this.rows = ret.data
         }
@@ -178,6 +212,7 @@ export default {
       Object.assign(this.editForm, DefaultMdm)
       this.editDialogVisible = true
     },
+
     handleMdmTypeChange() {
 
     },
@@ -203,6 +238,21 @@ export default {
         }
       })
     },
+    handleSelectionChange(sels) {
+      this.sels = sels
+    },
+    handleRowDbclick(row, column, event) {
+      this.$emit('select', row)
+    },
+    handleSelectClick() {
+      if (this.sels.length == 1) {
+        this.$emit('select', this.sels[0])
+      }
+      else {
+        this.$message.error('须且只能选择一条记录')
+      }
+    }
+
   }
 }
 

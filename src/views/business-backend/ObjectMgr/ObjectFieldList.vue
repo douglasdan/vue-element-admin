@@ -10,10 +10,10 @@
       @selection-change="handleSelectionChange">
       <el-table-column v-if="!forViewEdit" type="selection" width="55" />
       <el-table-column v-if="!forViewEdit" type="index" label="序号" />
-      <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" />
+      <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" width="200"/>
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
-      <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" />
-      <el-table-column prop="visible" label="是否显示" v-if="forViewEdit">
+      <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="200"/>
+      <el-table-column prop="visible" label="是否显示" v-if="forViewEdit" width="160">
         <template scope="scope">
           <el-switch v-model="scope.row.visible"
             active-color="#13ce66" inactive-color="#ff4949"
@@ -23,20 +23,17 @@
         </template>
       </el-table-column>
 
+      <el-table-column v-if="!forViewEdit" prop="valueRefType" label="值类型" :formatter="formatter" width="160"/>
 
-      <el-table-column v-if="!forViewEdit" prop="fieldTip" label="提示" :formatter="formatter" />
-      <el-table-column v-if="!forViewEdit" prop="fieldDesc" label="描述" :formatter="formatter" />
+      <el-table-column v-if="!forViewEdit" prop="fieldTip" label="提示" :formatter="formatter" width="160"/>
+      <el-table-column v-if="!forViewEdit" prop="fieldDesc" label="描述" :formatter="formatter" width="200"/>
 
-      <el-table-column v-if="!forViewEdit" prop="fieldNullable" label="是否可为空" :formatter="formatter" />
-      <el-table-column v-if="!forViewEdit" prop="fieldAutoGenerate" label="是否自动生成值" :formatter="formatter" />
+      <el-table-column v-if="!forViewEdit" prop="fieldNullable"     label="可为空" :formatter="formatter" />
+      <el-table-column v-if="!forViewEdit" prop="fieldAutoGenerate" label="自动自增" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldUnique" label="是否唯一" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldLength" label="最大长度" :formatter="formatter" />
-      <el-table-column v-if="!forViewEdit" prop="decicmalLength" label="小数位" :formatter="formatter" />
+      <el-table-column v-if="!forViewEdit" prop="decicmalLength" label="小数位" :formatter="formatter"/>
       <el-table-column v-if="!forViewEdit" prop="version" label="版本" :formatter="formatter" />
-
-      <slot>
-
-      </slot>
 
       <el-table-column v-if="mode != 'edit-view'" width="240">
         <template slot="header">
@@ -65,18 +62,18 @@
     </div>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :append-to-body="true">
-      <el-form :inline="true" label-width="120px" style="width: 400px;">
+      <el-form :inline="true" label-width="160px">
         <el-form-item label="字段名称：">
           <el-input v-model="editForm.fieldName" placeholder="" :disabled="shouldDisableInput" />
         </el-form-item>
         <el-form-item label="字段类型：">
-          <mdm-select v-model="editForm.fieldType" :code="'fieldType'" :disabled="shouldDisableInput" />
+          <mdm-select v-model="editForm.fieldType" :code="'fieldType'" :disabled="shouldDisableInput" @change="handleFieldTypeChange"/>
         </el-form-item>
         <el-form-item label="字段代码：">
           <el-input v-model="editForm.fieldCode" placeholder="" :disabled="shouldDisableInput" />
         </el-form-item>
 
-        <el-form-item label="是否可为空：">
+        <el-form-item label="可为空：">
           <el-select v-model="editForm.fieldNullable" placeholder="">
             <el-option label="是" :value="true" />
             <el-option label="否" :value="false" />
@@ -88,16 +85,30 @@
             <el-option label="否" :value="false" />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否自动生成值：">
+        <el-form-item label="自动自增：" v-if="editForm.fieldType == 'int'">
           <el-select v-model="editForm.fieldAutoGenerate" placeholder="">
             <el-option label="是" :value="true" />
             <el-option label="否" :value="false" />
           </el-select>
         </el-form-item>
-        <el-form-item label="长度：">
-          <el-input v-model="editForm.fieldLength" type="number" placeholder="" :disabled="shouldDisableInput" />
+
+        <el-divider></el-divider>
+
+        <el-form-item label="值定义：">
+          <mdm-select v-model="editForm.valueRefType" :code="'valueRefType'" @change="handleValueRefTypeChange"/>
         </el-form-item>
-        <el-form-item label="小数位：">
+
+        <el-form-item label="引用主数据："  v-if="editForm.valueRefType == '2' || editForm.valueRefType == '3'">
+          <el-link @click="showMdmDialog">{{ selectMdmName }}</el-link>
+        </el-form-item>
+
+        <el-divider></el-divider>
+
+        <el-form-item label="长度：">
+          <el-input v-model="editForm.fieldLength" type="number" placeholder=""
+            :disabled="shouldDisableInput" />
+        </el-form-item>
+        <el-form-item label="小数位：" v-show="editForm.fieldType == 'decimal'">
           <el-input v-model="editForm.decicmalLength" type="number" placeholder="" :disabled="shouldDisableInput" />
         </el-form-item>
         <el-form-item label="提示：">
@@ -114,6 +125,15 @@
         <el-button @click="cancelEdit">取消</el-button>
         <el-button type="primary" @click="submitEdit()">确定</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog title="选择" :visible.sync="selectMdmDialogVisible" :close-on-click-modal="false" :append-to-body="true" :destroy-on-close="true">
+      <mdm-list :mode="'select'" :mdm-type="editForm.valueRefType" @select="handleMdmSelect">
+      </mdm-list>
+    </el-dialog>
+
+    <el-dialog title="选择" :visible.sync="selectObjectFieldDialogVisible" :close-on-click-modal="false" :append-to-body="true" :destroy-on-close="true">
+
     </el-dialog>
 
   </section>
@@ -141,9 +161,12 @@ const DefaultField = {
   fieldUnique: false,
   fieldLength: 20,
   decicmalLength: 2,
-  mdmDataId: null,
-  mdmMultiple: false,
-  mdmDdata: '[]',
+  valueRefType: '',
+  mdmDataId: '',
+  mdmMultiple: false,   //多值，存储不好处理，暂时不支持
+  mdmDdata: '[]',         //编辑修改原Mdm的值，暂不支持
+  refTableCode: '',
+  refFieldCode: '',
   logicDelete: false,
   tenantId: null,
   version: null
@@ -181,14 +204,24 @@ export default {
       editDialogVisible: false,
       editForm: JSON.parse(JSON.stringify(DefaultField)),
 
-      sels: []
+      sels: [],
+
+      selectMdmDialogVisible: false,
+      selectMdmName: '',
+
+      selectObjectFieldDialogVisible: false,
+      selectObjectName: '',
+      selectFieldName: '',
     }
   },
   computed: {
     ...mapState({
       mdm: function(state) {
         return state.mdm.data
-      }
+      },
+      mdmList: function(state) {
+        return state.mdm.rows
+      },
     }),
     tableHeight() {
       if (this.$props.height > 0) {
@@ -231,12 +264,12 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('mdm/getMdmData', '')
   },
   mounted() {
     if (this.$props.dragSort) {
       this.enableRowDrag()
     }
-    this.loadData()
   },
   methods: {
 
@@ -269,6 +302,27 @@ export default {
       }
       else if (column.property === 'fieldUnique') {
         return ''+cellValue
+      }
+      else if (column.property == 'valueRefType') {
+        if (cellValue) {
+          let text = ''
+          let dd = JSON.parse(this.mdm['valueRefType'].json).find(a => a.value == cellValue)
+          if (dd) {
+            if (dd.value == '1') {
+              text += dd.label
+            }
+            else if (dd.value == '2' || dd.value == '3') {
+              text += dd.label
+              if (row.mdmDataId) {
+                let refMdm = this.mdmList.find(a => a.id == row.mdmDataId)
+                if (refMdm) {
+                  text += " "+refMdm.mdmName
+                }
+              }
+            }
+          }
+          return text
+        }
       }
       return cellValue
     },
@@ -316,8 +370,24 @@ export default {
       this.editForm = {}
       this.editDialogVisible = false
     },
+
+    handleValueRefTypeChange() {
+      if (this.editForm.valueRefType == '2' || this.editForm.valueRefType == '3') {
+        console.log(this.mdmList)
+
+        let selectMdm = this.mdmList.some(a => a.id == this.editForm.mdmDataId)
+        if (selectMdm) {
+          this.selectMdmName = selectMdm.mdmName
+        }
+        else {
+          this.selectMdmName = "选择"
+        }
+      }
+    },
+
     handleEdit(i, row) {
       this.editForm = JSON.parse(JSON.stringify(row))
+      this.handleValueRefTypeChange()
       this.editDialogVisible = true
     },
     handleAdd() {
@@ -327,6 +397,26 @@ export default {
     cancelEdit() {
       this.editDialogVisible = false
     },
+    handleFieldTypeChange() {
+
+      if (this.editForm.fieldType == 'text') {
+        this.editForm.fieldLength = 40
+        this.editForm.decicmalLength = 0
+      }
+      else if (this.editForm.fieldType == 'int') {
+        this.editForm.fieldLength = 20
+        this.editForm.decicmalLength = 0
+      }
+      else if (this.editForm.fieldType == 'decimal') {
+        this.editForm.fieldLength = 20
+        this.editForm.decicmalLength = 2
+      }
+
+      if (this.editForm.fieldType != 'int') {
+        this.editForm.fieldAutoGenerate = false
+      }
+    },
+
     submitEdit() {
       this.editForm.oid = this.$props.objectId
 
@@ -438,6 +528,15 @@ export default {
         })
       })
 
+    },
+
+    showMdmDialog() {
+      this.selectMdmDialogVisible = true
+    },
+    handleMdmSelect(row) {
+      this.editForm.mdmDataId = row.id
+      this.selectMdmName = row.mdmName
+      this.selectMdmDialogVisible = false
     }
   }
 }

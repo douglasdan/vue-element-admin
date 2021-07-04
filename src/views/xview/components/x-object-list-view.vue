@@ -243,7 +243,9 @@ export default {
         }
       })
     },
-
+    closeDialog() {
+      this.showView.visible = false
+    },
     openView(viewId, row) {
       //
       console.log('x-object-list-view showView', viewId)

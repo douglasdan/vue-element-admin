@@ -46,6 +46,11 @@ import XButton from '@/views/xview/x-button'
 
 import XObjectEditor from '@/views/xview/x-object-editor'
 
+
+//主数据选择器
+import MdmList from '@/views/business-backend/MdmDataMgr/MdmList'
+Vue.component('mdm-list', MdmList)
+
 //对象选择器
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
 Vue.component('x-object-select', ObjectSelect)

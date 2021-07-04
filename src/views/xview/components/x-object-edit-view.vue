@@ -111,7 +111,6 @@ export default {
     loadObject() {
       if (this.objectId) {
         this.$store.dispatch('lowCode/getObjectDefine', this.objectId).then(ret => {
-          debugger
           this.objectDefine = ret
           this.objectFieldDefine = ret.fields
 
@@ -141,12 +140,23 @@ export default {
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {
           this.$message.info('操作成功')
+          this.cancel()
         }
       })
 
     },
     cancel() {
-      Object.assign(this.objectData, {})
+      console.log(this.$parent.$options._componentTag == 'show-view')
+      console.log(this.$parent.$parent.$options._componentTag == 'el-dialog')
+      console.log(this.$parent.$parent.$parent.$options._componentTag == 'x-object-list-view')
+
+      if (this.$parent.$options._componentTag == 'show-view'
+        && this.$parent.$parent.$options._componentTag == 'el-dialog'
+        && this.$parent.$parent.$parent.$options._componentTag == 'x-object-list-view') {
+
+          this.$parent.$parent.$parent.loadData()
+          this.$parent.$parent.$parent.closeDialog()
+      }
     }
 
   }

@@ -12,7 +12,11 @@
         "disabled": false,
         "type": "primary"
       },
-      "action": null
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.saveData()"
+      }
     },
     {
       "name": "取消",
@@ -21,7 +25,11 @@
         "size": "small",
         "disabled": false
       },
-      "action": null
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.cancel()"
+      }
     }
   ]
 }

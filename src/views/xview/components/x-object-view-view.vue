@@ -15,15 +15,13 @@
                 {{ showFieldGroups[i-1][j].fieldName }}：
               </div>
 
-              <div style="display: flex-inline; width: 180px;" v-if="editing">
-                <div v-if="cond.fieldType == 'text'">
-                  <el-input v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-                </div>
-              </div>
-
-              <div v-else class="field-content" :style="'width: '+(viewJson.contentWidth ? viewJson.contentWidth : 200)+'px'"
-                :title="objectData[showFieldGroups[i-1][j].fieldCode]">
-                {{ objectData[showFieldGroups[i-1][j].fieldCode] }}
+              <div :style="'width: '+(viewJson.contentWidth ? viewJson.contentWidth : 200)+'px'">
+                <x-object-field-control v-if="mdmReady"
+                  @object-relation="handleObjectRelation"
+                  v-model="objectData[showFieldGroups[i-1][j].fieldCode]"
+                  :editing="editing"
+                  :field-define="objectFieldDefineMap[showFieldGroups[i-1][j].fieldCode]">
+                </x-object-field-control>
               </div>
 
             </div>
@@ -31,41 +29,12 @@
         </el-col>
       </el-row>
     </div>
-
-    <!-- <el-row style="border-top: 1px solid #eee" v-if="colspan == 0">
-      <div class="cond-parent">
-        <div v-for="(cond, i) in viewJson.showFields" class="cond-child">
-          <div :style="labelStyle">
-            {{ cond.fieldName }}：
-          </div>
-          <div style="display: flex-inline; width: 180px;">
-            <div v-if="cond.fieldType == 'text'">
-              <el-input v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'int'">
-              <el-input type="number" v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'decimal'">
-              <el-input type="number" v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'date'">
-              <el-date-picker type="date" v-model="objectData[cond.fieldCode]" placeholder="选择日期"></el-date-picker>
-            </div>
-            <div v-if="cond.fieldType == 'datetime'">
-              <el-date-picker type="datetime" v-model="objectData[cond.fieldCode]" placeholder=""></el-date-picker>
-            </div>
-          </div>
-        </div>
-      </div>
-    </el-row> -->
-
-
-
   </section>
 </template>
 
 <script>
 
+import { mapState } from 'vuex'
 import { getViewDefineById } from '@/api/view-define'
 import { getObjectDefineById } from '@/api/object-define'
 import { saveObjectData, getObjectDataById } from '@/api/object-data'
@@ -86,6 +55,7 @@ export default {
   data() {
     return {
       self: this,
+      mdmReady: false,
       editing: false,
 
       objectDefine: null,
@@ -96,6 +66,7 @@ export default {
       objectData: {
 
       },
+      objectDataBak: null,
 
       colspan: 0,
       showCols: 1,
@@ -104,6 +75,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      mdm: function(state) {
+        return state.mdm.data
+      },
+    }),
     tableHeight() {
       const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
@@ -112,47 +88,6 @@ export default {
           this.$store.state.settings.tablePaginationHeight) + 'px'
       return h
     },
-    // colspan: {
-    //   get() {
-    //     if (this.showCols > 0) {
-    //       return 24/this.showCols
-    //     }
-    //     else {
-    //       return 0
-    //     }
-    //   }
-    // },
-    // showCols: {
-    //   get() {
-    //     return this.$props.viewJson.cols > 0 ? this.$props.viewJson.cols : 0
-    //   }
-    // },
-    // showFieldGroups: {
-    //   get() {
-    //     let groups = []
-    //     if (this.showCols > 0) {
-
-    //       let temp = []
-    //       for (let i=0; i<this.viewJson.showFields.length; i++) {
-
-    //         temp.push(this.viewJson.showFields[i])
-
-    //         if (temp.length == this.showCols) {
-    //           groups.push(temp)
-    //           temp = []
-    //         }
-    //       }
-
-    //       if (temp.length > 0) {
-    //         groups.push(temp)
-    //       }
-
-    //       return groups
-    //     }
-    //     else {
-    //       return []        }
-    //   }
-    // },
     pageStyle: {
       get() {
         let str = ''
@@ -206,7 +141,9 @@ export default {
       immediate: true
     }
   },
-  created() {
+  async created() {
+    await this.$store.dispatch('mdm/getMdmData', '')
+    this.mdmReady = true
   },
   methods: {
     updateViewDisplay() {
@@ -285,14 +222,35 @@ export default {
       //
     },
 
-    saveData() {
+    beginEdit() {
+      if (!this.editing) {
+        this.objectDataBak = JSON.parse(JSON.stringify(this.objectData))
+        this.editing = true
+      }
+    },
+    cancelEdit() {
+      if (this.editing) {
+        this.objectData = JSON.parse(JSON.stringify(this.objectDataBak))
+        this.editing = false
+      }
+    },
 
+    handleObjectRelation(dd) {
+
+      this.objectFieldDefine.forEach(f => {
+        if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
+          this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
+        }
+      })
+    },
+
+    saveData() {
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {
+          this.editing = false
           this.$message.info('操作成功')
         }
       })
-
     },
 
   }

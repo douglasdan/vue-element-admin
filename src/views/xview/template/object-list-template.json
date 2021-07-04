@@ -58,7 +58,7 @@
       "action": {
         "type": "2",
         "viewId": "",
-        "script": "this.resetQueryCond(); this.loadData();"
+        "script": "this.resetQueryCond();"
       }
     },
     {

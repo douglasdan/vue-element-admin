@@ -51,9 +51,18 @@ import XObjectEditor from '@/views/xview/x-object-editor'
 import MdmList from '@/views/business-backend/MdmDataMgr/MdmList'
 Vue.component('mdm-list', MdmList)
 
+
+
+
 //对象选择器
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
 Vue.component('x-object-select', ObjectSelect)
+
+import ObjectFieldSelect from '@/views/business-backend/ObjectMgr/ObjectFieldSelect'
+Vue.component('x-object-field-select', ObjectFieldSelect)
+
+import XObjectFieldControl from '@/views/xview/components/x-object-field-control'
+Vue.component('x-object-field-control', XObjectFieldControl)
 
 //对象列表展示
 import XObjectListView from '@/views/xview/components/x-object-list-view'

@@ -7,21 +7,12 @@
             {{ cond.fieldName }}：
           </div>
           <div style="display: flex-inline; width: 180px;">
-            <div v-if="cond.fieldType == 'text'">
-              <el-input v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'int'">
-              <el-input type="number" v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'decimal'">
-              <el-input type="number" v-model="objectData[cond.fieldCode]" size="small" placeholder="" @change="handleChange"></el-input>
-            </div>
-            <div v-if="cond.fieldType == 'date'">
-              <el-date-picker type="date" v-model="objectData[cond.fieldCode]" placeholder="选择日期"></el-date-picker>
-            </div>
-            <div v-if="cond.fieldType == 'datetime'">
-              <el-date-picker type="datetime" v-model="objectData[cond.fieldCode]" placeholder=""></el-date-picker>
-            </div>
+            <x-object-field-control v-if="mdmReady"
+              @object-relation="handleObjectRelation"
+              :editing="true"
+              v-model="objectData[cond.fieldCode]"
+              :field-define="objectFieldDefineMap[cond.fieldCode]"
+            ></x-object-field-control>
           </div>
         </div>
       </div>
@@ -56,6 +47,7 @@ export default {
   },
   data() {
     return {
+      mdmReady: false,
       self: this,
       objectDefine: null,
       objectFieldDefine: [],
@@ -105,7 +97,9 @@ export default {
       immediate: true
     }
   },
-  created() {
+  async created() {
+    await this.$store.dispatch('mdm/getMdmData', '')
+    this.mdmReady = true
   },
   methods: {
     loadObject() {
@@ -131,8 +125,13 @@ export default {
       return ''
     },
 
-    handleChange() {
-      //
+    handleObjectRelation(dd) {
+
+      this.objectFieldDefine.forEach(f => {
+        if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
+          this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
+        }
+      })
     },
 
     saveData() {

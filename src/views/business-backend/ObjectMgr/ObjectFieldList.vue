@@ -102,6 +102,13 @@
           <el-link @click="showMdmDialog">{{ selectMdmName }}</el-link>
         </el-form-item>
 
+        <el-form-item label="引用主数据：" v-if="editForm.valueRefType == '4'">
+          <x-object-select v-model="editForm.refTableId"/>
+        </el-form-item>
+        <el-form-item label="引用主数据："  v-if="editForm.valueRefType == '4'">
+          <x-object-field-select v-model="editForm.refFieldCode" :object-id="editForm.refTableId"></x-object-field-select>
+        </el-form-item>
+
         <el-divider></el-divider>
 
         <el-form-item label="长度：">
@@ -132,10 +139,6 @@
       </mdm-list>
     </el-dialog>
 
-    <el-dialog title="选择" :visible.sync="selectObjectFieldDialogVisible" :close-on-click-modal="false" :append-to-body="true" :destroy-on-close="true">
-
-    </el-dialog>
-
   </section>
 </template>
 
@@ -162,10 +165,10 @@ const DefaultField = {
   fieldLength: 20,
   decicmalLength: 2,
   valueRefType: '',
-  mdmDataId: '',
+  mdmDataCode: '',
   mdmMultiple: false,   //多值，存储不好处理，暂时不支持
   mdmDdata: '[]',         //编辑修改原Mdm的值，暂不支持
-  refTableCode: '',
+  refTableId: '',
   refFieldCode: '',
   logicDelete: false,
   tenantId: null,
@@ -208,19 +211,12 @@ export default {
 
       selectMdmDialogVisible: false,
       selectMdmName: '',
-
-      selectObjectFieldDialogVisible: false,
-      selectObjectName: '',
-      selectFieldName: '',
     }
   },
   computed: {
     ...mapState({
       mdm: function(state) {
         return state.mdm.data
-      },
-      mdmList: function(state) {
-        return state.mdm.rows
       },
     }),
     tableHeight() {
@@ -304,24 +300,14 @@ export default {
         return ''+cellValue
       }
       else if (column.property == 'valueRefType') {
-        if (cellValue) {
-          let text = ''
-          let dd = JSON.parse(this.mdm['valueRefType'].json).find(a => a.value == cellValue)
-          if (dd) {
-            if (dd.value == '1') {
-              text += dd.label
+        if (cellValue && this.mdm['valueRefType']) {
+          let name = ''
+          JSON.parse(this.mdm['valueRefType'].json).forEach((item) => {
+            if (item.value === cellValue) {
+              name = item.label
             }
-            else if (dd.value == '2' || dd.value == '3') {
-              text += dd.label
-              if (row.mdmDataId) {
-                let refMdm = this.mdmList.find(a => a.id == row.mdmDataId)
-                if (refMdm) {
-                  text += " "+refMdm.mdmName
-                }
-              }
-            }
-          }
-          return text
+          })
+          return name
         }
       }
       return cellValue
@@ -373,11 +359,8 @@ export default {
 
     handleValueRefTypeChange() {
       if (this.editForm.valueRefType == '2' || this.editForm.valueRefType == '3') {
-        console.log(this.mdmList)
-
-        let selectMdm = this.mdmList.some(a => a.id == this.editForm.mdmDataId)
-        if (selectMdm) {
-          this.selectMdmName = selectMdm.mdmName
+        if (this.mdm[this.editForm.mdmDataCode]) {
+          this.selectMdmName = this.mdm[this.editForm.mdmDataCode].mdmName
         }
         else {
           this.selectMdmName = "选择"
@@ -534,7 +517,7 @@ export default {
       this.selectMdmDialogVisible = true
     },
     handleMdmSelect(row) {
-      this.editForm.mdmDataId = row.id
+      this.editForm.mdmDataCode = row.mdmCode
       this.selectMdmName = row.mdmName
       this.selectMdmDialogVisible = false
     }

@@ -16,6 +16,7 @@
 
     <el-table :data="rows" border style="width: 100%;"
       highlight-current-row
+      @selection-change="handleSelectionChange"
       @header-dragend="handleHeaderDragend"
       :height="tableHeight">
 
@@ -28,7 +29,15 @@
         :show-overflow-tooltip="showTooltip(f.fieldCode)"
         :width=" !!f.width ? f.width : 100"
         :formatter="formatter"
-      />
+      >
+        <template scope="scope">
+          <x-object-field-control v-if="mdmReady"
+            v-model="scope.row[f.fieldCode]"
+            :field-define="objectFieldDefineMap[f.fieldCode]"
+            >
+          </x-object-field-control>
+        </template>
+      </el-table-column>
 
       <el-table-column width="45" prop="operate" :width=" (viewJson.operate && viewJson.operate.width) ? viewJson.operate.width : 100">
         <template slot="header">
@@ -40,21 +49,26 @@
       </el-table-column>
     </el-table>
 
-    <div class="block" style="margin: 5px; float: right;">
-      <el-pagination
-        :current-page.sync="pageNo"
-        :page-sizes="pageSizes"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <el-row>
+      <div class="block" style="margin: 5px; float: right;">
+        <el-pagination
+          :current-page.sync="pageNo"
+          :page-sizes="pageSizes"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </el-row>
+
+    <el-row v-if="mode == 'select'" style="margin: 10px; font-size: 14px; height: 32px; text-align: right;">
+      <el-button type="primary" size="small" @click="submitSelection">确定</el-button>
+    </el-row>
 
     <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body>
-      <show-view :view-define="showView.viewDefine" :data-id="showView.dataId" v-if="showView.visible"
-        style="max-height: 600px;">
+      <show-view :view-define="showView.viewDefine" :data-id="showView.dataId" v-if="showView.visible">
       </show-view>
     </el-dialog>
 
@@ -63,6 +77,7 @@
 
 <script>
 
+import { mapState } from 'vuex'
 import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 import { selectObjectDataPage } from '@/api/object-data'
@@ -87,11 +102,17 @@ export default {
     edit: {
       type: Boolean,
       default: false
+    },
+    mode: {
+      type: String,     //select 选择模式
+      default: ''
     }
   },
   data() {
     return {
       self: this,
+      mdmReady: false,
+
       objectDefine: null,
       objectFieldDefine: null,
       objectFieldDefineMap: {},
@@ -117,13 +138,38 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      mdm: function(state) {
+        return state.mdm.data
+      },
+      mdmList: function(state) {
+        return state.mdm.rows
+      },
+    }),
+    checkShowInDialog() {
+      let flag = false
+      let p = this.$parent
+      while(p) {
+        if (p.$options._componentTag == 'el-dialog') {
+          flag = true
+          break
+        }
+        p = p.$parent
+      }
+      return flag
+    },
     tableHeight() {
-      const h = (window.innerHeight - 22 -
+      if (this.checkShowInDialog) {
+        return (window.innerHeight/2)+'px'
+      }
+      else {
+        const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
           this.$store.state.settings.tableFuncBarHeight -
           this.$store.state.settings.tablePaginationHeight) + 'px'
-      return h
+        return h
+      }
     }
   },
   watch: {
@@ -142,7 +188,9 @@ export default {
       immediate: true
     }
   },
-  created() {
+  async created() {
+    await this.$store.dispatch('mdm/getMdmData', '')
+    this.mdmReady = true
   },
   methods: {
     queryBtnVisible() {
@@ -207,8 +255,37 @@ export default {
       return false
     },
     formatter(row, column, cellValue, index) {
-      // if (column.property == '') {
-      // }
+
+      if (this.objectFieldDefineMap[column.property]) {
+
+        let fd = this.objectFieldDefineMap[column.property]
+        if (fd && fd.valueRefType) {
+          if (fd.valueRefType == '1') {
+            let dd = JSON.parse(this.mdm['bool'].json).find(a => a.value == cellValue)
+            if (dd) {
+              return dd.label
+            }
+          }
+          else if (fd.valueRefType == '2') {
+            let mm = this.mdmList.find(a => a.id == fd.mdmDataId)
+            if (mm) {
+              let dd = JSON.parse(this.mdm[mm.mdmCode].json).find(a => a.value == cellValue)
+              if (dd) {
+                return dd.label
+              }
+            }
+          }
+          else if (fd.valueRefType == '3') {
+            //TODO select
+
+          }
+          else if (fd.valueRefType == '4') {
+            // 引用字段，如果是不读的值，则应当创建另外一个字段来保存值
+
+          }
+        }
+      }
+
       return cellValue
     },
     resetQueryCond() {
@@ -220,6 +297,7 @@ export default {
       }
 
       this.$refs.refObjectFilter.resetValues()
+      this.loadData()
     },
 
     loadData() {
@@ -274,6 +352,16 @@ export default {
 
       }
       //
+    },
+
+    handleSelectionChange(sels){
+      this.sels = sels
+    },
+    submitSelection() {
+      this.$emit('object-relation', {
+        objectId: this.objectId,
+        row: this.sels[0]
+      })
     },
 
     deleteDataRow(row) {

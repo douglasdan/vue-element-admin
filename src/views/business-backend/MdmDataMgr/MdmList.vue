@@ -151,15 +151,15 @@ export default {
     },
     tableHeight() {
       if (this.checkShowInDialog) {
+        return (window.innerHeight/2)+'px'
+      }
+      else {
         const h = (window.innerHeight - 22 -
             this.$store.state.settings.navbarHeight -
             this.$store.state.settings.tagsViewHeight -
             this.$store.state.settings.tableFuncBarHeight -
             this.$store.state.settings.tablePaginationHeight) + 'px'
         return h
-      }
-      else {
-        return (window.innerHeight/2)+'px'
       }
     },
     renderForSelect() {

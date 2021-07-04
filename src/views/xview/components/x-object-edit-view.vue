@@ -145,6 +145,9 @@ export default {
       })
 
     },
+    cancel() {
+      Object.assign(this.objectData, {})
+    }
 
   }
 

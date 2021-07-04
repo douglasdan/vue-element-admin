@@ -22,8 +22,13 @@
           </el-switch>
         </template>
       </el-table-column>
+
+
       <el-table-column v-if="!forViewEdit" prop="fieldTip" label="提示" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldDesc" label="描述" :formatter="formatter" />
+
+      <el-table-column v-if="!forViewEdit" prop="fieldNullable" label="是否可为空" :formatter="formatter" />
+      <el-table-column v-if="!forViewEdit" prop="fieldAutoGenerate" label="是否自动生成值" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldUnique" label="是否唯一" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldLength" label="最大长度" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="decicmalLength" label="小数位" :formatter="formatter" />
@@ -70,6 +75,25 @@
         <el-form-item label="字段代码：">
           <el-input v-model="editForm.fieldCode" placeholder="" :disabled="shouldDisableInput" />
         </el-form-item>
+
+        <el-form-item label="是否可为空：">
+          <el-select v-model="editForm.fieldNullable" placeholder="">
+            <el-option label="是" :value="true" />
+            <el-option label="否" :value="false" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否唯一：">
+          <el-select v-model="editForm.fieldUnique" placeholder="">
+            <el-option label="是" :value="true" />
+            <el-option label="否" :value="false" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否自动生成值：">
+          <el-select v-model="editForm.fieldAutoGenerate" placeholder="">
+            <el-option label="是" :value="true" />
+            <el-option label="否" :value="false" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="长度：">
           <el-input v-model="editForm.fieldLength" type="number" placeholder="" :disabled="shouldDisableInput" />
         </el-form-item>
@@ -112,6 +136,8 @@ const DefaultField = {
   fieldCode: '',
   fieldTip: '',
   fieldDesc: '',
+  fieldAutoGenerate: false,
+  fieldNullable: true,
   fieldUnique: false,
   fieldLength: 20,
   decicmalLength: 2,
@@ -240,6 +266,9 @@ export default {
           }
         })
         return name
+      }
+      else if (column.property === 'fieldUnique') {
+        return ''+cellValue
       }
       return cellValue
     },

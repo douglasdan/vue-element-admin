@@ -22,6 +22,39 @@ export function repairObjectListViewJson(viewJson) {
     viewJson.maxWidth = 0
   }
 
+  if (viewJson.hasOwnProperty('viewButtons')) {
+    viewJson.viewButtons.forEach((btn) => {
+
+      if (!btn.hasOwnProperty('props')) {
+        btn.props = {
+          "size": "small",
+          "type": "primary",
+          "disabled": false
+        }
+      }
+
+      if (!btn.props.hasOwnProperty('type')) {
+        btn.props.type = ''
+      }
+    })
+  }
+
+  if (viewJson.hasOwnProperty('rowButtons')) {
+    viewJson.rowButtons.forEach((btn) => {
+      if (!btn.hasOwnProperty('props')) {
+        btn.props = {
+          "size": "mini",
+          "type": "",
+          "disabled": false
+        }
+      }
+
+      if (!btn.props.hasOwnProperty('type')) {
+        btn.props.type = ''
+      }
+    })
+  }
+
   if (!viewJson.operate) {
     viewJson.operate = {
       "visible": true,

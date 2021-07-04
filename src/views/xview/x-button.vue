@@ -15,7 +15,11 @@ export default {
     self: {
       type: Object
     },
-    size: String
+    size: String,
+    row: {
+      type: Object,
+      required: false
+    }
   },
   data() {
     return {}
@@ -56,7 +60,7 @@ export default {
         }
 
         if (actionDefine.type == '1') {
-          this.$props.self.openView(actionDefine.viewId)
+          this.$props.self.openView(actionDefine.viewId, this.row)
         }
         else if (actionDefine.type == '2') {
           const fun = new Function(`return function(){${actionDefine.script}}`)()

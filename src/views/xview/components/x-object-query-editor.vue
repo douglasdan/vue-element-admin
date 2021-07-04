@@ -155,11 +155,16 @@ export default {
     syncFilterField() {
       console.log('syncFilterField ', this.$props.viewJson.queryDefine.conditions.length)
 
-      if (this.$props.viewJson.queryDefine.conditions.length == 0) {
 
-        let temp = []
-        this.rows.forEach((row) => {
-          console.log('syncFilterField init field', row.fieldCode)
+      let temp = []
+      this.rows.forEach((row) => {
+        console.log('syncFilterField init field', row.fieldCode)
+
+        let cond = this.$props.viewJson.queryDefine.conditions.some(cond => cond.fieldCode === row.fieldCode)
+        if (cond) {
+          temp.push(cond)
+        }
+        else {
           temp.push({
             fieldName: row.fieldName,
             fieldCode: row.fieldCode,
@@ -169,25 +174,45 @@ export default {
             values: '',
             visible: row.visible
           })
-        })
+        }
+      })
 
-        this.$set(this.$props.viewJson.queryDefine, 'conditions', temp)
-      }
-      else {
-        this.rows = this.$props.viewJson.queryDefine.conditions
-        this.rows.forEach((row) => {
-          console.log('syncFilterField check field', row.fieldCode)
-          if (typeof(row.visible) == undefined) {
-            if (row.opType) {
-              row.visible = true
-            }
-            else {
-              row.visible = false
-            }
-          }
-        })
-        this.$set(this.$props.viewJson.queryDefine, 'conditions', this.rows)
-      }
+      this.$set(this.$props.viewJson.queryDefine, 'conditions', temp)
+
+
+      // if (this.$props.viewJson.queryDefine.conditions.length == 0) {
+
+      //   let temp = []
+      //   this.rows.forEach((row) => {
+      //     console.log('syncFilterField init field', row.fieldCode)
+      //     temp.push({
+      //       fieldName: row.fieldName,
+      //       fieldCode: row.fieldCode,
+      //       fieldType: row.fieldType,
+      //       opType: '',
+      //       sortNo: row.sortNo,
+      //       values: '',
+      //       visible: row.visible
+      //     })
+      //   })
+
+      //   this.$set(this.$props.viewJson.queryDefine, 'conditions', temp)
+      // }
+      // else {
+      //   this.rows = this.$props.viewJson.queryDefine.conditions
+      //   this.rows.forEach((row) => {
+      //     console.log('syncFilterField check field', row.fieldCode)
+      //     if (typeof(row.visible) == undefined) {
+      //       if (row.opType) {
+      //         row.visible = true
+      //       }
+      //       else {
+      //         row.visible = false
+      //       }
+      //     }
+      //   })
+      //   this.$set(this.$props.viewJson.queryDefine, 'conditions', this.rows)
+      // }
 
     },
     getCondition(fieldCode) {

@@ -34,9 +34,8 @@
         <template slot="header">
           <span>操作</span>
         </template>
-        <template slot-scope="scope">
-          <x-button :size="'mini'" v-for="(btn, index) in viewJson.rowButtons" :view="btn" :self="self" />
-          <!-- <x-row-operator :buttons="viewJson.rowButtons" :idx="scope.$index" :row="scope.row" :self="self" /> -->
+        <template scope="scope">
+          <x-button :size="'mini'" v-for="(btn, index) in viewJson.rowButtons" :view="btn" :self="self" :row="scope.row"/>
         </template>
       </el-table-column>
     </el-table>
@@ -253,11 +252,17 @@ export default {
 
         getViewDefineById(viewId).then(ret => {
           if (ret.success) {
-            if (row) {
-              this.showView.dataId = row.id
+
+            if (ret.data.viewType == 'object-list') {
+              this.$router.push({path: '/singleview/' + ret.data.id});
             }
-            this.showView.viewDefine = ret.data
-            this.showView.visible = true
+            else if (ret.data.viewType == 'object-view') {
+              this.$router.push({path: '/singleview/' + ret.data.id+'/'+row.id});
+            }
+            else {
+              this.showView.viewDefine = ret.data
+              this.showView.visible = true
+            }
           }
           else {
             //
@@ -271,7 +276,6 @@ export default {
 
     deleteDataRow(row) {
       //TODO
-
 
     }
 

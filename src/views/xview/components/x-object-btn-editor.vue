@@ -39,6 +39,18 @@
         </el-form-item>
       </el-form>
       <el-form :inline="true" label-width="120px" style="width: 800px;">
+        <el-form-item label="颜色：">
+          <el-select v-model="editForm.props.type">
+            <el-option label="默认" value="无" />
+            <el-option label="蓝色" value="primary" />
+            <el-option label="绿色" value="success" />
+            <el-option label="灰色" value="info" />
+            <el-option label="橙色" value="warning" />
+            <el-option label="红色" value="danger" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-form :inline="true" label-width="120px" style="width: 800px;">
         <el-form-item label="动作：">
           <x-object-btn-func-editor v-model="editForm.action"></x-object-btn-func-editor>
         </el-form-item>
@@ -80,7 +92,15 @@ export default {
       eid: 'e' + uuid.v1(),
       editForm: {
         name: '',
-        action: ''
+        action: {
+          type: '',
+          viewId: '',
+          script: ''
+        },
+        props: {
+          type: '',
+          disabled: false
+        }
       },
       editIndex: null,
       editDialogVisible: false

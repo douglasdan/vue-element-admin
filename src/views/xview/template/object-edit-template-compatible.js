@@ -24,16 +24,25 @@ export function repairObjectEditViewJson(viewJson) {
 
   if (viewJson.hasOwnProperty('viewButtons')) {
     viewJson.viewButtons.forEach((btn) => {
-      if (btn.hasOwnProperty('type')) {
-        btn.type = 'primary'
+
+      if (!btn.hasOwnProperty('props')) {
+        btn.props = {
+          "size": "small",
+          "type": "primary",
+          "disabled": false
+        }
       }
     })
   }
 
   if (viewJson.hasOwnProperty('rowButtons')) {
     viewJson.rowButtons.forEach((btn) => {
-      if (btn.hasOwnProperty('type')) {
-        btn.type = 'primary'
+      if (!btn.hasOwnProperty('props')) {
+        btn.props = {
+          "size": "mini",
+          "type": "",
+          "disabled": false
+        }
       }
     })
   }

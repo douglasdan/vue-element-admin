@@ -101,7 +101,7 @@ const actions = {
     })
   },
 
-  updateObjectDefineupdateObjectDefine({ commit }, oid) {
+  updateObjectDefine({ commit }, oid) {
     return new Promise((resolve, reject) => {
       commit('UPDATE_OBJECT_DEFINE', oid)
       resolve(true)
@@ -130,9 +130,6 @@ const actions = {
       }
     })
   },
-
-
-
 }
 
 export default {

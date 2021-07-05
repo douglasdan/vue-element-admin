@@ -2,25 +2,24 @@
   <section>
     <el-row style="border-top: 1px solid #eee" v-if="objectFieldDefine.length > 0">
       <div class="cond-parent">
-        <div v-for="(cond, i) in viewJson.showFields" class="cond-child">
-          <div :style="labelStyle">
-            {{ cond.fieldName }}：
-          </div>
+        <div class="cond-child">
+          <div :style="labelStyle">成本对象名称： </div>
           <div style="display: flex-inline; width: 180px;">
-            <x-object-field-control v-if="mdmReady"
-              @object-relation="handleObjectRelation"
-              :editing="true"
-              v-model="objectData[cond.fieldCode]"
-              :field-define="objectFieldDefineMap[cond.fieldCode]"
-            ></x-object-field-control>
+            <span>选择</span>
+          </div>
+        </div>
+        <div class="cond-child">
+          <div :style="labelStyle">分摊对象名称： </div>
+          <div style="display: flex-inline; width: 180px;">
+            <span>选择</span>
           </div>
         </div>
       </div>
     </el-row>
 
-    <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+    <el-row style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
       <div style="right: 10px; float: right; position: absolute;">
-        <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
+        <el-button type="primary" size="small" @click="submit">保存</el-button>
       </div>
     </el-row>
 
@@ -29,21 +28,9 @@
 
 <script>
 
-import { getViewDefineById } from '@/api/view-define'
-import { getObjectDefineById } from '@/api/object-define'
-import { saveObjectData } from '@/api/object-data'
-
 export default {
-  name: 'x-object-edit-view',
+  name: 'cs-method-edit-view',
   props: {
-    objectId: {
-      type: String,
-      required: true
-    },
-    viewJson: {
-      type: Object,
-      required: true
-    },
   },
   data() {
     return {

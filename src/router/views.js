@@ -19,7 +19,9 @@ const routesMap =
   '/finance/voucher': () => import('@/views/business-finance/accounting/VoucherList'),
   '/finance/cost/distribute': () => import('@/views/business-finance/fico/CostDistribution'),
 
-  '/fico/costsharing/method': () => import('@/views/business-finance/fico/SharingStrategyList'),
+  '/fico/costsharing/method': () => import('@/views/business-finance/fico/csmethod/CsMethodListView'),
+
+
 }
 
 export { routesMap }

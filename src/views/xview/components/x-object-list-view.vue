@@ -83,12 +83,9 @@ import { selectObjectFieldDefinePage } from '@/api/object-field-define'
 import { selectObjectDataPage } from '@/api/object-data'
 import { getViewDefineById } from '@/api/view-define'
 
-import xObjectFilter from '@/views/xview/x-object-filter'
-
 export default {
   name: 'x-object-list-view',
   components: {
-    'x-object-filter': xObjectFilter
   },
   props: {
     objectId: {

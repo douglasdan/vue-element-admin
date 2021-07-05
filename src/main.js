@@ -64,6 +64,9 @@ Vue.component('x-object-field-select', ObjectFieldSelect)
 import XObjectFieldControl from '@/views/xview/components/x-object-field-control'
 Vue.component('x-object-field-control', XObjectFieldControl)
 
+import xObjectFilter from '@/views/xview/x-object-filter'
+Vue.component('x-object-filter', xObjectFilter)
+
 //对象列表展示
 import XObjectListView from '@/views/xview/components/x-object-list-view'
 Vue.component('x-object-list-view', XObjectListView)

@@ -27,12 +27,13 @@
             <el-form-item label="对象代码:">
               <el-input v-model="tableDefine.objectCode" :disabled="shouldDisable" />
             </el-form-item>
-            <el-form-item label="对象类型:">
+
+            <!-- <el-form-item label="对象类型:">
               <el-select v-model="tableDefine.objectType" :disabled="shouldDisable">
                 <el-option label="普通对象" value="1" />
                 <el-option label="子对象" value="2" />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <!-- <el-divider />
             <el-form-item label="主键字段:">
@@ -54,6 +55,27 @@
             </el-form-item>
 
             <el-divider />
+
+            <el-form-item label="树:">
+              <el-select v-model="tableDefine.treeFlag" placeholder="">
+                <el-option label="是" :value="true" />
+                <el-option label="否" :value="false" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="名称Code:" v-if="tableDefine.treeFlag">
+              <el-input v-model="tableDefine.labelFieldCode"/>
+            </el-form-item>
+
+            <el-form-item label="IdCode:" v-if="tableDefine.treeFlag">
+              <el-input v-model="tableDefine.idFieldCode"/>
+            </el-form-item>
+
+            <el-form-item label="父IdCode:" v-if="tableDefine.treeFlag">
+              <el-input v-model="tableDefine.parentFieldCode"/>
+            </el-form-item>
+
+            <el-divider />
             <el-form-item>
               <el-button type="primary" @click="onSubmit1">保存</el-button>
             </el-form-item>
@@ -61,7 +83,7 @@
         </div>
 
         <div v-else-if="selectIndex === '2'">
-          <ObjectFieldList :object-id="tableDefine.id" />
+          <ObjectFieldList :object-id="tableDefine.id"/>
         </div>
         <div v-else-if="selectIndex === '3'">
           33
@@ -92,7 +114,9 @@ export default {
     return {
       apps: [],
       selectIndex: '1',
-      tableDefine: {},
+      tableDefine: {
+        objectType: '1'
+      },
       filterAppType: ''
     }
   },
@@ -149,7 +173,11 @@ export default {
     onSubmit1() {
       saveObjectDefine(this.tableDefine).then(ret => {
         if (ret.success) {
+          this.tableDefine = ret.data
+          this.$store.dispatch('lowCode/updateObjectDefine', this.tableDefine.id)
           this.loadData()
+
+          this.$message.info('操作成功');
         }
       })
     },

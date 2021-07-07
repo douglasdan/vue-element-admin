@@ -19,12 +19,13 @@
 export default {
   name: 'x-object-btn-func-editor',
   props: {
-    value: String
+    value: [String, Object]
   },
   watch: {
     'value': {
       handler(nval, oval) {
-        if(nval) {
+        this.actionJson = nval
+        if(nval && typeof(nval) == 'string') {
           if (nval.indexOf('{') == 0) {
             this.actionJson = JSON.parse(nval)
           }

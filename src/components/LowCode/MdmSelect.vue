@@ -2,9 +2,9 @@
   <el-select v-model="val" placeholder="" :disabled="disabled" @change="handleChange">
     <el-option
       v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
+      :key="''+item.value"
+      :label="''+item.label"
+      :value="''+item.value"
     />
   </el-select>
 </template>

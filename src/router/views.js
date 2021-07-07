@@ -21,6 +21,7 @@ const routesMap =
 
   '/fico/costsharing/method': () => import('@/views/business-finance/fico/csmethod/CsMethodListView'),
 
+  '/fico/sharing/strategy': () => import('@/views/business-finance/fico/csmethod/CsMethodListView'),
 
 }
 

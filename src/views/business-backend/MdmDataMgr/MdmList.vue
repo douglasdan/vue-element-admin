@@ -36,22 +36,22 @@
       </el-table-column>
     </el-table>
 
-    <div class="block" style="margin: 5px; float: right;">
-      <el-pagination
-        :current-page.sync="pageNo"
-        :page-sizes="pageSizes"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
-
-    <el-row v-if="renderForSelect" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
-      <div style="right: 10px; float: right; position: absolute;">
-        <el-button size="small" type="primary" @click="handleSelectClick">确定</el-button>
+    <el-row>
+      <div class="block" style="margin: 5px; float: right;">
+        <el-pagination
+          :current-page.sync="pageNo"
+          :page-sizes="pageSizes"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </div>
+    </el-row>
+
+    <el-row v-if="renderForSelect" style="margin: 10px; font-size: 14px; height: 32px; text-align: right;">
+      <el-button type="primary" size="small" @click="handleSelectClick">确定</el-button>
     </el-row>
 
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false">

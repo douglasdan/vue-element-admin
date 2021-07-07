@@ -30,3 +30,17 @@ export function selectObjectDataPage(oid, data) {
   })
 }
 
+export function selectTreeRootPage(oid, data) {
+  return request({
+    url: `/api/v1/object/${oid}/tree/roots`,
+    method: 'post',
+    data
+  })
+}
+
+export function getTree(oid, id) {
+  return request({
+    url: `/api/v1/object/${oid}/tree/${id}`,
+    method: 'get',
+  })
+}

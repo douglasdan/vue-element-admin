@@ -238,8 +238,11 @@ export default {
     handleObjectRelation(dd) {
 
       this.objectFieldDefine.forEach(f => {
-        if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
-          this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
+        if (f.valueRefType == '4') {
+          if (f.refTableId == dd.objectId && f.refFieldCode) {
+            this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
+            console.log('set', f.fieldCode, dd.row[f.refFieldCode])
+          }
         }
       })
     },

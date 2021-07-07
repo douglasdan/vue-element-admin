@@ -10,9 +10,9 @@
       @selection-change="handleSelectionChange">
       <el-table-column v-if="!forViewEdit" type="selection" width="55" />
       <el-table-column v-if="!forViewEdit" type="index" label="序号" />
-      <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" width="200"/>
+      <el-table-column prop="fieldName" label="字段名称" :formatter="formatter" width="120"/>
       <el-table-column prop="fieldType" label="字段类型" :formatter="formatter" />
-      <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="200"/>
+      <el-table-column prop="fieldCode" label="字段代码" :formatter="formatter" width="180"/>
       <el-table-column prop="visible" label="是否显示" v-if="forViewEdit" width="160">
         <template scope="scope">
           <el-switch v-model="scope.row.visible"
@@ -23,10 +23,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column v-if="!forViewEdit" prop="valueRefType" label="值类型" :formatter="formatter" width="160"/>
-
-      <el-table-column v-if="!forViewEdit" prop="fieldTip" label="提示" :formatter="formatter" width="160"/>
-      <el-table-column v-if="!forViewEdit" prop="fieldDesc" label="描述" :formatter="formatter" width="200"/>
+      <el-table-column v-if="!forViewEdit" prop="valueRefType" label="值类型" :formatter="formatter" width="100"/>
 
       <el-table-column v-if="!forViewEdit" prop="fieldNullable"     label="可为空" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="fieldAutoGenerate" label="自动自增" :formatter="formatter" />
@@ -34,6 +31,9 @@
       <el-table-column v-if="!forViewEdit" prop="fieldLength" label="最大长度" :formatter="formatter" />
       <el-table-column v-if="!forViewEdit" prop="decicmalLength" label="小数位" :formatter="formatter"/>
       <el-table-column v-if="!forViewEdit" prop="version" label="版本" :formatter="formatter" />
+
+      <el-table-column v-if="!forViewEdit" prop="fieldTip" label="提示" :formatter="formatter" width="120"/>
+      <el-table-column v-if="!forViewEdit" prop="fieldDesc" label="描述" :formatter="formatter" width="120"/>
 
       <el-table-column v-if="mode != 'edit-view'" width="240">
         <template slot="header">
@@ -307,6 +307,10 @@ export default {
               name = item.label
             }
           })
+          //信息太多，不点开查看
+          // if (cellValue == '4') {
+          //   name += row.refTableId+' '+row.refFieldCode
+          // }
           return name
         }
       }
@@ -411,7 +415,7 @@ export default {
         if (ret.success) {
           this.editDialogVisible = false
           this.loadData()
-
+          this.$message.info('操作成功');
           this.$store.dispatch('lowCode/updateObjectDefine', this.$props.objectId)
         }
       })

@@ -1,5 +1,5 @@
 <template>
-  <div style="line-height: 30px;">
+  <div style="line-height: 30px; display: inline-block;">
     <span v-if="ready && !editing">{{ fieldValue() }}</span>
 
     <mdm-select v-model="val" :code="'bool'" @change="handleChange" v-else-if="ready() && fieldDefine.valueRefType == '1'">
@@ -11,7 +11,7 @@
     <mdm-select v-model="val" :code="fieldDefine.mdmDataCode" @change="handleChange" v-else-if="ready() && fieldDefine.valueRefType == '3' && fieldDefine.mdmDataCode">
     </mdm-select>
 
-    <el-input v-model="val" placeholder="" @focus="handleFocus" @change="handleChange" v-else-if="ready() && fieldDefine.fieldType == 'text'">
+    <el-input :type="fieldDefine.fieldLength > 100 ? 'textarea' : 'text'" v-model="val" placeholder="" @focus="handleFocus" @change="handleChange" v-else-if="ready() && fieldDefine.fieldType == 'text'">
     </el-input>
 
     <el-input type="number" v-model="val" @focus="handleFocus" @change="handleChange" v-else-if="ready() && fieldDefine.fieldType == 'int'">
@@ -132,6 +132,10 @@ export default {
       this.$emit('input', nval)
     },
 
+    closeDialog() {
+      this.selectDataRowDialogVisible = false
+    },
+
     fieldValue() {
 
       if (!this.ready()) {
@@ -162,10 +166,12 @@ export default {
 
         }
       }
+
       return cellValue
     },
 
     handleObjectRelation(dd) {
+      console.log('handleObjectRelation', JSON.stringify(dd))
       this.$emit('object-relation', dd)
     },
 

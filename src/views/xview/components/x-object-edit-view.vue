@@ -1,6 +1,6 @@
 <template>
   <section>
-    <el-row style="border-top: 1px solid #eee" v-if="objectFieldDefine.length > 0">
+    <el-row style="margin-top: 10px; border-top: 1px solid #eee" v-if="objectFieldDefine.length > 0">
       <div class="cond-parent">
         <div v-for="(cond, i) in viewJson.showFields" class="cond-child">
           <div :style="labelStyle">

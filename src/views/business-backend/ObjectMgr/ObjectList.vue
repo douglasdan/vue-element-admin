@@ -6,6 +6,7 @@
       <div style="display: inline-block; float: right;">
         <el-button type="primary" @click="handleAdd">新增对象</el-button>
       </div>
+      是否删除：<mdm-select v-model="queryForm.logicDelete" :code="'bool'" @change="handleAppChange()"/>
     </div>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
@@ -19,9 +20,9 @@
       <el-table-column prop="idField" label="ID字段" :formatter="formatter" />
       <el-table-column prop="idFieldType" label="ID字段类型" :formatter="formatter" />
       -->
-      <el-table-column prop="objectIcon" label="图标" :formatter="formatter" />
-      <el-table-column prop="version" label="当前版本" :formatter="formatter" />
-      <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter" />
+      <!-- <el-table-column prop="objectIcon" label="图标" :formatter="formatter" /> -->
+      <!-- <el-table-column prop="version" label="当前版本" :formatter="formatter" /> -->
+      <!-- <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter" /> -->
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -36,7 +37,12 @@
             size="mini"
             type="primary"
             @click="createObjectDefaultViews(scope.$index, scope.row)"
-          >创建默认视图</el-button>
+          >创建视图</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -76,7 +82,8 @@ import objectViewTemplate from '@/views/xview/template/object-view-template'
 
 const DefaultObject = {
   id: null,
-  objectSource: '9'
+  objectSource: '9',
+  objectType: '1'
 }
 
 export default {
@@ -93,6 +100,7 @@ export default {
       queryForm: {
         appId: '',
         objectSource: '',
+        logicDelete: '0',
       },
       rows: [],
       total: 0,
@@ -184,7 +192,9 @@ export default {
       const queryObj = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        conditions: []
+        conditions: [
+          { field: 'logic_delete', op: 'eq', values: [this.queryForm.logicDelete] }
+        ]
       }
 
       if (this.queryForm.appId) {
@@ -193,6 +203,7 @@ export default {
       if (this.queryForm.objectSource) {
         queryObj.conditions.push({ field: 'object_source', op: 'eq', values: [this.queryForm.objectSource] })
       }
+
 
       selectObjectDefinePage(queryObj).then(ret => {
         if (ret.success) {
@@ -360,12 +371,28 @@ export default {
       this.editDialogVisible = true
     },
     handleDelete(i, row) {
-      deleteObjectDefine(row.id).then(ret => {
-        if (ret.success) {
-          this.loadData()
-          this.editDialogVisible = false
-        }
-      })
+
+      this.$confirm('请自行确认风险, 此操作可能会导致未知错误, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+
+          deleteObjectDefine(row.id).then(ret => {
+            if (ret.success) {
+              this.loadData()
+              this.editDialogVisible = false
+            }
+          })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+
+
     }
   }
 }

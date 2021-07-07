@@ -17,7 +17,7 @@ export function saveObjectDefine(data) {
 
 export function deleteObjectDefine(id) {
   return request({
-    url: `/api/v1/objectDefine/${id}`,
+    url: `/api/v1/objectDefine/delete/${id}`,
     method: 'delete',
   })
 }

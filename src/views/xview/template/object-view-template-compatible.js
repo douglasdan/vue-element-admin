@@ -32,6 +32,9 @@ export function repairObjectViewJson(viewJson) {
           "disabled": false
         }
       }
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
+      }
     })
   }
 
@@ -43,6 +46,9 @@ export function repairObjectViewJson(viewJson) {
           "type": "",
           "disabled": false
         }
+      }
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
       }
     })
   }

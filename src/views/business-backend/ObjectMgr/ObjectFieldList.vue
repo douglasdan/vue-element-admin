@@ -64,7 +64,7 @@
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :append-to-body="true">
       <el-form :inline="true" label-width="160px">
         <el-form-item label="字段名称：">
-          <el-input v-model="editForm.fieldName" placeholder="" :disabled="shouldDisableInput" />
+          <el-input v-model="editForm.fieldName" placeholder=""/>
         </el-form-item>
         <el-form-item label="字段类型：">
           <mdm-select v-model="editForm.fieldType" :code="'fieldType'" :disabled="shouldDisableInput" @change="handleFieldTypeChange"/>

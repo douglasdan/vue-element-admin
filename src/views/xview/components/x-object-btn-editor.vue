@@ -8,6 +8,14 @@
       <el-table-column type="index" label="序号" />
       <el-table-column prop="name" label="名称" :formatter="formatter" />
       <el-table-column prop="code" label="编码" :formatter="formatter" />
+      <el-table-column prop="visible" label="是否显示" width="70">
+        <template scope="scope">
+          <el-switch v-model="scope.row.visible"
+            active-color="#13ce66" inactive-color="#ff4949"
+            style="margin-top: 5px;">
+          </el-switch>
+        </template>
+      </el-table-column>>
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>

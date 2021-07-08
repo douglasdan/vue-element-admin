@@ -12,6 +12,7 @@
     {
       "name": "保存",
       "code": "",
+      "visible": true,
       "props": {
         "size": "small",
         "type": "primary",
@@ -26,6 +27,7 @@
     {
       "name": "取消",
       "code": "",
+      "visible": true,
       "props": {
         "size": "small",
         "disabled": false
@@ -39,6 +41,7 @@
     {
       "name": "编辑",
       "code": "",
+      "visible": true,
       "props": {
         "size": "small",
         "disabled": false

@@ -1,12 +1,12 @@
 <template>
   <section>
     <div>
-      <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+      <el-row v-if="viewButtons && viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
         <div style="display: flex-inline;" >
           <el-link type="primary" style="line-height: 32px;" @click="toggleQueryPanel" v-show="queryBtnVisible()">筛选</el-link>
         </div>
         <div style="right: 10px; float: right; position: absolute;">
-          <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
+          <x-button v-for="(btn, index) in viewButtons" :view="btn" :self="self" />
         </div>
       </el-row>
 
@@ -55,7 +55,9 @@
             <span>操作</span>
           </template>
           <template scope="scope">
-            <x-button :size="'mini'" v-for="(btn, index) in viewJson.rowButtons" :view="btn" :self="self" :row="scope.row"/>
+            <x-button :size="'mini'" :view="btn" :self="self" :row="scope.row"
+              v-for="(btn, index) in viewJson.rowButtons"
+              v-if="btn.visible"/>
           </template>
         </el-table-column>
       </el-table>
@@ -102,7 +104,7 @@ export default {
   },
   props: {
     objectId: {
-      type: String,
+      type: [String, Number],
       required: false
     },
     viewJson: {
@@ -116,12 +118,18 @@ export default {
     mode: {
       type: String,     //select 选择模式
       default: ''
+    },
+    maxHeight: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       self: this,
       mdmReady: false,
+
+      defaultQueryConditions:[],
 
       objectDefine: null,
       objectFieldDefine: null,
@@ -175,20 +183,28 @@ export default {
       return flag
     },
     tableHeight() {
+      let h
       if (this.checkShowInDialog) {
-        return (window.innerHeight/2)+'px'
+        h = (window.innerHeight/2)
       }
       else {
-        const h = (window.innerHeight - 22 -
+        h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
           this.$store.state.settings.tableFuncBarHeight -
-          this.$store.state.settings.tablePaginationHeight) + 'px'
-        return h
+          this.$store.state.settings.tablePaginationHeight)
       }
+
+      if (this.$props.maxHeight > 0 && h > this.$props.maxHeight) {
+        h = this.$props.maxHeight
+      }
+      return h+'px'
     },
     hideRowOpearte() {
       return this.mode == 'select'
+    },
+    viewButtons() {
+      return this.viewJson.viewButtons.filter(a => a.visible)
     }
   },
   watch: {
@@ -330,6 +346,10 @@ export default {
       this.loadData()
     },
 
+    setDefaultQueryConditions(conds) {
+      this.defaultQueryConditions = conds
+      this.loadData()
+    },
     loadData() {
       if (!this.objectDefine) {
         return
@@ -346,7 +366,7 @@ export default {
         pageSize: this.pageSize,
         conditions: []
       }
-      queryObj.conditions = this.$refs.refObjectFilter.getConditions()
+      queryObj.conditions = this.defaultQueryConditions.concat(this.$refs.refObjectFilter.getConditions())
 
       if (this.objectDefine.treeFlag) {
         selectTreeRootPage(this.objectId, queryObj).then(ret => {

@@ -22,3 +22,12 @@ export function deleteCsSharingMethod(id) {
     method: 'delete'
   })
 }
+
+export function executeStrategy(id, year, month) {
+  return request({
+    url: `/api/v1/costsharing/execute?id=${id}&year=${year}&month=${month}`,
+    method: 'get'
+  })
+}
+
+

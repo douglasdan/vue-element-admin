@@ -33,7 +33,7 @@ export default {
   name: 'x-object-filter',
   props: {
     objectId: {
-      type: String,
+      type: [String, Number],
       required: true
     },
     viewJson: {

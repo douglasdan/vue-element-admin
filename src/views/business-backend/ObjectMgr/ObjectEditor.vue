@@ -78,6 +78,7 @@
             <el-divider />
             <el-form-item>
               <el-button type="primary" @click="onSubmit1">保存</el-button>
+              <el-button type="primary" @click="genJavaBean">生成JavaBean</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -183,6 +184,61 @@ export default {
     },
     handleIdTypeChange(val) {
       // this.tableDefine.idFieldType = val;
+    },
+    camelCase(str) {
+      let s =
+      str &&
+      str
+      .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+      .map(x => x.slice(0, 1).toUpperCase() + x.slice(1).toLowerCase())
+      .join('');
+      return s.slice(0, 1).toLowerCase() + s.slice(1);
+    },
+    genJavaBean() {
+
+      this.$store.dispatch('lowCode/getObjectDefine', this.tableDefine.id).then(ret => {
+        if (ret) {
+
+          let sb = "";
+
+          ret.fields.forEach((item) => {
+            if (item.fieldType == 'text' || item.fieldType == 'textarea' || item.fieldType == 'json' ) {
+
+              sb += `@JSONField(name = \"${item.fieldCode}\")\r\n`
+              sb += `@JsonProperty("${item.fieldCode}") \r\n`
+              sb += "private String "+this.camelCase(item.fieldCode)+";\r\n"
+              sb += "\r\n"
+            }
+            else if (item.fieldType == 'int') {
+              sb += `@JSONField(name = \"${item.fieldCode}\")\r\n`
+              sb += `@JsonProperty("${item.fieldCode}") \r\n`
+              sb += "private Long "+this.camelCase(item.fieldCode)+";\r\n"
+              sb += "\r\n"
+            }
+            else if (item.fieldType == 'date') {
+              sb += `@JSONField(name = \"${item.fieldCode}\", format = \"XDateUtil.YYYY_MM_DD\")\r\n`
+              sb += `@JsonProperty("${item.fieldCode}") \r\n`
+              sb += "private Date "+this.camelCase(item.fieldCode)+";\r\n"
+              sb += "\r\n"
+            }
+            else if (item.fieldType == 'datetime') {
+              sb += `@JSONField(name = \"${item.fieldCode}\", format = \"XDateUtil.YYYY_MM_DD_HH_MM_SS\")\r\n`
+              sb += `@JsonProperty("${item.fieldCode}") \r\n`
+              sb += "private Date "+this.camelCase(item.fieldCode)+";\r\n"
+              sb += "\r\n"
+            }
+            else if (item.fieldType == 'decimal') {
+              sb += `@JSONField(name = \"${item.fieldCode}\")\r\n`
+              sb += `@JsonProperty("${item.fieldCode}") \r\n`
+              sb += "private BigDecimal "+this.camelCase(item.fieldCode)+";\r\n"
+              sb += "\r\n"
+            }
+
+          })
+
+          console.log(sb)
+        }
+      })
     }
   }
 }

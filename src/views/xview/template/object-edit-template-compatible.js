@@ -32,6 +32,11 @@ export function repairObjectEditViewJson(viewJson) {
           "disabled": false
         }
       }
+
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
+      }
+
     })
   }
 
@@ -44,6 +49,11 @@ export function repairObjectEditViewJson(viewJson) {
           "disabled": false
         }
       }
+
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
+      }
+
     })
   }
 

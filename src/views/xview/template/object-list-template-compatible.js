@@ -36,6 +36,9 @@ export function repairObjectListViewJson(viewJson) {
       if (!btn.props.hasOwnProperty('type')) {
         btn.props.type = ''
       }
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
+      }
     })
   }
 
@@ -51,6 +54,9 @@ export function repairObjectListViewJson(viewJson) {
 
       if (!btn.props.hasOwnProperty('type')) {
         btn.props.type = ''
+      }
+      if (!btn.hasOwnProperty('visible')) {
+        btn.visible = true
       }
     })
   }

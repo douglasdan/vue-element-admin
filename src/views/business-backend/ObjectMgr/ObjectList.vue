@@ -236,6 +236,8 @@ export default {
         if (editViewId && viewId) {
           this.createDefaultListView(row, editViewId, viewId)
         }
+
+        this.$message.info('操作成功');
       }
 
     },

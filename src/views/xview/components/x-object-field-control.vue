@@ -145,9 +145,15 @@ export default {
       let fd = this.$props.fieldDefine
       let cellValue = this.$props.value
 
+      //work around
+      if (fd && fd.valueRefType == '1') {
+        fd.mdmDataCode = 'bool'
+      }
+
       if (fd && fd.valueRefType && fd.mdmDataCode) {
         if (fd.valueRefType == '1') {
-          let dd = JSON.parse(this.mdm['bool'].json).find(a => a.value == cellValue)
+          debugger
+          let dd = JSON.parse(this.mdm[fd.mdmDataCode].json).find(a => a.value == cellValue)
           if (dd) {
             return dd.label
           }

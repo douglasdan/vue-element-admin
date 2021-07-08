@@ -2,15 +2,17 @@
   <div>
 
     <div v-if="objectId">
-      <x-object-list-view v-if="viewType == 'object-list'"
+      <component :is="renderComponent" v-if="viewType == 'object-list'"
         :object-id="objectId"
         :view-json="viewJson"
         />
-      <x-object-edit-view v-if="viewType == 'object-edit'"
+
+        <component :is="renderComponent" v-if="viewType == 'object-edit'"
         :object-id="objectId"
         :view-json="viewJson"
         />
-      <x-object-view-view v-if="viewType == 'object-view'"
+
+        <component :is="renderComponent" v-if="viewType == 'object-view'"
         :object-id="objectId"
         :object-data-id="objectDataId"
         :view-json="viewJson"
@@ -33,8 +35,16 @@ import { repairObjectListViewJson } from '@/views/xview/template/object-list-tem
 import { repairObjectEditViewJson } from '@/views/xview/template/object-edit-template-compatible.js'
 import { repairObjectViewJson } from '@/views/xview/template/object-view-template-compatible.js'
 
+import fcShareStrategyView from '@/views/business-finance/fico/fc-share-strategy-view'
+import fcShareStrategyList from '@/views/business-finance/fico/fc-share-strategy-list'
+
+
 export default {
   name: 'ShowView',
+  components: {
+    fcShareStrategyView,
+    fcShareStrategyList
+  },
   props: {
     viewDefine: {
       type: Object,
@@ -50,7 +60,14 @@ export default {
       viewType: '',
       objectId: '',
       viewJson: null,
-      objectDataId: null
+      objectDataId: null,
+
+      VIEW_COVER: {
+        "54": {
+          "object-list": "fcShareStrategyList",
+          "object-view": "fcShareStrategyView"
+        }
+      }
     }
   },
   watch: {
@@ -72,6 +89,38 @@ export default {
       },
       deep: true,
       immediate: true
+    }
+  },
+  computed: {
+    renderComponent: {
+      get() {
+
+        if (this.viewType == 'object-list') {
+          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-list']) {
+            return this.VIEW_COVER[''+this.objectId]['object-list']
+          }
+          else {
+            return 'x-object-list-view'
+          }
+        }
+        else if (this.viewType == 'object-edit') {
+          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-edit']) {
+            return this.VIEW_COVER[''+this.objectId]['object-edit']
+          }
+          else {
+            return 'x-object-edit-view'
+          }
+        }
+        else if (this.viewType == 'object-view') {
+          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-view']) {
+            return this.VIEW_COVER[''+this.objectId]['object-view']
+          }
+          else {
+            return 'x-object-view-view'
+          }
+        }
+
+      },
     }
   },
   created() {

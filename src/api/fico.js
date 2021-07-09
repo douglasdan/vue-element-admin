@@ -30,4 +30,16 @@ export function executeStrategy(id, year, month) {
   })
 }
 
+export function getShareLine(id) {
+  return request({
+    url: `/api/v1/costsharing/line?id=${id}`,
+    method: 'get'
+  })
+}
 
+export function getShareChildren(id) {
+  return request({
+    url: `/api/v1/costsharing/children?id=${id}`,
+    method: 'get'
+  })
+}

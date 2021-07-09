@@ -37,13 +37,16 @@ import { repairObjectViewJson } from '@/views/xview/template/object-view-templat
 
 import fcShareStrategyView from '@/views/business-finance/fico/fc-share-strategy-view'
 import fcShareStrategyList from '@/views/business-finance/fico/fc-share-strategy-list'
-
+// import fcShareTraceView from '@/views/business-finance/fico/fc-share-trace-view'
+import fcGatherResultTrace from '@/views/business-finance/fico/fc-gather-result-trace'
 
 export default {
   name: 'ShowView',
   components: {
     fcShareStrategyView,
-    fcShareStrategyList
+    fcShareStrategyList,
+    // fcShareTraceView,
+    fcGatherResultTrace
   },
   props: {
     viewDefine: {
@@ -63,6 +66,12 @@ export default {
       objectDataId: null,
 
       VIEW_COVER: {
+        "38": {
+          "object-view": "fcGatherResultTrace"
+        },
+        "58": {
+          // "object-view": "fcShareTraceView"
+        },
         "54": {
           "object-list": "fcShareStrategyList",
           "object-view": "fcShareStrategyView"

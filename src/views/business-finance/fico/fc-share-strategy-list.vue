@@ -59,7 +59,7 @@
               v-for="(btn, index) in viewJson.rowButtons"
               v-if="btn.visible"/>
             <el-button size="mini" type="primary" @click="beginExecute(scope.row)">执行</el-button>
-            <el-button size="mini" type="primary" @click="viewExecution(scope.row)">执行日志</el-button>
+            <!-- <el-button size="mini" type="primary" @click="viewExecution(scope.row)">执行日志</el-button> -->
           </template>
         </el-table-column>
       </el-table>

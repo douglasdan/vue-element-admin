@@ -34,7 +34,7 @@ export function repairObjectListViewJson(viewJson) {
       }
 
       if (!btn.props.hasOwnProperty('type')) {
-        btn.props.type = ''
+        btn.props.type = 'primary'
       }
       if (!btn.hasOwnProperty('visible')) {
         btn.visible = true
@@ -53,10 +53,17 @@ export function repairObjectListViewJson(viewJson) {
       }
 
       if (!btn.props.hasOwnProperty('type')) {
-        btn.props.type = ''
+        btn.props.type = 'primary'
       }
       if (!btn.hasOwnProperty('visible')) {
         btn.visible = true
+      }
+      if (!btn.hasOwnProperty('action')) {
+        btn.action = {
+          "type": "2",
+          "viewId": "",
+          "script": ""
+        }
       }
     })
   }

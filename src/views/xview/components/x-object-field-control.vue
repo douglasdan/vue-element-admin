@@ -152,7 +152,6 @@ export default {
 
       if (fd && fd.valueRefType && fd.mdmDataCode) {
         if (fd.valueRefType == '1') {
-          debugger
           let dd = JSON.parse(this.mdm[fd.mdmDataCode].json).find(a => a.value == cellValue)
           if (dd) {
             return dd.label
@@ -177,7 +176,7 @@ export default {
     },
 
     handleObjectRelation(dd) {
-      console.log('handleObjectRelation', JSON.stringify(dd))
+      console.log('field-control handleObjectRelation', JSON.stringify(dd))
       this.$emit('object-relation', dd)
     },
 

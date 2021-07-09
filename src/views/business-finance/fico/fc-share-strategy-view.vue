@@ -47,13 +47,12 @@
       </el-row>
 
       <el-row style="border-top: 1px solid #eee">
-        <el-col :span="colspan">
+
           <div class="cond-parent" style="margin: 0px;">
             <div class="cond-child">
               <div :style="labelStyle">
                 费用类型：
               </div>
-
               <div style="width: 200px;">
                 <x-object-field-control v-if="mdmReady"
                   @object-relation="handleObjectRelation2"
@@ -62,10 +61,23 @@
                   :field-define="feeCodeFieldDefine">
                 </x-object-field-control>
               </div>
-
             </div>
+
+            <div class="cond-child">
+              <div :style="labelStyle">
+                部门编码：
+              </div>
+              <div style="width: 200px;">
+                <x-object-field-control v-if="mdmReady"
+                  @object-relation="handleObjectRelation3"
+                  v-model="fetchConfig.query.PK_DEPTDOC"
+                  :editing="editing"
+                  :field-define="deptCodeFieldDefine">
+                </x-object-field-control>
+              </div>
+            </div>
+
           </div>
-        </el-col>
       </el-row>
 
     </div>
@@ -104,9 +116,10 @@ export default {
       showFieldGroups:[],
 
       fetchConfig: {
-        fields: ['DEF1', 'DEF2'],
+        fields: ['DEF1', 'DEF2', 'PK_DEPTDOC'],
         query: {
-          DEF1: ''
+          DEF1: '',
+          PK_DEPTDOC: ''
         }
       },
       feeCodeFieldDefine: {
@@ -114,6 +127,12 @@ export default {
         valueRefType: '4',
         refTableId: 30,
         refFieldCode: 'fee_code'
+      },
+      deptCodeFieldDefine: {
+        fieldType: 'text',
+        valueRefType: '4',
+        refTableId: 28,
+        refFieldCode: 'csDepartCode'
       },
 
       shareTaskObjectId: 55,
@@ -126,6 +145,9 @@ export default {
   methods: {
     handleObjectRelation2(dd) {
       this.fetchConfig.query.DEF1 = dd.row['fee_code']
+    },
+    handleObjectRelation3(dd) {
+      this.fetchConfig.query.PK_DEPTDOC = dd.row['csDepartCode']
     },
     loadObjectData() {
       if (this.objectId) {

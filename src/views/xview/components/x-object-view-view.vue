@@ -236,7 +236,6 @@ export default {
     },
 
     handleObjectRelation(dd) {
-
       this.objectFieldDefine.forEach(f => {
         if (f.valueRefType == '4') {
           if (f.refTableId == dd.objectId && f.refFieldCode) {

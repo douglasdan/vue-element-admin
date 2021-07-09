@@ -28,7 +28,7 @@
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
 
-        <el-table-column width="45" v-if="objectDefine && objectDefine.treeFlag">
+        <el-table-column :width="checkBoxWidth" v-if="objectDefine && objectDefine.treeFlag">
         </el-table-column>
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" />
@@ -95,7 +95,7 @@
 import { mapState } from 'vuex'
 import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
-import { selectObjectDataPage, selectTreeRootPage, getTree } from '@/api/object-data'
+import { selectObjectDataPage, selectTreeRootPage, getTree, getObjectDataById } from '@/api/object-data'
 import { getViewDefineById } from '@/api/view-define'
 
 export default {
@@ -159,6 +159,7 @@ export default {
         isLeaf: 'leaf'
       },
 
+      treeMaxDepth: 1
     }
   },
   computed: {
@@ -205,6 +206,9 @@ export default {
     },
     viewButtons() {
       return this.viewJson.viewButtons.filter(a => a.visible)
+    },
+    checkBoxWidth() {
+      return 31 + this.treeMaxDepth * 14
     }
   },
   watch: {
@@ -230,7 +234,7 @@ export default {
       },
       deep: true,
       immediate: true
-    }
+    },
   },
   async created() {
     await this.$store.dispatch('mdm/getMdmData', '')
@@ -372,6 +376,7 @@ export default {
         selectTreeRootPage(this.objectId, queryObj).then(ret => {
           if (ret.success) {
             ret.data.rows.forEach((row) => {
+              row.level = 1
               row.hasChildren = true
             })
 
@@ -392,26 +397,60 @@ export default {
     },
 
     loadTreeNode(tree, treeNode, resolve) {
-
       console.log(tree, treeNode)
-
-      getTree(this.objectDefine.id, tree.id).then(ret => {
+      selectObjectDataPage(this.objectDefine.id, {
+        pageNo: 1,
+        pageSize: 10000,
+        conditions: [{field: this.objectDefine['parentFieldCode'], op:'eq', values: [tree[this.objectDefine['idFieldCode']]]}]
+      }).then(ret => {
         if (ret.success) {
-          //肯定为root节点
-          if (ret.data.children && ret.data.children.length > 0) {
-            resolve(ret.data.children)
-            // tree.hasChildren = true
+          if (ret.data.rows.length == 0) {
+            this.$message.error('没有下级数据')
+            resolve([])
           }
           else {
-            resolve([])
-            tree.hasChildren = false
+            ret.data.rows.forEach(item => {
+              item.children = []
+              item.hasChildren = true
+              item.level = tree.level+1
+
+              this.treeMaxDepth = Math.max(this.treeMaxDepth, item.level)
+            })
+            resolve(ret.data.rows)
           }
-        }
-        else {
-          this.$message.error('没有下级数据')
         }
       })
 
+      // getTree(this.objectDefine.id, tree.id).then(ret => {
+      //   if (ret.success) {
+      //     //肯定为root节点
+      //     if (ret.data.children && ret.data.children.length > 0) {
+      //       this.autoFixTreeNodeHasChildren(ret.data)
+      //       resolve(ret.data.children)
+      //       // tree.hasChildren = true
+      //     }
+      //     else {
+      //       resolve([])
+      //       tree.hasChildren = false
+      //     }
+      //   }
+      //   else {
+      //     this.$message.error('没有下级数据')
+      //   }
+      // })
+
+    },
+
+    autoFixTreeNodeHasChildren(node) {
+      if (node.children && node.children.length > 0) {
+        node.hasChildren = true
+        node.children.forEach((item) => {
+          this.autoFixTreeNodeHasChildren(item)
+        })
+      }
+      else {
+        node.hasChildren = false
+      }
     },
 
     closeDialog() {

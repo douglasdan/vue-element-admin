@@ -24,16 +24,19 @@ export default {
   watch: {
     'value': {
       handler(nval, oval) {
-        this.actionJson = nval
-        if(nval && typeof(nval) == 'string') {
-          if (nval.indexOf('{') == 0) {
-            this.actionJson = JSON.parse(nval)
-          }
-          else {
-            this.actionJson = {
-              type: '2',
-              viewId: '',
-              script: nval
+        if (nval) {
+          this.actionJson = nval
+
+          if(nval && typeof(nval) == 'string') {
+            if (nval.indexOf('{') == 0) {
+              this.actionJson = JSON.parse(nval)
+            }
+            else {
+              this.actionJson = {
+                type: '2',
+                viewId: '',
+                script: nval
+              }
             }
           }
         }

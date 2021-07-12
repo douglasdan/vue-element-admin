@@ -24,7 +24,7 @@
           >删除</el-button>
           <el-button
             size="mini"
-            type="danger"
+            type="primary"
             @click="editPerm(scope.$index, scope.row)"
           >分配权限</el-button>
         </template>
@@ -48,18 +48,22 @@
         <el-form-item label="角色名称：">
           <el-input v-model="editForm.roleName" placeholder="" />
         </el-form-item>
-        <el-form-item label="角色名称：">
-          <el-input v-model="editForm.roleName" placeholder="" />
+        <el-form-item label="角色描述：">
+          <el-input v-model="editForm.roleDesc" placeholder="" />
         </el-form-item>
-        <el-form-item label="数据权限范围：">
+        <!-- <el-form-item label="数据权限范围：">
           <mdm-data :value="editForm.dataPermType" :code="'dataPermType'" @change="handleDataPermChange" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取消</el-button>
         <el-button type="primary" @click="submitEdit()">确定</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog title="编辑角色权限" :visible.sync="editRolePermDialogVisible" :append-to-body="true" :fullscreen="true">
+      <role-perm-edit :role-id="selectRole.roleId"></role-perm-edit>
     </el-dialog>
 
   </section>
@@ -71,8 +75,13 @@ import store from '@/store'
 import { mapState } from 'vuex'
 import { selectRolePage, saveRole, deleteRole } from '@/api/role'
 
+import RolePermEdit from '@/views/business-backend/RoleMgr/RolePermEdit'
+
 export default {
   name: 'OrgList',
+  components: {
+    RolePermEdit
+  },
   data() {
     return {
       roles: [],
@@ -85,7 +94,10 @@ export default {
       editForm: {
         roleName: '',
         roleDesc: ''
-      }
+      },
+
+      editRolePermDialogVisible: false,
+      selectRole: {}
     }
   },
   computed: {
@@ -152,9 +164,9 @@ export default {
         }
       })
     },
-    editPerm(row) {
-      //
-
+    editPerm(i, row) {
+      this.selectRole = row
+      this.editRolePermDialogVisible = true
     },
     handleDataPermChange() {
 

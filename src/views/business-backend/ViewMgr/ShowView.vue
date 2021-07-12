@@ -29,7 +29,7 @@
 <script>
 
 import { param2Obj } from '@/utils'
-import { getViewDefineById } from '@/api/view-define'
+import { getViewDefineById, selectViewDefinePage } from '@/api/view-define'
 
 import { repairObjectListViewJson } from '@/views/xview/template/object-list-template-compatible.js'
 import { repairObjectEditViewJson } from '@/views/xview/template/object-edit-template-compatible.js'
@@ -40,20 +40,28 @@ import fcShareStrategyList from '@/views/business-finance/fico/fc-share-strategy
 // import fcShareTraceView from '@/views/business-finance/fico/fc-share-trace-view'
 import fcGatherResultTrace from '@/views/business-finance/fico/fc-gather-result-trace'
 
+import csCostObjectConfig from '@/views/business-finance/fico/cs-cost-object-config'
+
+
 export default {
   name: 'ShowView',
   components: {
     fcShareStrategyView,
     fcShareStrategyList,
     // fcShareTraceView,
-    fcGatherResultTrace
+    fcGatherResultTrace,
+    csCostObjectConfig
   },
   props: {
     viewDefine: {
       type: Object,
       required: false
     },
-    dataId: [String, Number]
+    dataId: [String, Number],
+    directShow: {
+      objectId: [String, Number],
+      viewType: ''
+    }
   },
   data() {
     return {
@@ -66,6 +74,9 @@ export default {
       objectDataId: null,
 
       VIEW_COVER: {
+        // "69": {
+        //   "object-view": "csCostObjectConfig"
+        // },
         "38": {
           "object-view": "fcGatherResultTrace"
         },
@@ -139,6 +150,22 @@ export default {
       // 由外部传递viewContent，来渲染页面
 
     }
+    else if (this.directShow && this.directShow.objectId && this.directShow.viewType == 'object-list') {
+
+      //组件内部引用，根据ObjectId + viewType查询显示页面
+      selectViewDefinePage({
+          conditions: [
+            {field: 'object_id', op:'eq', values:[''+this.directShow.objectId]},
+            {field: 'view_type', op:'eq', values:['object-list']},
+          ]
+        }).then(ret => {
+
+          if (ret.success && ret.data.rows.length > 0) {
+            this.viewId = ret.data.rows[0].id
+            this.getAndShowViewById()
+          }
+        })
+    }
     else if (this.$route.params.viewId) {
       // 从后台获取viewContent来渲染
       this.viewId = this.$route.params.viewId
@@ -159,6 +186,7 @@ export default {
       //
     },
     getAndShowViewById() {
+      debugger
       if (!this.viewId) {
         return
       }
@@ -205,7 +233,7 @@ export default {
           this.$message.error('页面不存在');
         }
       })
-    }
+    },
   }
 }
 

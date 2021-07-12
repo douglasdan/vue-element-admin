@@ -7,3 +7,10 @@ export function saveMenu(data) {
     data
   })
 }
+
+export function deleteMenuById(id) {
+  return request({
+    url: `/api/v1/menu/delete/${id}`,
+    method: 'delete',
+  })
+}

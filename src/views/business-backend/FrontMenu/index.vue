@@ -7,6 +7,7 @@
       <div class="custom-tree-container">
         <div class="block" style="margin-top:10px;">
           <el-tree
+            ref="mtree"
             style="font-size: 14px;"
             :data="menuTree"
             node-key="id"
@@ -50,16 +51,20 @@
         <el-form-item label=" ">
           <el-button type="primary" @click="submitEdit()">保存</el-button>
           <el-button type="primary" @click="addChildMenu()">添加下级菜单</el-button>
+          <el-button type="primary" @click="deleteMenu()">删除</el-button>
         </el-form-item>
       </el-form>
     </el-col>
+
+
+
   </div>
 </template>
 
 <script>
 
 import { getRoutes, getAllRoutes } from '@/api/user'
-import { saveMenu } from '@/api/back-end'
+import { saveMenu, deleteMenuById } from '@/api/back-end'
 
 const DefaultMenu = {
   menuId: null,
@@ -76,6 +81,9 @@ const DefaultMenu = {
 
 export default {
   name: 'FrontMenu',
+  props: {
+    mode: String
+  },
   data() {
     return {
       searchText: '',
@@ -92,6 +100,13 @@ export default {
         if (ret.success) {
           if (!ret.data.menuTree.root) {
             this.menuTree = [JSON.parse(JSON.stringify(DefaultMenu))]
+
+            if (this.selectMenu.menuId) {
+              this.$nextTick(() => {
+                this.$refs.mtree.setCheckedKeys([this.selectMenu.supId])
+              })
+            }
+
           } else {
             if (ret.data.menuTree.root.virtual) {
               this.menuTree = [].concat(ret.data.menuTree.root.children)
@@ -130,6 +145,20 @@ export default {
         this.selectMenu = newMenu
       } else {
         this.$message.error('请先保存')
+      }
+    },
+    deleteMenu() {
+      if (this.selectMenu.menuId) {
+        if (this.selectMenu.children.length > 0) {
+          this.$message.error('只能删除最末级菜单')
+        }
+        else {
+          deleteMenuById(this.selectMenu.menuId).then(ret => {
+            if (ret.success) {
+              this.loadData()
+            }
+          })
+        }
       }
     }
   }

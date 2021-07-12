@@ -87,7 +87,7 @@
           <ObjectFieldList :object-id="tableDefine.id"/>
         </div>
         <div v-else-if="selectIndex === '3'">
-          33
+          <ObjectRelationList :object-id="tableDefine.id"/>
         </div>
       </el-main>
     </el-container>
@@ -102,10 +102,11 @@ import { selectAppPage } from '@/api/app.js'
 import AppSelect from '../AppMgr/AppSelect'
 
 import ObjectFieldList from './ObjectFieldList'
+import ObjectRelationList from './ObjectRelationList'
 
 export default {
   name: 'ObjectEditor',
-  components: { AppSelect, ObjectFieldList },
+  components: { AppSelect, ObjectFieldList, ObjectRelationList },
   props: {
     obj: {
       type: Object
@@ -152,14 +153,6 @@ export default {
     shouldDisable() {
       return !!this.tableDefine.id
     },
-    editComponent() {
-      if (this.selectIndex === 1) {
-        //
-
-      } else {
-
-      }
-    }
   },
   methods: {
     loadData() {

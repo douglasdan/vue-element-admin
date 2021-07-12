@@ -77,7 +77,7 @@ export default {
   watch: {
     'viewDefine': {
       handler(nval, oval) {
-        console.log('run watch viewDefine changed', nval.viewContent)
+        // console.log('run watch viewDefine changed', nval.viewContent)
         this.viewJson = JSON.parse(nval.viewContent)
       },
       deep: true,

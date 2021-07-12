@@ -13,7 +13,11 @@
         "size": "small",
         "disabled": false
       },
-      "action": "console.log(this)"
+      "action": {
+        "type": "1",
+        "viewId": "",
+        "script": ""
+      }
     },
     {
       "name": "删除",
@@ -23,7 +27,11 @@
         "type": "primary",
         "disabled": false
       },
-      "action": "console.log(this)"
+      "action": {
+        "type": "2",
+        "viewId": "",
+        "script": ""
+      }
     }
   ],
   "selectable": true,

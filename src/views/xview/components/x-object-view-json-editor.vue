@@ -1,5 +1,17 @@
 <template>
   <el-collapse v-model="activeNames">
+    <!-- <el-row style="margin-top: 10px; border-top: 1px solid #eee">
+      <div class="cond-parent">
+        <div class="cond-child">
+          <div style="text-align: right; line-height: 30px; font-size: 13px; width: 40px;">
+            高度：
+          </div>
+          <div style="display: flex-inline; width: 180px;">
+            <el-input type="number" size="small" v-model="viewJson.height"></el-input>
+          </div>
+        </div>
+      </div>
+    </el-row> -->
     <el-collapse-item title="字段显示" name="1">
       <el-row style="margin-bottom: 10px;">
         显示字段名称：<el-input v-model="viewJson.labelWidth"
@@ -29,6 +41,13 @@
       <ObjectBtnEditor :height="400" :btns="viewJson.viewButtons" />
     </el-collapse-item>
 
+    <el-collapse-item title="一对多关系" name="3">
+      <el-row style="margin-bottom: 10px;">
+        高度：<el-input v-model="viewJson.erViewHeight" placeholder="" style="width: 200px;" size="small"></el-input>
+      </el-row>
+      <xObjectErViewEditor :object-id="objectId" :viewJson="viewJson"></xObjectErViewEditor>
+    </el-collapse-item>
+
   </el-collapse>
 </template>
 
@@ -36,11 +55,12 @@
 
 import ObjectFieldList from '@/views/business-backend/ObjectMgr/ObjectFieldList'
 import ObjectBtnEditor from './x-object-btn-editor'
+import xObjectErViewEditor from '@/views/xview/components/x-object-er-view-editor'
 
 export default {
   name: 'XObjectViewJsonEditor',
   components: {
-    ObjectFieldList, ObjectBtnEditor
+    ObjectFieldList, ObjectBtnEditor, xObjectErViewEditor
   },
   props: {
     objectId: {

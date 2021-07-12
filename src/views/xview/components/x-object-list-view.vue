@@ -122,6 +122,10 @@ export default {
     maxHeight: {
       type: Number,
       default: 0
+    },
+    rowEdit: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -172,9 +176,11 @@ export default {
       },
     }),
     checkShowInDialog() {
+
       let flag = false
       let p = this.$parent
       while(p) {
+        console.log(p.$options._componentTag)
         if (p.$options._componentTag == 'el-dialog') {
           flag = true
           break
@@ -241,6 +247,26 @@ export default {
     this.mdmReady = true
   },
   methods: {
+    smartAddDefaultCondition() {
+      debugger
+      if (this.$parent.$options._componentTag == 'show-view'
+        && this.$parent.$parent.$options._componentTag == 'el-tab-pane'
+        && this.$parent.$parent.$parent.$options._componentTag == 'el-tabs'
+        && this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view') {
+
+          let oid = this.$parent.$parent.$parent.$parent.$props.objectId
+          let did = this.$parent.$parent.$parent.$parent.$props.objectDataId
+
+          this.objectFieldDefine.forEach((f) => {
+            if (f.valueRefType == '4' && f.refFieldCode == 'id' && f.refTableId == oid ) {
+              this.defaultQueryConditions = [{
+                field: f.fieldCode, op:'eq', values: [did]
+              }].concat(this.defaultQueryConditions)
+            }
+          })
+      }
+
+    },
     queryBtnVisible() {
       if (this.viewJson.queryDefine && this.viewJson.queryDefine.conditions) {
         return this.viewJson.queryDefine.conditions.filter(a => a.visible && a.visible && a.opType != '').length > 0
@@ -284,6 +310,7 @@ export default {
 
           this.treeProps.label = this.objectDefine['labelFieldCode']
 
+          this.smartAddDefaultCondition()
           this.loadData()
         })
       }

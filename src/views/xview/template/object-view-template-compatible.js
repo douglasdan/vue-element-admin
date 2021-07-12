@@ -52,5 +52,9 @@ export function repairObjectViewJson(viewJson) {
       }
     })
   }
+
+  if (!viewJson.hasOwnProperty('ers')) {
+    viewJson.ers = []
+  }
 }
 

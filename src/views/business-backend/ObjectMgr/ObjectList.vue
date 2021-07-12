@@ -338,8 +338,8 @@ export default {
 
               let viewJson = JSON.parse(JSON.stringify(objectListTemplate))
               viewJson.viewButtons[0].action.viewId = editViewId
-
-              //TODO 设置查看对象跳转的处理
+              debugger
+              viewJson.rowButtons[0].action.viewId = viewId
 
               saveViewDefine({
                 viewName: '列表 '+od.objectName,

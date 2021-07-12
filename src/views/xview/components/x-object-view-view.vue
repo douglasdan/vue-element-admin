@@ -29,6 +29,15 @@
         </el-col>
       </el-row>
     </div>
+
+    <div v-if="shouldShowErView" style="padding-left: 10px; padding-right: 10px;">
+      <el-tabs>
+        <el-tab-pane :label="er.objectName" :name="''+index" v-for="(er, index) in viewJson.ers.filter(a => a.visible)">
+          <show-view :direct-show="{'objectId': er.objectId, viewType:'object-list'}"></show-view>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+
   </section>
 </template>
 
@@ -71,7 +80,10 @@ export default {
       colspan: 0,
       showCols: 1,
       cols: [],
-      showFieldGroups:[]
+      showFieldGroups:[],
+
+      //
+      erViews: {}
     }
   },
   computed: {
@@ -109,6 +121,16 @@ export default {
         return str
       }
     },
+    shouldShowErView: {
+      get() {
+        if (this.viewJson.ers
+          && this.viewJson.ers.length > 0
+          && this.viewJson.ers.filter(a => a.visible).length > 0) {
+            return true
+        }
+        return false
+      }
+    }
   },
   watch: {
     'objectId': {

@@ -323,7 +323,8 @@ export default {
       this.loadData()
     },
     loadData() {
-      selectObjectFieldDefinePage({
+
+      let queryObj = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         conditions: [
@@ -331,7 +332,8 @@ export default {
             field: 'oid', op: 'eq', values: [this.$props.objectId]
           }
         ]
-      }).then(ret => {
+      }
+      selectObjectFieldDefinePage(queryObj).then(ret => {
         if (ret.success) {
 
           this.showFields = ret.data.rows

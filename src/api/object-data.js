@@ -44,3 +44,11 @@ export function getTree(oid, id) {
     method: 'get',
   })
 }
+
+export function callObjectAction(oid, id, cmd, data) {
+  return request({
+    url: `/api/v1/object/${oid}/${id}/action?cmd=${cmd}`,
+    method: 'post',
+    data
+  })
+}

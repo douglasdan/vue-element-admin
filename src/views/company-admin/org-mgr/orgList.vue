@@ -103,7 +103,7 @@ export default {
       this.editDialogVisible = false
     },
     handleEdit(i, row) {
-      Object.assign(this.editForm, row)
+      this.editForm = JSON.parse(JSON.stringify(row))
       this.editDialogVisible = true
     },
     handleAdd(i, row) {
@@ -126,7 +126,15 @@ export default {
     },
     submitEdit() {
       console.log('orgList save', this.editForm)
-      store.dispatch('corpAdmin/saveOrUpdateOrgAction', this.editForm).then(ret => {
+
+      let dd = JSON.parse(JSON.stringify(this.editForm))
+      delete dd['id']
+      delete dd['supId']
+      delete dd['children']
+      delete dd['depth']
+      delete dd['virtual']
+
+      store.dispatch('corpAdmin/saveOrUpdateOrgAction', dd).then(ret => {
         if (ret.success) {
           this.editDialogVisible = false
         }

@@ -26,7 +26,7 @@ const actions = {
         resolve(state.data[key])
       } else {
         getMdmTypeAll().then(ret => {
-          console.log('load mdm success: ' + JSON.stringify(ret))
+          // console.log('load mdm success: ' + JSON.stringify(ret))
           if (ret.success) {
             commit('SET_MDM_LIST', ret.data)
 

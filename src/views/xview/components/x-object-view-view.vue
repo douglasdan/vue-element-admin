@@ -200,7 +200,7 @@ export default {
         this.showFieldGroups = []
       }
 
-      console.log("showFieldGroups = ", JSON.stringify(this.showFieldGroups))
+      // console.log("showFieldGroups = ", JSON.stringify(this.showFieldGroups))
     },
     loadObject() {
       if (this.objectId) {
@@ -258,14 +258,20 @@ export default {
     },
 
     handleObjectRelation(dd) {
-      this.objectFieldDefine.forEach(f => {
-        if (f.valueRefType == '4') {
-          if (f.refTableId == dd.objectId && f.refFieldCode) {
-            this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
-            console.log('set', f.fieldCode, dd.row[f.refFieldCode])
+      if (dd.rows.length > 1) {
+        //TODO 如果字段是JSON
+        this.$message.error('只能选择一条记录')
+      }
+      else {
+        this.objectFieldDefine.forEach(f => {
+          if (f.valueRefType == '4') {
+            if (f.refTableId == dd.objectId && f.refFieldCode) {
+              this.objectData[f.fieldCode] = dd.rows[0][f.refFieldCode]
+              console.log('set', f.fieldCode, dd.rows[0][f.refFieldCode])
+            }
           }
-        }
-      })
+        })
+      }
     },
 
     saveData() {

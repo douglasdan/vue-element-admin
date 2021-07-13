@@ -39,9 +39,9 @@ import fcShareStrategyView from '@/views/business-finance/fico/fc-share-strategy
 import fcShareStrategyList from '@/views/business-finance/fico/fc-share-strategy-list'
 // import fcShareTraceView from '@/views/business-finance/fico/fc-share-trace-view'
 import fcGatherResultTrace from '@/views/business-finance/fico/fc-gather-result-trace'
-
 import csCostObjectConfig from '@/views/business-finance/fico/cs-cost-object-config'
 
+import { CustomViewDefines } from '@/views/business-backend/ViewMgr/customer-view-override'
 
 export default {
   name: 'ShowView',
@@ -70,24 +70,9 @@ export default {
       viewId: '',
       viewType: '',
       objectId: '',
+      objectDefine: null,
       viewJson: null,
       objectDataId: null,
-
-      VIEW_COVER: {
-        // "69": {
-        //   "object-view": "csCostObjectConfig"
-        // },
-        "38": {
-          "object-view": "fcGatherResultTrace"
-        },
-        "58": {
-          // "object-view": "fcShareTraceView"
-        },
-        "54": {
-          "object-list": "fcShareStrategyList",
-          "object-view": "fcShareStrategyView"
-        }
-      }
     }
   },
   watch: {
@@ -114,32 +99,22 @@ export default {
   computed: {
     renderComponent: {
       get() {
+        if (this.objectDefine && CustomViewDefines[this.objectDefine.objectCode]
+            && CustomViewDefines[this.objectDefine.objectCode][this.viewType]) {
+
+          let def = CustomViewDefines[this.objectDefine.objectCode][this.viewType]
+          return def
+        }
 
         if (this.viewType == 'object-list') {
-          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-list']) {
-            return this.VIEW_COVER[''+this.objectId]['object-list']
-          }
-          else {
-            return 'x-object-list-view'
-          }
+          return 'x-object-list-view'
         }
         else if (this.viewType == 'object-edit') {
-          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-edit']) {
-            return this.VIEW_COVER[''+this.objectId]['object-edit']
-          }
-          else {
             return 'x-object-edit-view'
-          }
         }
         else if (this.viewType == 'object-view') {
-          if (this.objectId && this.VIEW_COVER[''+this.objectId] && this.VIEW_COVER[''+this.objectId]['object-view']) {
-            return this.VIEW_COVER[''+this.objectId]['object-view']
-          }
-          else {
-            return 'x-object-view-view'
-          }
+          return 'x-object-view-view'
         }
-
       },
     }
   },
@@ -186,7 +161,6 @@ export default {
       //
     },
     getAndShowViewById() {
-      debugger
       if (!this.viewId) {
         return
       }
@@ -203,6 +177,10 @@ export default {
           this.objectDataId = this.$route.params.dataId
 
           this.objectId = this.view.objectId
+
+          this.$store.dispatch('lowCode/getObjectDefine', this.objectId).then(ret => {
+              this.objectDefine = ret
+          })
 
           let viewJson = JSON.parse(ret.data.viewContent)
 

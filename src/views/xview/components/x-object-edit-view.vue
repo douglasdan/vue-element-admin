@@ -143,12 +143,17 @@ export default {
     },
 
     handleObjectRelation(dd) {
-
-      this.objectFieldDefine.forEach(f => {
-        if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
-          this.objectData[f.fieldCode] = dd.row[f.refFieldCode]
-        }
-      })
+      if (dd.rows.length > 1) {
+        //TODO 如果字段是JSON
+        this.$message.error('只能选择一条记录')
+      }
+      else {
+        this.objectFieldDefine.forEach(f => {
+          if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
+            this.objectData[f.fieldCode] = dd.rows[0][f.refFieldCode]
+          }
+        })
+      }
     },
 
     saveData() {

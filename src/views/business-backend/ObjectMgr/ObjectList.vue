@@ -9,7 +9,8 @@
       是否删除：<mdm-select v-model="queryForm.logicDelete" :code="'bool'" @change="handleAppChange()"/>
     </div>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
-      <el-table-column type="index" label="序号" />
+      <!-- <el-table-column type="index" label="序号" /> -->
+      <el-table-column prop="id" label="对象ID" :formatter="formatter" width="60px" />
       <el-table-column prop="appId" label="应用" :formatter="formatter" width="160px" />
       <el-table-column prop="objectSource" label="对象定义来源" :formatter="formatter" />
       <el-table-column prop="objectName" label="对象名称" :formatter="formatter" width="200px" />

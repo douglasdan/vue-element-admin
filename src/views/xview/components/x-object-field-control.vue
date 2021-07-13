@@ -26,6 +26,8 @@
     <el-date-picker v-model="val" type="datetime" @focus="handleFocus" @change="handleChange" placeholder="选择日期" v-else-if="ready() && fieldDefine.fieldType == 'datetime'">
     </el-date-picker>
 
+    <el-link type="primary" @click="handleFocus" v-if="ready() && multiple">选择</el-link>
+
     <el-dialog title="选择" :visible.sync="selectDataRowDialogVisible"
       :close-on-click-modal="false"
       :append-to-body="true"
@@ -60,6 +62,10 @@ export default {
     },
     fieldDefine: Object,
     value: [String, Number],
+    multiple: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -176,7 +182,10 @@ export default {
     },
 
     handleObjectRelation(dd) {
-      console.log('field-control handleObjectRelation', JSON.stringify(dd))
+      console.log('field-control handleObjectRelation', JSON.stringify(dd.rows))
+      if (dd.rows.length == 1) {
+        this.$emit('input', dd.rows[0][this.fieldDefine.refFieldCode])
+      }
       this.$emit('object-relation', dd)
     },
 

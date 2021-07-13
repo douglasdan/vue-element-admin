@@ -175,8 +175,13 @@ export default {
         return state.mdm.rows
       },
     }),
+    checkShowInErView() {
+      return this.$parent.$options._componentTag == 'show-view'
+        && this.$parent.$parent.$options._componentTag == 'el-tab-pane'
+        && this.$parent.$parent.$parent.$options._componentTag == 'el-tabs'
+        && this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view'
+    },
     checkShowInDialog() {
-
       let flag = false
       let p = this.$parent
       while(p) {
@@ -191,7 +196,7 @@ export default {
     },
     tableHeight() {
       let h
-      if (this.checkShowInDialog) {
+      if (this.checkShowInDialog || this.checkShowInErView) {
         h = (window.innerHeight/2)
       }
       else {
@@ -248,7 +253,6 @@ export default {
   },
   methods: {
     smartAddDefaultCondition() {
-      debugger
       if (this.$parent.$options._componentTag == 'show-view'
         && this.$parent.$parent.$options._componentTag == 'el-tab-pane'
         && this.$parent.$parent.$parent.$options._componentTag == 'el-tabs'
@@ -309,7 +313,6 @@ export default {
           })
 
           this.treeProps.label = this.objectDefine['labelFieldCode']
-
           this.smartAddDefaultCondition()
           this.loadData()
         })
@@ -528,14 +531,17 @@ export default {
       return p
     },
     submitSelection() {
-      this.$emit('object-relation', {
-        objectId: this.objectId,
-        row: this.sels[0]
-      })
 
-      let p = this.getParentView('x-object-field-control')
-      if (p) {
-        p.closeDialog()
+      if (this.sels.length > 0) {
+        this.$emit('object-relation', {
+          objectId: this.objectId,
+          rows: this.sels
+        })
+
+        let p = this.getParentView('x-object-field-control')
+        if (p) {
+          p.closeDialog()
+        }
       }
     },
 

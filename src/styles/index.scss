@@ -200,19 +200,29 @@ aside {
   margin: 10px;
   width: 100%;
   display: flex;
-  font-size: 12px;
+  font-size: 13px;
   flex-flow: row wrap;
   align-content: flex-start;
 }
 
 .cond-child {
   margin: 10px;
+  font-size: 13px;
   box-sizing: border-box;
   background-color: white;
   display: flex;
   flex: 0 0 200px;
   /* border: 1px dotted grey; */
   list-style: none;
+
+  // :first-child {
+  //   text-align: right;
+  //   line-height: 32px;
+  //   width: 120px;
+  // }
+  // :nth-child(2) {
+  //   width: 180px;
+  // }
 }
 
 .field-content {

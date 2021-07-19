@@ -1,27 +1,28 @@
 <template>
   <section>
-    <div  :style="pageStyle">
+    <div :style="pageStyle" v-if="viewJson">
       <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
         <div style="right: 10px; float: right; position: absolute;">
           <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
         </div>
       </el-row>
 
-      <el-row style="border-top: 1px solid #eee" v-for="i of showFieldGroups.length" v-if="colspan > 0">
-        <el-col :span="colspan" v-for="(item, j) in cols">
+      <el-row v-for="i of showFieldGroups.length" v-if="colspan > 0" style="border-top: 1px solid #eee">
+        <el-col v-for="(item, j) in cols" :span="colspan">
           <div class="cond-parent" style="margin: 0px;">
-            <div class="cond-child" v-if="showFieldGroups[i-1][j]">
+            <div v-if="showFieldGroups[i-1][j]" class="cond-child">
               <div :style="labelStyle">
                 {{ showFieldGroups[i-1][j].fieldName }}：
               </div>
 
               <div :style="'width: '+(viewJson.contentWidth ? viewJson.contentWidth : 200)+'px'">
-                <x-object-field-control v-if="mdmReady"
-                  @object-relation="handleObjectRelation"
+                <x-object-field-control
+                  v-if="mdmReady"
                   v-model="objectData[showFieldGroups[i-1][j].fieldCode]"
-                  :editing="editing"
-                  :field-define="objectFieldDefineMap[showFieldGroups[i-1][j].fieldCode]">
-                </x-object-field-control>
+                  :editing="pageEditing"
+                  :field-define="objectFieldDefineMap[showFieldGroups[i-1][j].fieldCode]"
+                  @object-relation="handleObjectRelation"
+                />
               </div>
 
             </div>
@@ -32,8 +33,9 @@
 
     <div v-if="shouldShowErView" style="padding-left: 10px; padding-right: 10px;">
       <el-tabs>
-        <el-tab-pane :label="er.objectName" :name="''+index" v-for="(er, index) in viewJson.ers.filter(a => a.visible)">
-          <show-view :direct-show="{'objectId': er.objectId, viewType:'object-list'}"></show-view>
+        <el-tab-pane v-for="(er, index) in viewJson.ers.filter(a => a.visible)" :label="er.objectName" :name="''+index">
+          {{ er.objectId }}
+          <show-view :object-id="er.objectId" :view-type="'object-list'" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -49,7 +51,7 @@ import { getObjectDefineById } from '@/api/object-define'
 import { saveObjectData, getObjectDataById } from '@/api/object-data'
 
 export default {
-  name: 'x-object-view-view',
+  name: 'XObjectViewView',
   props: {
     objectId: {
       type: String,
@@ -59,19 +61,22 @@ export default {
       type: Object,
       required: true
     },
-    objectDataId: [String, Number]
+    objectDataId: [String, Number],
+    editing: {
+      type: Boolean, default: false
+    }
   },
   data() {
     return {
       self: this,
       mdmReady: false,
-      editing: false,
+      pageEditing: false,
 
       objectDefine: null,
       objectFieldDefine: [],
       objectFieldDefineMap: {},
 
-      //对象数据
+      // 对象数据
       objectData: {
 
       },
@@ -80,17 +85,22 @@ export default {
       colspan: 0,
       showCols: 1,
       cols: [],
-      showFieldGroups:[],
+      showFieldGroups: [],
 
-      //
-      erViews: {}
+      //er关系
+      erViews: {},
+
+      //extend data
+      ext: {
+
+      }
     }
   },
   computed: {
     ...mapState({
       mdm: function(state) {
         return state.mdm.data
-      },
+      }
     }),
     tableHeight() {
       const h = (window.innerHeight - 22 -
@@ -103,19 +113,18 @@ export default {
     pageStyle: {
       get() {
         let str = ''
-        if (this.viewJson.maxHeight) {
-          str += 'max-height: '+this.viewJson.maxHeight+'px;'
+        if (this.viewJson && this.viewJson.maxHeight) {
+          str += 'max-height: ' + this.viewJson.maxHeight + 'px;'
         }
         return str
       }
     },
     labelStyle: {
       get() {
-        let str = 'display: flex-inline; text-align: right; line-height: 30px;'
+        let str = 'display: flex-inline; text-align: right; line-height: 32px;'
         if (this.$props.viewJson.labelWidth > 0) {
-          str += 'width: '+ this.$props.viewJson.labelWidth +'px;'
-        }
-        else {
+          str += 'width: ' + this.$props.viewJson.labelWidth + 'px;'
+        } else {
           str += 'width: 120px;'
         }
         return str
@@ -123,10 +132,10 @@ export default {
     },
     shouldShowErView: {
       get() {
-        if (this.viewJson.ers
-          && this.viewJson.ers.length > 0
-          && this.viewJson.ers.filter(a => a.visible).length > 0) {
-            return true
+        if (this.viewJson.ers &&
+          this.viewJson.ers.length > 0 &&
+          this.viewJson.ers.filter(a => a.visible).length > 0) {
+          return true
         }
         return false
       }
@@ -161,6 +170,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    'editing': {
+      handler(nval, oval) {
+        this.pageEditing = nval
+      },
+      deep: true,
+      immediate: true
     }
   },
   async created() {
@@ -169,20 +185,18 @@ export default {
   },
   methods: {
     updateViewDisplay() {
-
       this.showCols = this.$props.viewJson.cols > 0 ? this.$props.viewJson.cols : 1
-      this.colspan = 24/this.showCols
+      this.colspan = 24 / this.showCols
 
       this.cols = []
-      for (let i=0;i<this.showCols; i++) {
+      for (let i = 0; i < this.showCols; i++) {
         this.cols.push({})
       }
 
-      let groups = []
+      const groups = []
       if (this.showCols > 0) {
-
         let temp = []
-        for (let i=0; i<this.viewJson.showFields.length; i++) {
+        for (let i = 0; i < this.viewJson.showFields.length; i++) {
           temp.push(this.viewJson.showFields[i])
           if (temp.length == this.showCols) {
             groups.push(temp)
@@ -195,8 +209,7 @@ export default {
         }
 
         this.showFieldGroups = groups
-      }
-      else {
+      } else {
         this.showFieldGroups = []
       }
 
@@ -222,10 +235,9 @@ export default {
       if (this.objectId) {
         if (!this.objectDataId) {
           this.$message.error('未指定数据ID')
-        }
-        else {
+        } else {
           getObjectDataById(this.objectId, this.objectDataId).then(ret => {
-            if ( ret.success && ret.data) {
+            if (ret.success && ret.data) {
               this.objectData = ret.data
             }
           })
@@ -245,24 +257,23 @@ export default {
     },
 
     beginEdit() {
-      if (!this.editing) {
+      if (!this.pageEditing) {
         this.objectDataBak = JSON.parse(JSON.stringify(this.objectData))
-        this.editing = true
+        this.pageEditing = true
       }
     },
     cancelEdit() {
-      if (this.editing) {
+      if (this.pageEditing) {
         this.objectData = JSON.parse(JSON.stringify(this.objectDataBak))
-        this.editing = false
+        this.pageEditing = false
       }
     },
 
     handleObjectRelation(dd) {
       if (dd.rows.length > 1) {
-        //TODO 如果字段是JSON
+        // TODO 如果字段是JSON
         this.$message.error('只能选择一条记录')
-      }
-      else {
+      } else {
         this.objectFieldDefine.forEach(f => {
           if (f.valueRefType == '4') {
             if (f.refTableId == dd.objectId && f.refFieldCode) {
@@ -277,11 +288,11 @@ export default {
     saveData() {
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {
-          this.editing = false
+          this.pageEditing = false
           this.$message.info('操作成功')
         }
       })
-    },
+    }
 
   }
 

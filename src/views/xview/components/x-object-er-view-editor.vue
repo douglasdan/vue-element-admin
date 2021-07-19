@@ -66,6 +66,7 @@ export default {
         ]
       }).then(ret => {
         if (ret.success) {
+          debugger
           this.relations = []
           ret.data.rows.forEach((item) => {
             this.relations.push({

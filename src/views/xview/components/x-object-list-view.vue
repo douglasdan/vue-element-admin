@@ -2,34 +2,37 @@
   <section>
     <div>
       <el-row v-if="viewButtons && viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
-        <div style="display: flex-inline;" >
-          <el-link type="primary" style="line-height: 32px;" @click="toggleQueryPanel" v-show="queryBtnVisible()">筛选</el-link>
+        <div style="display: flex-inline;">
+          <el-link v-show="queryBtnVisible()" type="primary" style="line-height: 32px;" @click="toggleQueryPanel">筛选</el-link>
         </div>
         <div style="right: 10px; float: right; position: absolute;">
           <x-button v-for="(btn, index) in viewButtons" :view="btn" :self="self" />
         </div>
       </el-row>
 
-      <x-object-filter :object-id="objectId" :viewJson="viewJson"
+      <x-object-filter
+        v-show="queryPanelVisible"
         ref="refObjectFilter"
-        v-show="queryPanelVisible" >
-      </x-object-filter>
+        :object-id="objectId"
+        :view-json="viewJson"
+      />
 
-      <el-table :data="rows"
+      <el-table
+        :data="rows"
         border
         :row-key="(objectDefine && objectDefine.treeFlag ? objectDefine.idFieldCode : 'id')"
         style="width: 100%;"
         highlight-current-row
-        @selection-change="handleSelectionChange"
-        @header-dragend="handleHeaderDragend"
         :height="tableHeight"
         lazy
         :load="loadTreeNode"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-        >
+        @selection-change="handleSelectionChange"
+        @header-dragend="handleHeaderDragend"
+        @row-click="haneldRowClick"
+      >
 
-        <el-table-column :width="checkBoxWidth" v-if="objectDefine && objectDefine.treeFlag">
-        </el-table-column>
+        <el-table-column v-if="objectDefine && objectDefine.treeFlag" :width="checkBoxWidth" />
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" />
         <el-table-column
@@ -41,28 +44,36 @@
           :formatter="formatter"
         >
           <template scope="scope">
-            <x-object-field-control v-if="mdmReady"
+            <x-object-field-control
+              v-if="mdmReady"
               v-model="scope.row[f.fieldCode]"
               :field-define="objectFieldDefineMap[f.fieldCode]"
-              >
-            </x-object-field-control>
+            />
           </template>
         </el-table-column>
 
-        <el-table-column prop="operate" v-if="!hideRowOpearte"
-          :width=" (viewJson.operate && viewJson.operate.width) ? viewJson.operate.width : 100">
+        <el-table-column
+          v-if="!hideRowOpearte"
+          prop="operate"
+          :width=" (viewJson.operate && viewJson.operate.width) ? viewJson.operate.width : 100"
+        >
           <template slot="header">
             <span>操作</span>
           </template>
           <template scope="scope">
-            <x-button :size="'mini'" :view="btn" :self="self" :row="scope.row"
+            <x-button
               v-for="(btn, index) in viewJson.rowButtons"
-              v-if="btn.visible"/>
+              v-if="btn.visible"
+              :size="'mini'"
+              :view="btn"
+              :self="self"
+              :row="scope.row"
+            />
           </template>
         </el-table-column>
       </el-table>
 
-      <el-row>
+      <el-row v-if="pagination">
         <div class="block" style="margin: 5px; float: right;">
           <el-pagination
             :current-page.sync="pageNo"
@@ -82,9 +93,8 @@
 
     </div>
 
-    <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body>
-      <show-view :view-define="showView.viewDefine" :data-id="showView.dataId" v-if="showView.visible">
-      </show-view>
+    <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body v-if="showView.visible">
+      <show-view v-if="showView.visible" :view-define="showView.viewDefine" :data-id="showView.dataId" />
     </el-dialog>
 
   </section>
@@ -99,7 +109,7 @@ import { selectObjectDataPage, selectTreeRootPage, getTree, getObjectDataById } 
 import { getViewDefineById } from '@/api/view-define'
 
 export default {
-  name: 'x-object-list-view',
+  name: 'XObjectListView',
   components: {
   },
   props: {
@@ -116,7 +126,7 @@ export default {
       default: false
     },
     mode: {
-      type: String,     //select 选择模式
+      type: String, // select 选择模式
       default: ''
     },
     maxHeight: {
@@ -126,6 +136,14 @@ export default {
     rowEdit: {
       type: Boolean,
       default: false
+    },
+    pagination: {
+      type: Boolean,
+      default: true
+    },
+    editing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -133,7 +151,7 @@ export default {
       self: this,
       mdmReady: false,
 
-      defaultQueryConditions:[],
+      defaultQueryConditions: [],
 
       objectDefine: null,
       objectFieldDefine: null,
@@ -154,7 +172,7 @@ export default {
       showView: {
         visible: false,
         viewDefine: null,
-        dataId: null,
+        dataId: null
       },
 
       treeProps: {
@@ -163,7 +181,11 @@ export default {
         isLeaf: 'leaf'
       },
 
-      treeMaxDepth: 1
+      treeMaxDepth: 1,
+
+      ext: {
+
+      }
     }
   },
   computed: {
@@ -173,18 +195,18 @@ export default {
       },
       mdmList: function(state) {
         return state.mdm.rows
-      },
+      }
     }),
     checkShowInErView() {
-      return this.$parent.$options._componentTag == 'show-view'
-        && this.$parent.$parent.$options._componentTag == 'el-tab-pane'
-        && this.$parent.$parent.$parent.$options._componentTag == 'el-tabs'
-        && this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view'
+      return this.$parent.$options._componentTag == 'show-view' &&
+        this.$parent.$parent.$options._componentTag == 'el-tab-pane' &&
+        this.$parent.$parent.$parent.$options._componentTag == 'el-tabs' &&
+        this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view'
     },
     checkShowInDialog() {
       let flag = false
       let p = this.$parent
-      while(p) {
+      while (p) {
         console.log(p.$options._componentTag)
         if (p.$options._componentTag == 'el-dialog') {
           flag = true
@@ -197,9 +219,8 @@ export default {
     tableHeight() {
       let h
       if (this.checkShowInDialog || this.checkShowInErView) {
-        h = (window.innerHeight/2)
-      }
-      else {
+        h = (window.innerHeight / 2)
+      } else {
         h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
@@ -210,10 +231,10 @@ export default {
       if (this.$props.maxHeight > 0 && h > this.$props.maxHeight) {
         h = this.$props.maxHeight
       }
-      return h+'px'
+      return h + 'px'
     },
     hideRowOpearte() {
-      return this.mode == 'select'
+      return this.mode == 'select' || this.viewJson.rowButtons.filter(a => a.visible).length == 0
     },
     viewButtons() {
       return this.viewJson.viewButtons.filter(a => a.visible)
@@ -253,23 +274,21 @@ export default {
   },
   methods: {
     smartAddDefaultCondition() {
-      if (this.$parent.$options._componentTag == 'show-view'
-        && this.$parent.$parent.$options._componentTag == 'el-tab-pane'
-        && this.$parent.$parent.$parent.$options._componentTag == 'el-tabs'
-        && this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view') {
+      if (this.$parent.$options._componentTag == 'show-view' &&
+        this.$parent.$parent.$options._componentTag == 'el-tab-pane' &&
+        this.$parent.$parent.$parent.$options._componentTag == 'el-tabs' &&
+        this.$parent.$parent.$parent.$parent.$options._componentTag == 'x-object-view-view') {
+        const oid = this.$parent.$parent.$parent.$parent.$props.objectId
+        const did = this.$parent.$parent.$parent.$parent.$props.objectDataId
 
-          let oid = this.$parent.$parent.$parent.$parent.$props.objectId
-          let did = this.$parent.$parent.$parent.$parent.$props.objectDataId
-
-          this.objectFieldDefine.forEach((f) => {
-            if (f.valueRefType == '4' && f.refFieldCode == 'id' && f.refTableId == oid ) {
-              this.defaultQueryConditions = [{
-                field: f.fieldCode, op:'eq', values: [did]
-              }].concat(this.defaultQueryConditions)
-            }
-          })
+        this.objectFieldDefine.forEach((f) => {
+          if (f.valueRefType == '4' && f.refFieldCode == 'id' && f.refTableId == oid) {
+            this.defaultQueryConditions = [{
+              field: f.fieldCode, op: 'eq', values: [did]
+            }].concat(this.defaultQueryConditions)
+          }
+        })
       }
-
     },
     queryBtnVisible() {
       if (this.viewJson.queryDefine && this.viewJson.queryDefine.conditions) {
@@ -292,14 +311,16 @@ export default {
 
       if (column.property == 'operate') {
         this.$props.viewJson.operate.width = newWidth
-      }
-      else {
+      } else {
         this.$props.viewJson.showFields.forEach((item) => {
           if (item.fieldCode == column.property) {
             item.width = newWidth
           }
         })
       }
+    },
+    haneldRowClick(	row, column, event) {
+      this.$emit('row-click', { row, column, event })
     },
     loadObject() {
       if (this.objectId) {
@@ -335,31 +356,26 @@ export default {
       return false
     },
     formatter(row, column, cellValue, index) {
-
       if (this.objectFieldDefineMap[column.property]) {
-
-        let fd = this.objectFieldDefineMap[column.property]
+        const fd = this.objectFieldDefineMap[column.property]
         if (fd && fd.valueRefType) {
           if (fd.valueRefType == '1') {
-            let dd = JSON.parse(this.mdm['bool'].json).find(a => a.value == cellValue)
+            const dd = JSON.parse(this.mdm['bool'].json).find(a => a.value == cellValue)
             if (dd) {
               return dd.label
             }
-          }
-          else if (fd.valueRefType == '2') {
-            let mm = this.mdmList.find(a => a.id == fd.mdmDataId)
+          } else if (fd.valueRefType == '2') {
+            const mm = this.mdmList.find(a => a.id == fd.mdmDataId)
             if (mm) {
-              let dd = JSON.parse(this.mdm[mm.mdmCode].json).find(a => a.value == cellValue)
+              const dd = JSON.parse(this.mdm[mm.mdmCode].json).find(a => a.value == cellValue)
               if (dd) {
                 return dd.label
               }
             }
-          }
-          else if (fd.valueRefType == '3') {
-            //TODO select
+          } else if (fd.valueRefType == '3') {
+            // TODO select
 
-          }
-          else if (fd.valueRefType == '4') {
+          } else if (fd.valueRefType == '4') {
             // 引用字段，如果是不读的值，则应当创建另外一个字段来保存值
 
           }
@@ -385,6 +401,7 @@ export default {
       this.loadData()
     },
     loadData() {
+
       if (!this.objectDefine) {
         return
       }
@@ -395,7 +412,7 @@ export default {
         return
       }
 
-      let queryObj = {
+      const queryObj = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         conditions: []
@@ -414,8 +431,7 @@ export default {
             this.rows = ret.data.rows
           }
         })
-      }
-      else {
+      } else {
         selectObjectDataPage(this.objectId, queryObj).then(ret => {
           if (ret.success) {
             this.total = ret.data.total
@@ -423,7 +439,6 @@ export default {
           }
         })
       }
-
     },
 
     loadTreeNode(tree, treeNode, resolve) {
@@ -431,18 +446,17 @@ export default {
       selectObjectDataPage(this.objectDefine.id, {
         pageNo: 1,
         pageSize: 10000,
-        conditions: [{field: this.objectDefine['parentFieldCode'], op:'eq', values: [tree[this.objectDefine['idFieldCode']]]}]
+        conditions: [{ field: this.objectDefine['parentFieldCode'], op: 'eq', values: [tree[this.objectDefine['idFieldCode']]] }]
       }).then(ret => {
         if (ret.success) {
           if (ret.data.rows.length == 0) {
             this.$message.error('没有下级数据')
             resolve([])
-          }
-          else {
+          } else {
             ret.data.rows.forEach(item => {
               item.children = []
               item.hasChildren = true
-              item.level = tree.level+1
+              item.level = tree.level + 1
 
               this.treeMaxDepth = Math.max(this.treeMaxDepth, item.level)
             })
@@ -468,7 +482,6 @@ export default {
       //     this.$message.error('没有下级数据')
       //   }
       // })
-
     },
 
     autoFixTreeNodeHasChildren(node) {
@@ -477,8 +490,7 @@ export default {
         node.children.forEach((item) => {
           this.autoFixTreeNodeHasChildren(item)
         })
-      }
-      else {
+      } else {
         node.hasChildren = false
       }
     },
@@ -491,38 +503,32 @@ export default {
       console.log('x-object-list-view showView', viewId)
 
       if (viewId) {
-
         getViewDefineById(viewId).then(ret => {
           if (ret.success) {
-
             if (ret.data.viewType == 'object-list') {
-              this.$router.push({path: '/singleview/' + ret.data.id});
-            }
-            else if (ret.data.viewType == 'object-view') {
-              this.$router.push({path: '/singleview/' + ret.data.id+'/'+row.id});
-            }
-            else {
+              this.$router.push({ path: '/singleview/' + ret.data.id })
+            } else if (ret.data.viewType == 'object-view') {
+              this.$router.push({ path: '/singleview/' + ret.data.id + '/' + row.id })
+            } else {
               this.showView.viewDefine = ret.data
               this.showView.visible = true
             }
-          }
-          else {
+          } else {
             //
             this.$message.error('试图定义错误')
           }
         })
-
       }
       //
     },
 
-    handleSelectionChange(sels){
+    handleSelectionChange(sels) {
       this.sels = sels
     },
 
     getParentView(tag) {
       let p = this.$parent
-      while(p) {
+      while (p) {
         if (p.$options._componentTag == tag) {
           break
         }
@@ -531,14 +537,13 @@ export default {
       return p
     },
     submitSelection() {
-
       if (this.sels.length > 0) {
         this.$emit('object-relation', {
           objectId: this.objectId,
           rows: this.sels
         })
 
-        let p = this.getParentView('x-object-field-control')
+        const p = this.getParentView('x-object-field-control')
         if (p) {
           p.closeDialog()
         }
@@ -546,7 +551,7 @@ export default {
     },
 
     deleteDataRow(row) {
-      //TODO
+      // TODO
 
     }
 

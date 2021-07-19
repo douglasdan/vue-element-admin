@@ -22,7 +22,7 @@ const mutations = {
   SET_VIEWS: (state, data) => {
     state.views = data
   },
-  SET_OBJECT_DEFINE: (state, {oid, data}) => {
+  SET_OBJECT_DEFINE: (state, { oid, data }) => {
     state.objects[oid] = data
     state.objectCodeMap[data.fieldCode] = data
   },
@@ -33,9 +33,9 @@ const mutations = {
     delete state.objects[oid]
   },
 
-  SET_VIEW_DEFINE: (state, {vid, view}) => {
-    state.views[''+vid] = view
-  },
+  SET_VIEW_DEFINE: (state, { vid, view }) => {
+    state.views['' + vid] = view
+  }
 }
 
 const actions = {
@@ -84,60 +84,53 @@ const actions = {
   },
 
   getObjectDefine({ commit }, oid) {
-
-    console.log(new Date(),'lowCode/getObjectDefine '+oid)
+    console.log(new Date(), 'lowCode/getObjectDefine ' + oid)
 
     return new Promise((resolve, reject) => {
-      if (!state.objects[''+oid]) {
+      if (!state.objects['' + oid]) {
         // console.log(`state.objects[''+${oid}]`, 'not exists')
         getObjectDefineById(oid).then(ret => {
           if (ret.success) {
             commit('SET_OBJECT_DEFINE', {
-              oid: ''+oid,
+              oid: '' + oid,
               data: ret.data
             })
           }
           resolve(ret.data)
         })
-      }
-      else {
-        resolve(state.objects[''+oid])
+      } else {
+        resolve(state.objects['' + oid])
       }
     })
   },
 
   getObjectDefineByCode({ commit }, code) {
-
-    console.log(new Date(),'lowCode/getObjectDefineByCode '+code)
+    console.log(new Date(), 'lowCode/getObjectDefineByCode ' + code)
 
     return new Promise((resolve, reject) => {
-      if (!state.objectCodeMap[''+code]) {
-
+      if (!state.objectCodeMap['' + code]) {
         selectObjectDefinePage({
-          conditions:[
-            {field: 'object_code', op:'eq', values:[code]}
+          conditions: [
+            { field: 'object_code', op: 'eq', values: [code] }
           ]
         }).then(ret => {
-
           if (ret.success && ret.data.rows.length > 0) {
-            let oid = ret.data.rows[0].id
+            const oid = ret.data.rows[0].id
             getObjectDefineById(oid).then(ret => {
               if (ret.success) {
                 commit('SET_OBJECT_DEFINE', {
-                  oid: ''+oid,
+                  oid: '' + oid,
                   data: ret.data
                 })
               }
               resolve(ret.data)
             })
-          }
-          else {
+          } else {
             resolve(null)
           }
         })
-      }
-      else {
-        resolve(state.objectCodeMap[''+code])
+      } else {
+        resolve(state.objectCodeMap['' + code])
       }
     })
   },
@@ -150,27 +143,24 @@ const actions = {
   },
 
   getViewDefine({ commit }, vid) {
-
-    console.log(new Date(),'lowCode/getViewDefine '+vid)
+    console.log(new Date(), 'lowCode/getViewDefine ' + vid)
 
     return new Promise((resolve, reject) => {
-      if (!state.views[''+vid]) {
-
+      if (!state.views['' + vid]) {
         getViewDefineById(oid).then(ret => {
           if (ret.success) {
             commit('SET_VIEW_DEFINE', {
-              oid: ''+vid,
+              oid: '' + vid,
               data: ret.data
             })
           }
           resolve(ret.data)
         })
-      }
-      else {
-        resolve(state.views[''+vid])
+      } else {
+        resolve(state.views['' + vid])
       }
     })
-  },
+  }
 }
 
 export default {

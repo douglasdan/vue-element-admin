@@ -1,18 +1,19 @@
 <template>
   <section>
-    <el-row style="margin-top: 10px; border-top: 1px solid #eee" v-if="objectFieldDefine.length > 0">
+    <el-row v-if="objectFieldDefine.length > 0" style="margin-top: 10px; border-top: 1px solid #eee">
       <div class="cond-parent">
         <div v-for="(cond, i) in viewJson.showFields" class="cond-child">
           <div :style="labelStyle">
             {{ cond.fieldName }}：
           </div>
           <div style="display: flex-inline; width: 180px;">
-            <x-object-field-control v-if="mdmReady"
-              @object-relation="handleObjectRelation"
-              :editing="true"
+            <x-object-field-control
+              v-if="mdmReady"
               v-model="objectData[cond.fieldCode]"
+              :editing="true"
               :field-define="objectFieldDefineMap[cond.fieldCode]"
-            ></x-object-field-control>
+              @object-relation="handleObjectRelation"
+            />
           </div>
         </div>
       </div>
@@ -34,7 +35,7 @@ import { getObjectDefineById } from '@/api/object-define'
 import { saveObjectData } from '@/api/object-data'
 
 export default {
-  name: 'x-object-edit-view',
+  name: 'XObjectEditView',
   props: {
     objectId: {
       type: String,
@@ -43,7 +44,7 @@ export default {
     viewJson: {
       type: Object,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -53,7 +54,7 @@ export default {
       objectFieldDefine: [],
       objectFieldDefineMap: {},
 
-      //对象数据
+      // 对象数据
       objectData: {
 
       }
@@ -63,7 +64,7 @@ export default {
     checkShowInDialog() {
       let flag = false
       let p = this.$parent
-      while(p) {
+      while (p) {
         if (p.$options._componentTag == 'el-dialog') {
           flag = true
           break
@@ -74,9 +75,8 @@ export default {
     },
     tableHeight() {
       if (this.checkShowInDialog) {
-        return (window.innerHeight/2)+'px'
-      }
-      else {
+        return (window.innerHeight / 2) + 'px'
+      } else {
         const h = (window.innerHeight - 22 -
           this.$store.state.settings.navbarHeight -
           this.$store.state.settings.tagsViewHeight -
@@ -89,14 +89,13 @@ export default {
       get() {
         let str = 'display: flex-inline; text-align: right; line-height: 30px;'
         if (this.$props.viewJson.labelWidth > 0) {
-          str += 'width: '+ this.$props.viewJson.labelWidth +'px;'
-        }
-        else {
+          str += 'width: ' + this.$props.viewJson.labelWidth + 'px;'
+        } else {
           str += 'width: 120px;'
         }
         return str
       }
-    },
+    }
   },
   watch: {
     'objectId': {
@@ -144,10 +143,9 @@ export default {
 
     handleObjectRelation(dd) {
       if (dd.rows.length > 1) {
-        //TODO 如果字段是JSON
+        // TODO 如果字段是JSON
         this.$message.error('只能选择一条记录')
-      }
-      else {
+      } else {
         this.objectFieldDefine.forEach(f => {
           if (f.valueRefType == '4' && f.refTableId == dd.objectId && f.refFieldCode) {
             this.objectData[f.fieldCode] = dd.rows[0][f.refFieldCode]
@@ -157,26 +155,23 @@ export default {
     },
 
     saveData() {
-
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {
           this.$message.info('操作成功')
           this.cancel()
         }
       })
-
     },
     cancel() {
       console.log(this.$parent.$options._componentTag == 'show-view')
       console.log(this.$parent.$parent.$options._componentTag == 'el-dialog')
       console.log(this.$parent.$parent.$parent.$options._componentTag == 'x-object-list-view')
 
-      if (this.$parent.$options._componentTag == 'show-view'
-        && this.$parent.$parent.$options._componentTag == 'el-dialog'
-        && this.$parent.$parent.$parent.$options._componentTag == 'x-object-list-view') {
-
-          this.$parent.$parent.$parent.loadData()
-          this.$parent.$parent.$parent.closeDialog()
+      if (this.$parent.$options._componentTag == 'show-view' &&
+        this.$parent.$parent.$options._componentTag == 'el-dialog' &&
+        this.$parent.$parent.$parent.$options._componentTag == 'x-object-list-view') {
+        this.$parent.$parent.$parent.loadData()
+        this.$parent.$parent.$parent.closeDialog()
       }
     }
 

@@ -30,3 +30,10 @@ export function selectViewDefinePage(data) {
   })
 }
 
+export function getViewByObjectCodeAndType(code, type) {
+  return request({
+    url: `/api/v1/viewDefine/${code}/${type}`,
+    method: 'get',
+  })
+}
+

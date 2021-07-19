@@ -2,11 +2,11 @@
   <section>
     <div style="width: 100%; padding-left: 10px; padding-right: 10px; margin-top: 10px; margin-bottom: 10px; float: right; font-size: 14px;">
       应用：<app-select v-model="queryForm.appId" @change="handleAppChange()" />
-      对象来源：<mdm-select v-model="queryForm.objectSource" :code="'objectDefineSource'" @change="handleAppChange()"/>
+      对象来源：<mdm-select v-model="queryForm.objectSource" :code="'objectDefineSource'" @change="handleAppChange()" />
       <div style="display: inline-block; float: right;">
         <el-button type="primary" @click="handleAdd">新增对象</el-button>
       </div>
-      是否删除：<mdm-select v-model="queryForm.logicDelete" :code="'bool'" @change="handleAppChange()"/>
+      是否删除：<mdm-select v-model="queryForm.logicDelete" :code="'bool'" @change="handleAppChange()" />
     </div>
     <el-table :data="rows" border style="width: 100%;" :height="tableHeight">
       <!-- <el-table-column type="index" label="序号" /> -->
@@ -101,7 +101,7 @@ export default {
       queryForm: {
         appId: '',
         objectSource: '',
-        logicDelete: '0',
+        logicDelete: '0'
       },
       rows: [],
       total: 0,
@@ -205,7 +205,6 @@ export default {
         queryObj.conditions.push({ field: 'object_source', op: 'eq', values: [this.queryForm.objectSource] })
       }
 
-
       selectObjectDefinePage(queryObj).then(ret => {
         if (ret.success) {
           this.rows = ret.data.rows
@@ -228,145 +227,117 @@ export default {
       this.editDialogVisible = true
     },
     async createObjectDefaultViews(i, row) {
-
       if (row.id) {
-
-        let editViewId = await this.createDefaultEditView(row)
-        let viewId = await this.createDefaultViewView(row)
+        const editViewId = await this.createDefaultEditView(row)
+        const viewId = await this.createDefaultViewView(row)
 
         if (editViewId && viewId) {
           this.createDefaultListView(row, editViewId, viewId)
         }
 
-        this.$message.info('操作成功');
+        this.$message.info('操作成功')
       }
-
     },
     createDefaultEditView(od) {
-
       return new Promise((resolve, reject) => {
-
         selectViewDefinePage({
           conditions: [
-            {field: 'object_id', op:'eq', values:[''+od.id]},
-            {field: 'view_type', op:'eq', values:['object-edit']},
+            { field: 'object_id', op: 'eq', values: ['' + od.id] },
+            { field: 'view_type', op: 'eq', values: ['object-edit'] }
           ]
         }).then(ret => {
-
           if (ret.success) {
-
             if (ret.data.rows.length == 0) {
               saveViewDefine({
-                viewName: '创建 '+od.objectName,
+                viewName: '创建 ' + od.objectName,
                 viewType: 'object-edit',
                 objectId: od.id,
                 viewContent: JSON.stringify(objectEditTemplate)
               })
-              .then(ret => {
-                if (ret.success) {
-                  resolve(ret.data.id)
-                }
-                else {
-                  reject(null)
-                }
-              })
-            }
-            else {
+                .then(ret => {
+                  if (ret.success) {
+                    resolve(ret.data.id)
+                  } else {
+                    reject(null)
+                  }
+                })
+            } else {
               resolve(ret.data.rows[0].id)
             }
           } else {
             reject(null)
           }
         })
-
       })
-
     },
     createDefaultViewView(od) {
-
       return new Promise((resolve, reject) => {
-
         selectViewDefinePage({
           conditions: [
-            {field: 'object_id', op:'eq', values:[''+od.id]},
-            {field: 'view_type', op:'eq', values:['object-view']},
+            { field: 'object_id', op: 'eq', values: ['' + od.id] },
+            { field: 'view_type', op: 'eq', values: ['object-view'] }
           ]
         }).then(ret => {
-
           if (ret.success) {
-
             if (ret.data.rows.length == 0) {
               saveViewDefine({
-                viewName: '查看 '+od.objectName,
+                viewName: '查看 ' + od.objectName,
                 viewType: 'object-view',
                 objectId: od.id,
                 viewContent: JSON.stringify(objectViewTemplate)
               })
-              .then(ret => {
-                if (ret.success) {
-                  resolve(ret.data.id)
-                }
-                else {
-                  reject(null)
-                }
-              })
-            }
-            else {
+                .then(ret => {
+                  if (ret.success) {
+                    resolve(ret.data.id)
+                  } else {
+                    reject(null)
+                  }
+                })
+            } else {
               resolve(ret.data.rows[0].id)
             }
           } else {
             reject(null)
           }
         })
-
       })
-
     },
     createDefaultListView(od, editViewId, viewId) {
-
       return new Promise((resolve, reject) => {
-
         selectViewDefinePage({
           conditions: [
-            {field: 'object_id', op:'eq', values:[''+od.id]},
-            {field: 'view_type', op:'eq', values:['object-list']},
+            { field: 'object_id', op: 'eq', values: ['' + od.id] },
+            { field: 'view_type', op: 'eq', values: ['object-list'] }
           ]
         }).then(ret => {
-
           if (ret.success) {
-
             if (ret.data.rows.length == 0) {
-
-              let viewJson = JSON.parse(JSON.stringify(objectListTemplate))
+              const viewJson = JSON.parse(JSON.stringify(objectListTemplate))
               viewJson.viewButtons[0].action.viewId = editViewId
               debugger
               viewJson.rowButtons[0].action.viewId = viewId
 
               saveViewDefine({
-                viewName: '列表 '+od.objectName,
+                viewName: '列表 ' + od.objectName,
                 viewType: 'object-list',
                 objectId: od.id,
                 viewContent: JSON.stringify(viewJson)
               })
-              .then(ret => {
-                if (ret.success) {
-                  resolve(ret.data.id)
-                }
-                else {
-                  reject(null)
-                }
-              })
-            }
-            else {
+                .then(ret => {
+                  if (ret.success) {
+                    resolve(ret.data.id)
+                  } else {
+                    reject(null)
+                  }
+                })
+            } else {
               resolve(ret.data.rows[0].id)
             }
           } else {
             reject(null)
           }
         })
-
       })
-
     },
 
     handleAdd() {
@@ -374,28 +345,23 @@ export default {
       this.editDialogVisible = true
     },
     handleDelete(i, row) {
-
       this.$confirm('请自行确认风险, 此操作可能会导致未知错误, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-
-          deleteObjectDefine(row.id).then(ret => {
-            if (ret.success) {
-              this.loadData()
-              this.editDialogVisible = false
-            }
-          })
-
+        deleteObjectDefine(row.id).then(ret => {
+          if (ret.success) {
+            this.loadData()
+            this.editDialogVisible = false
+          }
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
-
-
+        })
+      })
     }
   }
 }

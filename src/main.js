@@ -35,24 +35,15 @@ import TreeSelect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 Vue.use(TreeSelect)
 
-import XElement from '@/views/xview-editor/xelement'
-import XCard from '@/views/xview-editor/xcard'
-import XTable from '@/views/xview-editor/xtable'
 
 import XObjectDefineEditor from '@/views/xview/x-object-editor'
-import XFormItem from '@/views/xview/x-form-item'
-
-import XButton from '@/views/xview/x-button'
-
 import XObjectEditor from '@/views/xview/x-object-editor'
-
+Vue.component('x-object-define-editor', XObjectDefineEditor)
+Vue.component('x-object-editor', XObjectEditor)
 
 //主数据选择器
 import MdmList from '@/views/business-backend/MdmDataMgr/MdmList'
 Vue.component('mdm-list', MdmList)
-
-
-
 
 //对象选择器
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
@@ -63,6 +54,11 @@ Vue.component('x-object-field-select', ObjectFieldSelect)
 
 import XObjectFieldControl from '@/views/xview/components/x-object-field-control'
 Vue.component('x-object-field-control', XObjectFieldControl)
+
+
+//字段输入
+import xFormItem from '@/views/xview/components/x-form-item'
+Vue.component('x-form-item', xFormItem)
 
 import xObjectFilter from '@/views/xview/x-object-filter'
 Vue.component('x-object-filter', xObjectFilter)
@@ -89,15 +85,19 @@ Vue.component('show-view', ShowView)
 
 
 
+import XElement from '@/views/xview-editor/xelement'
+import XCard from '@/views/xview-editor/xcard'
+import XTable from '@/views/xview-editor/xtable'
+import XButton from '@/views/xview/x-button'
 
 Vue.component('x-element', XElement)
 Vue.component('x-button', XButton)
 Vue.component('x-table', XTable)
 Vue.component('x-card', XCard)
-Vue.component('x-object-define-editor', XObjectDefineEditor)
-Vue.component('x-form-item', XFormItem)
+
 Vue.component('x-button', XButton)
-Vue.component('x-object-editor', XObjectEditor)
+
+
 
 
 /**

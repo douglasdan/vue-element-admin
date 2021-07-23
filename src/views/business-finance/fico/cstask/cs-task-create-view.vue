@@ -1,6 +1,5 @@
 <template>
   <section>
-
     <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
       <div style="right: 10px; float: right; position: absolute;">
         <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
@@ -71,11 +70,6 @@
       <el-col :span="8">
         <x-form-item :label="cond.fieldName+'：'" v-for="(cond) in receiver">
           <el-row style="width: 360px;">
-            <x-object-condition :cond="cond" :object-code="cond.objectCode" v-if="objectDefine"></x-object-condition>
-          </el-row>
-        </x-form-item>
-        <x-form-item :label="cond.fieldName+'：'" v-for="(cond) in keyAttribute">
-          <el-row style="width: 360px;">
             <csReceiverFieldEdit :cond="cond" :object-code="cond.objectCode" v-if="objectDefine"></csReceiverFieldEdit>
           </el-row>
         </x-form-item>
@@ -85,7 +79,7 @@
           <el-select v-model="objectData['factor']">
             <el-option :label="item.fieldName" :value="item.fieldCode" v-for="(item, i) in forcals"></el-option>
           </el-select>
-          <el-sel v-model="objectData['factor']" placeholder="" style="width: 100%;"></el-sel>
+          <!-- <el-input v-model="objectData['factor']" placeholder="" style="width: 100%;"></el-input> -->
         </x-form-item>
       </el-col>
     </el-row>
@@ -96,11 +90,14 @@
 
 <script>
 
+import { mapState } from 'vuex'
 import xObjectEditView from '@/views/xview/components/x-object-edit-view'
 import { saveObjectData } from '@/api/object-data'
+import csReceiverFieldEdit from '@/views/business-finance/fico/cstask/cs-receiver-field-edit'
 
 export default {
   name: 'cs-task-create-view',
+  components: {csReceiverFieldEdit},
   extends: xObjectEditView,
   data() {
     return {
@@ -121,25 +118,21 @@ export default {
         {fieldName:'部门',    objectCode: 'CS_COST_BILL', field: 'departCode', op: 'eq', values: []},
         {
           fieldName:'部门类型', objectCode: 'CS_DEPART',    field: 'departTypeCode',
-          op: 'eq', values: [], dataField: 'departTypeCode', refField:'departTypeCode'
+          op: 'eq', values: [], dataField: 'departCode', refField:'departCode'
         },
         {fieldName:'费用分类', objectCode: 'CS_COST_BILL', field: 'feeCode', op: 'eq', values: []},
         {fieldName:'产品',    objectCode: 'CS_COST_BILL', field: 'prdCode', op: 'eq', values: []},
         {fieldName:'产品类型', objectCode: 'CS_PRODUCT', field: 'prdTypeCode', op: 'eq', values: [], dataField: 'prdCode', refField:'prdCode'},
       ],
       receiver: [
-        {fieldName:'部门',    objectCode: 'CS_COST_BILL', field: 'departCode', op: 'eq', values: []},
-        {
-          fieldName:'部门类型', objectCode: 'CS_DEPART',    field: 'departTypeCode',
-          op: 'eq', values: [], dataField: 'departTypeCode', refField:'departTypeCode'
-        },
+        {fieldName:'部门',    objectCode: 'CS_FORCAL_DATA',    field: 'departCode', op: 'eq', values: []},
+        {fieldName:'部门类型', objectCode: 'CS_DEPART',    field: 'departTypeCode', op: 'eq', values: [], dataField: 'departCode', refField:'departCode'},
+        {fieldName:'费用分类', objectCode: 'CS_FORCAL_DATA', field: 'feeCode', op: 'same', values: []},
+        {fieldName:'资产',    objectCode: 'CS_FORCAL_DATA', field: 'assetCode', op: 'same', values: []},
+        {fieldName:'产品',    objectCode: 'CS_FORCAL_DATA', field: 'prdCode', op: 'same', values: []},
       ],
       keyAttribute: [
-        {fieldName:'费用分类', objectCode: 'CS_COST_BILL', field: 'feeCode', op: 'same', values: []},
-        {fieldName:'资产',    objectCode: 'CS_COST_BILL', field: 'assetCode', op: 'same', values: []},
-        {fieldName:'产品',    objectCode: 'CS_COST_BILL', field: 'prdCode', op: 'same', values: []},
       ],
-
       //动因字段
       forcals:[]
     }
@@ -148,9 +141,16 @@ export default {
     //处理URL参数
     this.loadForcalData()
   },
+  computed: {
+    ...mapState({
+      lowCode: function(state) {
+        return state.lowCode
+      }
+    })
+  },
   methods: {
     loadForcalData() {
-      this.$store.dispatch('lowCode/getObjectDefineByCode', 'CS_DEPART_FORCAL').then(ret => {
+      this.$store.dispatch('lowCode/getObjectDefineByCode', 'CS_FORCAL_DATA').then(ret => {
         this.forcals = ret.fields.filter(a => this.lowCode.defaultFields.indexOf(a.fieldCode) == -1
           && (a.fieldCode != 'departId')
           && (a.fieldType == 'decimal' || a.fieldType == 'int'))

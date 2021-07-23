@@ -1,5 +1,6 @@
 <template>
   <section>
+
     <el-row v-if="objectFieldDefine.length > 0" style="margin-top: 10px; border-top: 1px solid #eee">
       <div class="cond-parent">
         <div v-for="(cond, i) in viewJson.showFields" class="cond-child">
@@ -44,6 +45,9 @@ export default {
     viewJson: {
       type: Object,
       required: true
+    },
+    params: {
+      type: Object
     }
   },
   data() {
@@ -107,7 +111,7 @@ export default {
     },
     'viewJson': {
       handler(nval, oval) {
-
+        console.log(nval)
       },
       deep: true,
       immediate: true

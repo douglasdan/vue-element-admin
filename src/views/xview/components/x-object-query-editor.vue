@@ -85,13 +85,8 @@ export default {
     'viewJson': {
       handler(nval, oval) {
         console.log('x-object-query-editor watch viewJson changed')
-        if (!oval && nval) {
+        if (nval && nval.queryDefine && nval.queryDefine.conditions && nval.queryDefine.conditions.length > 0) {
           this.syncFilterField()
-        }
-        if (oval && nval) {
-          if (JSON.stringify(oval.queryDefine) != JSON.stringify(nval.queryDefine)) {
-            this.syncFilterField()
-          }
         }
       },
       deep: true,
@@ -102,7 +97,6 @@ export default {
   },
   mounted() {
     this.enableRowDrag()
-    this.loadData()
   },
   methods: {
     enableRowDrag() {
@@ -129,10 +123,14 @@ export default {
       return cellValue
     },
     loadData() {
+      if (!this.$props.objectId) {
+        return
+      }
       this.$store.dispatch('lowCode/getObjectDefine', this.$props.objectId).then(ret => {
         if (ret) {
           this.objectDefineLoaded = true
           this.rows = []
+
           ret.fields.forEach((item,i) => {
             this.rows.push({
               fieldName: item.fieldName,
@@ -155,14 +153,18 @@ export default {
     syncFilterField() {
       console.log('syncFilterField ', this.$props.viewJson.queryDefine.conditions.length)
 
-
+      if (this.$props.viewJson.queryDefine.conditions.length == 0) {
+        return
+      }
       let temp = []
       this.rows.forEach((row) => {
-        console.log('syncFilterField init field', row.fieldCode)
 
-        let cond = this.$props.viewJson.queryDefine.conditions.some(cond => cond.fieldCode === row.fieldCode)
-        if (cond) {
-          temp.push(cond)
+        let cond = this.$props.viewJson.queryDefine.conditions.filter(c => c.fieldCode === row.fieldCode)
+
+        console.log('syncFilterField init field', row.fieldCode, cond)
+
+        if (cond && cond.length > 0) {
+          temp.push(cond[0])
         }
         else {
           temp.push({
@@ -178,42 +180,6 @@ export default {
       })
 
       this.$set(this.$props.viewJson.queryDefine, 'conditions', temp)
-
-
-      // if (this.$props.viewJson.queryDefine.conditions.length == 0) {
-
-      //   let temp = []
-      //   this.rows.forEach((row) => {
-      //     console.log('syncFilterField init field', row.fieldCode)
-      //     temp.push({
-      //       fieldName: row.fieldName,
-      //       fieldCode: row.fieldCode,
-      //       fieldType: row.fieldType,
-      //       opType: '',
-      //       sortNo: row.sortNo,
-      //       values: '',
-      //       visible: row.visible
-      //     })
-      //   })
-
-      //   this.$set(this.$props.viewJson.queryDefine, 'conditions', temp)
-      // }
-      // else {
-      //   this.rows = this.$props.viewJson.queryDefine.conditions
-      //   this.rows.forEach((row) => {
-      //     console.log('syncFilterField check field', row.fieldCode)
-      //     if (typeof(row.visible) == undefined) {
-      //       if (row.opType) {
-      //         row.visible = true
-      //       }
-      //       else {
-      //         row.visible = false
-      //       }
-      //     }
-      //   })
-      //   this.$set(this.$props.viewJson.queryDefine, 'conditions', this.rows)
-      // }
-
     },
     getCondition(fieldCode) {
 
@@ -234,6 +200,7 @@ export default {
         row.sortNo = i
       })
 
+      debugger
       this.$set(this.$props.viewJson.queryDefine, 'conditions', JSON.parse(JSON.stringify(this.rows)))
     },
     handleValueChange(nval, oval) {

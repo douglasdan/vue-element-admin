@@ -3,13 +3,13 @@
     <el-row style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
       <div style="right: 10px; float: right; position: absolute;">
         <el-button type="primary" size="small" @click="handleAddTask">新增</el-button>
-        <el-button type="primary" size="small" @click="handleSave">保存</el-button>
-        <el-button type="primary" size="small" @click="handleAddSubTask">新增下级</el-button>
+        <!-- <el-button type="primary" size="small" @click="handleSave">保存</el-button> -->
+        <!-- <el-button type="primary" size="small" @click="handleAddSubTask">新增下级</el-button> -->
       </div>
     </el-row>
 
     <el-row :gutter="20" style="max-height: 600px;">
-      <el-col :span="12">
+      <el-col :span="24">
         <x-object-filter
           v-show="queryPanelVisible"
           ref="refObjectFilter"
@@ -77,14 +77,14 @@
         </el-row>
       </el-col>
 
-      <el-col :span="12">
+      <!-- <el-col :span="12">
         <show-view :page-props="{'editing': editing}" v-if="ext.selectTask"
           :object-id="objectId" :view-type="'object-view'" :data-id="ext.selectTask.id" />
-      </el-col>
+      </el-col> -->
     </el-row>
 
-    <el-dialog ref="showViewDialog" :visible.sync="showView.visible" width="80%" append-to-body v-if="showView.visible">
-      <show-view :object-id="objectId" :view-type="'object-edit'"/>
+    <el-dialog ref="showViewDialog" :visible.sync="showView.visible" :fullscreen="true" append-to-body v-if="showView.visible">
+      <show-view :object-id="objectId" :view-type="'object-edit'" :params="params"/>
     </el-dialog>
 
   </section>
@@ -95,6 +95,7 @@
 import xObjectListView from '@/views/xview/components/x-object-list-view'
 
 import { getViewByObjectCodeAndType } from '@/api/view-define'
+import { deleteObjectData } from '@/api/object-data'
 
 export default {
   name: 'cs-task-list-view',
@@ -120,6 +121,13 @@ export default {
     },
     handleAddSubTask() {
 
+    },
+    deleteDataRow(row) {
+      deleteObjectData(this.objectDefine.id, row.id).then(ret => {
+        if (ret.success) {
+          this.loadData()
+        }
+      })
     }
   }
 

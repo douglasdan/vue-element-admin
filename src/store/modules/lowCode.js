@@ -12,7 +12,9 @@ const state = {
   },
   objectCodeMap: {
 
-  }
+  },
+  keywords:[],
+  defaultFields:['id', 'create_by', 'create_user', 'create_time', 'update_by', 'update_user', 'update_time', 'tenant_id', 'tenant_code', 'company_id', 'company_code', 'depart_id', 'depart_code']
 }
 
 const mutations = {

@@ -1,5 +1,5 @@
 <template>
-  <div style="line-height: 32px; display: inline-block;">
+  <div style="line-height: 32px; display: inline-block; width: 200px;">
     <span v-if="ready && !editing">{{ fieldValue() }}</span>
 
     <mdm-select v-else-if="ready() && fieldDefine.valueRefType == '1'" v-model="val" :code="'bool'" @change="handleChange" />

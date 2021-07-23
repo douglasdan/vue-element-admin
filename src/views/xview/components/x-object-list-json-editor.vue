@@ -8,6 +8,7 @@
         :object-id="objectId"
         :viewJson="viewJson"
         :dragSort="true"
+        :pagination="false"
         @selection-change="handleFieldChange"
       />
     </el-collapse-item>
@@ -40,11 +41,6 @@
 
 <script>
 
-// viewButtons
-// rowButtons
-// selectable
-// showFields
-
 import ObjectFieldList from '@/views/business-backend/ObjectMgr/ObjectFieldList'
 
 import xObjectQueryEditor from '@/views/xview/components/x-object-query-editor'
@@ -73,6 +69,9 @@ export default {
   watch: {
     'viewJson': {
       handler(nval, oval) {
+        this.$nextTick(()=>{
+          this.$forceUpdate()
+        })
       },
       deep: true,
       immediate: true

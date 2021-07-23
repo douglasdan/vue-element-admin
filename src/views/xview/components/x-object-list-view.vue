@@ -105,7 +105,7 @@
 import { mapState } from 'vuex'
 import { getObjectDefineById } from '@/api/object-define'
 import { selectObjectFieldDefinePage } from '@/api/object-field-define'
-import { selectObjectDataPage, selectTreeRootPage, getTree, getObjectDataById } from '@/api/object-data'
+import { selectObjectDataPage, selectTreeRootPage, getTree, getObjectDataById, deleteObjectData } from '@/api/object-data'
 import { getViewDefineById } from '@/api/view-define'
 
 export default {
@@ -144,6 +144,9 @@ export default {
     editing: {
       type: Boolean,
       default: false
+    },
+    params: {
+      type: Object
     }
   },
   data() {
@@ -552,7 +555,12 @@ export default {
 
     deleteDataRow(row) {
       // TODO
-
+      debugger
+      deleteObjectData(this.objectDefine.id, row.id).then(ret => {
+        if (ret.success) {
+          this.loadData()
+        }
+      })
     }
 
   }

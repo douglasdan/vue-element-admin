@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div v-if="pageDefine.objectId && pageDefine.viewType && viewJson">
 
       <component
@@ -9,6 +8,7 @@
         v-bind="pageProps"
         :object-id="pageDefine.objectId"
         :view-json="viewJson"
+        :params="params"
       />
 
       <component
@@ -17,6 +17,7 @@
         v-bind="pageProps"
         :object-id="pageDefine.objectId"
         :view-json="viewJson"
+        :params="params"
       />
 
       <component
@@ -26,6 +27,7 @@
         :object-id="pageDefine.objectId"
         :object-data-id="pageDefine.dataId"
         :view-json="viewJson"
+        :params="params"
       />
 
     </div>
@@ -75,6 +77,9 @@ export default {
     dataId: [String, Number],
 
     pageProps: {
+      type: Object
+    },
+    params: {
       type: Object
     }
   },
@@ -154,10 +159,10 @@ export default {
   computed: {
     renderComponent: {
       get() {
-
         if (this.pageDefine.objectId && this.pageDefine.viewType && this.objectDefine) {
           if (this.objectDefine && CustomViewDefines[this.objectDefine.objectCode] &&
             CustomViewDefines[this.objectDefine.objectCode][this.pageDefine.viewType]) {
+
             const def = CustomViewDefines[this.objectDefine.objectCode][this.pageDefine.viewType]
             return def
           }
@@ -199,7 +204,13 @@ export default {
       //如果有viewDefine
       if (this.viewDefine) {
         // 由外部传递viewContent，来渲染页面
+        this.view = this.viewDefine
+        this.pageDefine.viewType = this.view.viewType
+        this.pageDefine.objectId = this.view.objectId
 
+        this.$store.dispatch('lowCode/getObjectDefine', this.pageDefine.objectId).then(ret => {
+          this.objectDefine = ret
+        })
       }
       else if (this.isRootPageView() && this.$route.params.viewId) {
         this.pageDefine.viewId = this.$route.params.viewId
@@ -210,7 +221,7 @@ export default {
         selectViewDefinePage({
           conditions: [
             { field: 'object_id', op: 'eq', values: ['' + this.pageDefine.objectId] },
-            { field: 'view_type', op: 'eq', values: [this.pageDefine.viewType] }
+            { field: 'view_type', op: 'eq', values: ['' + this.pageDefine.viewType] }
           ]
         }).then(ret => {
           if (ret.success && ret.data.rows.length > 0) {

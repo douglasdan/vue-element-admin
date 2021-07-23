@@ -1,5 +1,6 @@
 <template>
   <section>
+
     <el-row v-if="viewJson.viewButtons && viewJson.viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
       <div style="right: 10px; float: right; position: absolute;">
         <x-button v-for="(btn, index) in viewJson.viewButtons" :view="btn" :self="self" />
@@ -84,7 +85,7 @@
           <el-select v-model="objectData['factor']">
             <el-option :label="item.fieldName" :value="item.fieldCode" v-for="(item, i) in forcals"></el-option>
           </el-select>
-          <!-- <el-input v-model="objectData['factor']" placeholder="" style="width: 100%;"></el-input> -->
+          <el-sel v-model="objectData['factor']" placeholder="" style="width: 100%;"></el-sel>
         </x-form-item>
       </el-col>
     </el-row>
@@ -92,47 +93,25 @@
   </section>
 </template>
 
+
 <script>
-import { mapState } from 'vuex'
-import { saveObjectData, getObjectDataById } from '@/api/object-data'
 
-import xObjectViewView from '@/views/xview/components/x-object-view-view'
-import CsTaskInputFilter from './cs-task-input-filter'
-
-import csReceiverFieldEdit from '@/views/business-finance/fico/cstask/cs-receiver-field-edit'
+import xObjectEditView from '@/views/xview/components/x-object-edit-view'
+import { saveObjectData } from '@/api/object-data'
 
 export default {
-  name: 'CsTaskViewVue',
-  components: {
-    CsTaskInputFilter, csReceiverFieldEdit
-  },
-  extends: xObjectViewView,
+  name: 'cs-task-create-view',
+  extends: xObjectEditView,
   data() {
     return {
-      self: this,
       mdmReady: false,
-      pageEditing: false,
-
+      self: this,
       objectDefine: null,
       objectFieldDefine: [],
       objectFieldDefineMap: {},
 
       // 对象数据
       objectData: {
-
-      },
-      objectDataBak: null,
-
-      colspan: 0,
-      showCols: 1,
-      cols: [],
-      showFieldGroups: [],
-
-      //er关系
-      erViews: {},
-
-      //extend data
-      ext: {
 
       },
       extendsFrom: {
@@ -165,53 +144,20 @@ export default {
       forcals:[]
     }
   },
-  computed: {
-    ...mapState({
-      lowCode: function(state) {
-        return state.lowCode
-      }
-    })
-  },
   created() {
+    //处理URL参数
     this.loadForcalData()
   },
   methods: {
     loadForcalData() {
       this.$store.dispatch('lowCode/getObjectDefineByCode', 'CS_DEPART_FORCAL').then(ret => {
-        this.forcals = [{
-          fieldName: '平摊', fildCode: '1'
-        }].concat(ret.fields.filter(a => this.lowCode.defaultFields.indexOf(a.fieldCode) == -1
+        this.forcals = ret.fields.filter(a => this.lowCode.defaultFields.indexOf(a.fieldCode) == -1
           && (a.fieldCode != 'departId')
-          && (a.fieldType == 'decimal' || a.fieldType == 'int')))
+          && (a.fieldType == 'decimal' || a.fieldType == 'int'))
       })
     },
-    loadObjectData() {
-      if (this.objectId) {
-        if (!this.objectDataId) {
-          this.$message.error('未指定数据ID')
-        } else {
-          getObjectDataById(this.objectId, this.objectDataId).then(ret => {
-            if (ret.success && ret.data) {
-              this.objectData = ret.data
-
-              if(this.objectData['sender'] && JSON.parse(this.objectData['sender']).length > 0) {
-                this.sender = JSON.parse(this.objectData['sender'])
-              }
-              if(this.objectData['receiver'] && JSON.parse(this.objectData['receiver']).length > 0) {
-                this.receiver = JSON.parse(this.objectData['receiver'])
-              }
-              if(this.objectData['keyAttribute'] && JSON.parse(this.objectData['keyAttribute']).length > 0) {
-                this.keyAttribute = JSON.parse(this.objectData['keyAttribute'])
-                if (this.keyAttribute.length == 2) {
-                  this.keyAttribute.splice(1,0, {fieldName:'资产',    objectCode: 'CS_COST_BILL', field: 'assetCode', op: 'same', values: []})
-                }
-              }
-            }
-          })
-        }
-      }
-    },
     saveData() {
+      this.objectData['strategyId'] = this.params.strategyId
       this.objectData['extendsFrom'] = JSON.stringify(this.extendsFrom.values)
       this.objectData['sender'] = JSON.stringify(this.sender)
       this.objectData['receiver'] = JSON.stringify(this.receiver)
@@ -220,10 +166,12 @@ export default {
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {
           this.$message.info('操作成功')
+          this.cancel()
         }
       })
     },
   }
+
 }
 
 </script>

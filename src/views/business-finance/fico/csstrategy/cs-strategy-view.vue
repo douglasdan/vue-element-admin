@@ -34,7 +34,10 @@
     <div v-if="shouldShowErView" style="padding-left: 10px; padding-right: 10px;">
       <el-tabs>
         <el-tab-pane v-for="(er, index) in viewJson.ers.filter(a => a.visible)" :label="er.objectName" :name="''+index">
-          <show-view :object-id="er.objectId" :view-type="'object-list'" :page-props="{'editing': pageEditing}"/>
+          <show-view :object-id="er.objectId"
+            :view-type="'object-list'"
+            :params="{strategyId: objectDataId}"
+            :page-props="{'editing': pageEditing}"/>
         </el-tab-pane>
       </el-tabs>
     </div>

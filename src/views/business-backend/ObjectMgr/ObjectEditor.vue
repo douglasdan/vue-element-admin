@@ -63,11 +63,11 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="名称Code:" v-if="tableDefine.treeFlag">
+            <el-form-item label="名称Code:">
               <el-input v-model="tableDefine.labelFieldCode"/>
             </el-form-item>
 
-            <el-form-item label="IdCode:" v-if="tableDefine.treeFlag">
+            <el-form-item label="IdCode:">
               <el-input v-model="tableDefine.idFieldCode"/>
             </el-form-item>
 

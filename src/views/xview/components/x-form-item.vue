@@ -1,12 +1,12 @@
 <template>
-  <el-row>
+  <!-- <el-row> -->
     <div class="cond-child" style="margin-top: 4px; margin-bottom: 4px;">
       <div :style="labelStyle">{{ label }}</div>
       <div>
         <slot></slot>
       </div>
     </div>
-  </el-row>
+  <!-- </el-row> -->
 </template>
 
 <script>

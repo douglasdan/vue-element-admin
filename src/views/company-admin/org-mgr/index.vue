@@ -11,7 +11,7 @@
 
 <script>
 
-import OrgList from './OrgList'
+import OrgList from './orgList'
 import OrgSideBar from '../OrgSideBar.vue'
 
 export default {

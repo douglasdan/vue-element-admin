@@ -56,6 +56,14 @@ import XObjectFieldControl from '@/views/xview/components/x-object-field-control
 Vue.component('x-object-field-control', XObjectFieldControl)
 
 
+
+
+import xObjectCondition from '@/views/xview/components/x-object-condition'
+Vue.component('x-object-condition', xObjectCondition)
+
+import xObjectDataSelect from '@/views/xview/components/x-object-data-select'
+Vue.component('x-object-data-select', xObjectDataSelect)
+
 //字段输入
 import xFormItem from '@/views/xview/components/x-form-item'
 Vue.component('x-form-item', xFormItem)

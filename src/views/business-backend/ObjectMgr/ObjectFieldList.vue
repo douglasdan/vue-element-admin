@@ -105,7 +105,7 @@
         <el-form-item label="引用主数据：" v-if="editForm.valueRefType == '4'">
           <x-object-select v-model="editForm.refTableId"/>
         </el-form-item>
-        <el-form-item label="引用主数据："  v-if="editForm.valueRefType == '4'">
+        <el-form-item label="引用字段："  v-if="editForm.valueRefType == '4'">
           <x-object-field-select v-model="editForm.refFieldCode" :object-id="editForm.refTableId"></x-object-field-select>
         </el-form-item>
 
@@ -187,12 +187,14 @@ export default {
       type: Boolean,
       default: false
     },
-
     viewJson: {
       type: Object,
       required: false
+    },
+    pagination: {
+      type: Boolean,
+      default: true
     }
-
   },
   data() {
     return {
@@ -326,7 +328,7 @@ export default {
 
       let queryObj = {
         pageNo: this.pageNo,
-        pageSize: this.pageSize,
+        pageSize: this.pagination ? this.pageSize : 10000,
         conditions: [
           {
             field: 'oid', op: 'eq', values: [this.$props.objectId]

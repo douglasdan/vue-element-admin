@@ -63,10 +63,11 @@ export default {
           this.$props.self.openView(actionDefine.viewId, this.row)
         }
         else if (actionDefine.type == '2') {
-          const fun = new Function(`return function(){${actionDefine.script}}`)()
+          const fun = new Function('row',`return function(row){${actionDefine.script}}`)()
           console.log(fun)
 
-          fun.bind(this.$props.self).apply()
+          let d = this.$props.row
+          fun.bind(this.$props.self)(d)
         }
 
       }

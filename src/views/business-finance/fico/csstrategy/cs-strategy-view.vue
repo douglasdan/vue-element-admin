@@ -31,6 +31,17 @@
       </el-row>
     </div>
 
+    <!-- <el-row>
+      <div style="margin-left: 10px; width: 120px; text-align: right;font-size: 13px; font-weight: bold; height: 32px; line-height: 32px;">
+        发送条件：
+      </div>
+      <x-form-item :label="cond.fieldName+'：'" v-for="(cond) in ext.sender" v-if="cond.origin == '1'">
+        <el-row style="width: 360px;">
+          <x-object-condition :cond="cond" :object-code="cond.objectCode"></x-object-condition>
+        </el-row>
+      </x-form-item>
+    </el-row> -->
+
     <div v-if="shouldShowErView" style="padding-left: 10px; padding-right: 10px;">
       <el-tabs>
         <el-tab-pane v-for="(er, index) in viewJson.ers.filter(a => a.visible)" :label="er.objectName" :name="''+index">
@@ -63,6 +74,8 @@
 
 import xObjectViewView from '@/views/xview/components/x-object-view-view'
 import { executeStrategy } from '@/api/fico'
+import { selectObjectDataPage } from '@/api/object-data'
+import { saveObjectData, getObjectDataById } from '@/api/object-data'
 
 export default {
   name: 'cs-strategy-view',
@@ -71,8 +84,51 @@ export default {
     this.$set(this.ext, 'executeDialogVisible', false)
     this.$set(this.ext, 'year', ''+(new Date().getYear()+1900))
     this.$set(this.ext, 'period', ''+(new Date().getMonth()+1))
+
+    this.loadDefaultBillSender()
   },
   methods: {
+    loadObjectData() {
+      if (this.objectId) {
+        if (!this.objectDataId) {
+          this.$message.error('未指定数据ID')
+        } else {
+          getObjectDataById(this.objectId, this.objectDataId).then(ret => {
+            if (ret.success && ret.data) {
+              this.objectData = ret.data
+
+              if (!this.objectData.sender || this.objectData.sender == '' || JSON.parse(this.objectData.sender).length == 0) {
+                this.loadDefaultBillSender()
+              }
+              else {
+                this.ext.sender = JSON.parse(this.objectData.sender)
+              }
+            }
+          })
+        }
+      }
+    },
+
+    loadDefaultBillSender() {
+
+      this.$store.dispatch('fico/getSendConditions', 'origin').then(ret => {
+        if (ret) {
+        }
+      })
+    },
+
+    saveData() {
+
+      this.objectData.sender = JSON.stringify(this.ext.sender)
+
+      saveObjectData(this.objectId, this.objectData).then(ret => {
+        if (ret.success) {
+          this.pageEditing = false
+          this.$message.info('操作成功')
+        }
+      })
+    },
+
     showPeriodDialog() {
       this.ext.executeDialogVisible = true
     },

@@ -9,6 +9,9 @@ const CustomViewDefines =
   'CS_STRATEGY': {
     'object-view': require(`@/views/business-finance/fico/csstrategy/cs-strategy-view`).default
   },
+  'CS_TASK_PLAN': {
+    'object-view': require(`@/views/business-finance/fico/cstask/cs-task-plan-list`).default
+  },
   // 'CS_STRATEGY_PLAN': {
   //   'object-view': require(`@/views/business-finance/fico/csstrategyplan/cs-strategy-plan-view`).default
   // }

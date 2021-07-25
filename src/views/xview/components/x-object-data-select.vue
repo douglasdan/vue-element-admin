@@ -14,7 +14,7 @@
       @select="handleSelect"
       @deselect="handleDeSelect"
     />
-    <el-select v-model="vals" v-if="!(objectDefine && objectDefine.treeFlag)" multiple clearable @change="handleChange" style="width: 100%;">
+    <el-select v-model="vals" v-if="!(objectDefine && objectDefine.treeFlag)" multiple clearable @input="handleChange" style="width: 100%;">
       <el-option :label="item[objectDefine.labelFieldCode]" :value="item[objectDefine.idFieldCode]" v-for="(item,i) in rows"></el-option>
     </el-select>
   </div>
@@ -119,11 +119,19 @@ export default {
       }
     },
     handleSelect(node, instanceId) {
+      let oval = JSON.parse(JSON.stringify(this.vals))
+
       let val = ''+(this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
       this.vals.push(val)
       this.$emit('input', this.vals)
+      this.$emit('change', {
+        nval: this.vals, oval: oval
+      })
     },
     handleDeSelect(node, instanceId) {
+
+      let oval = JSON.parse(JSON.stringify(this.vals))
+
       let val = ''+(this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
       let idx = -1
       for (let i=0;i<this.vals.length;i++) {
@@ -136,10 +144,17 @@ export default {
         this.vals.splice(idx,1)
       }
       this.$emit('input', this.vals)
+
+      this.$emit('change', {
+        nval: this.vals, oval: oval
+      })
     },
 
-    handleChange() {
+    handleChange(nval, oval) {
       this.$emit('input', this.vals)
+      this.$emit('change', {
+        nval: nval, oval: oval
+      })
     }
   }
 }

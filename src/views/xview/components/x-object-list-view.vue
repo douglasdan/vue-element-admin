@@ -555,7 +555,6 @@ export default {
 
     deleteDataRow(row) {
       // TODO
-      debugger
       deleteObjectData(this.objectDefine.id, row.id).then(ret => {
         if (ret.success) {
           this.loadData()

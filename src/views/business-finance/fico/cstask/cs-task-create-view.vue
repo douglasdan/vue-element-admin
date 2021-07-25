@@ -32,7 +32,9 @@
           </el-row>
         </x-form-item>
         <x-form-item label="承接任务：">
-          <x-object-condition :hide-op="true" :cond="extendsFrom" :object-code="'CS_TASK'" v-if="objectDefine"></x-object-condition>
+          <x-object-condition :hide-op="true" :cond="extendsFrom" :object-code="'CS_TASK'"
+            @change="handleSenderChange"
+            v-if="objectDefine"></x-object-condition>
         </x-form-item>
       </div>
     </el-row>
@@ -40,17 +42,17 @@
     <el-divider></el-divider>
 
     <el-row style="margin-top: 10px; margin-bottom: 10px;">
-      <el-col :span="8">
+      <el-col :span="extendsFrom.values.length > 0 ? 8 : 24">
         <div style="width: 100%; text-align: center;">
           发送方
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="extendsFrom.values.length > 0">
         <div style="width: 100%; text-align: center;">
           接收方
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="extendsFrom.values.length > 0">
         <div style="width: 100%; text-align: center;">
           动因
         </div>
@@ -58,26 +60,26 @@
     </el-row>
 
     <el-row style="margin-top: 10px; margin-bottom: 10px;">
-      <el-col :span="8">
+      <el-col :span="extendsFrom.values.length > 0 ? 8 : 24">
         <div>
           <x-form-item :label="cond.fieldName+'：'" v-for="(cond) in sender">
             <el-row style="width: 360px;">
-              <x-object-condition :cond="cond" :object-code="cond.objectCode" v-if="objectDefine"></x-object-condition>
+              <x-object-condition :cond="cond" :data-object="sendBy" :object-code="cond.objectCode" v-if="objectDefine"></x-object-condition>
             </el-row>
           </x-form-item>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="extendsFrom.values.length > 0">
         <x-form-item :label="cond.fieldName+'：'" v-for="(cond) in receiver">
           <el-row style="width: 360px;">
-            <csReceiverFieldEdit :cond="cond" :object-code="cond.objectCode" v-if="objectDefine"></csReceiverFieldEdit>
+            <csReceiverFieldEdit :cond="cond" :data-object="receiveBy" :object-code="cond.objectCode" v-if="objectDefine"></csReceiverFieldEdit>
           </el-row>
         </x-form-item>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="extendsFrom.values.length > 0">
         <x-form-item label="动因：">
           <el-select v-model="objectData['factor']">
-            <el-option :label="item.fieldName" :value="item.fieldCode" v-for="(item, i) in forcals"></el-option>
+            <el-option :label="item.factorName" :value="item.factorCode" v-for="(item, i) in fico.factors"></el-option>
           </el-select>
           <!-- <el-input v-model="objectData['factor']" placeholder="" style="width: 100%;"></el-input> -->
         </x-form-item>
@@ -86,6 +88,7 @@
 
   </section>
 </template>
+
 
 
 <script>
@@ -115,53 +118,114 @@ export default {
         field: 'extendsFrom', op: 'eq', values: []
       },
       sender: [
-        {fieldName:'部门',    objectCode: 'CS_COST_BILL', field: 'departCode', op: 'eq', values: []},
-        {
-          fieldName:'部门类型', objectCode: 'CS_DEPART',    field: 'departTypeCode',
-          op: 'eq', values: [], dataField: 'departCode', refField:'departCode'
-        },
-        {fieldName:'费用分类', objectCode: 'CS_COST_BILL', field: 'feeCode', op: 'eq', values: []},
-        {fieldName:'产品',    objectCode: 'CS_COST_BILL', field: 'prdCode', op: 'eq', values: []},
-        {fieldName:'产品类型', objectCode: 'CS_PRODUCT', field: 'prdTypeCode', op: 'eq', values: [], dataField: 'prdCode', refField:'prdCode'},
       ],
       receiver: [
-        {fieldName:'部门',    objectCode: 'CS_FORCAL_DATA',    field: 'departCode', op: 'eq', values: []},
-        {fieldName:'部门类型', objectCode: 'CS_DEPART',    field: 'departTypeCode', op: 'eq', values: [], dataField: 'departCode', refField:'departCode'},
-        {fieldName:'费用分类', objectCode: 'CS_FORCAL_DATA', field: 'feeCode', op: 'same', values: []},
-        {fieldName:'资产',    objectCode: 'CS_FORCAL_DATA', field: 'assetCode', op: 'same', values: []},
-        {fieldName:'产品',    objectCode: 'CS_FORCAL_DATA', field: 'prdCode', op: 'same', values: []},
       ],
       keyAttribute: [
       ],
-      //动因字段
-      forcals:[]
+
+      sendBy: '',
+      receiveBy: 'CS_FORCAL_DATA',
     }
   },
   created() {
     //处理URL参数
-    this.loadForcalData()
+    this.loadFactors()
+    this.autoConfigSenderObject()
   },
   computed: {
     ...mapState({
       lowCode: function(state) {
         return state.lowCode
-      }
+      },
+      fico: function(state) {
+        return state.fico
+      },
     })
   },
   methods: {
-    loadForcalData() {
-      this.$store.dispatch('lowCode/getObjectDefineByCode', 'CS_FORCAL_DATA').then(ret => {
-        this.forcals = ret.fields.filter(a => this.lowCode.defaultFields.indexOf(a.fieldCode) == -1
-          && (a.fieldCode != 'departId')
-          && (a.fieldType == 'decimal' || a.fieldType == 'int'))
+
+    loadFactors() {
+      this.$store.dispatch('fico/getFactors')
+    },
+
+    autoConfigSenderObject() {
+      let condType = this.extendsFrom.values.length == 0 ? 'origin' : 'sender'
+
+      if (condType == 'origin') {
+        this.sendBy = 'CS_COST_BILL'
+      } else {
+        this.sendBy = 'CS_COST_RESULT'
+      }
+    },
+
+    loadObject() {
+      if (this.objectId) {
+        this.$store.dispatch('lowCode/getObjectDefine', this.objectId).then(ret => {
+          this.objectDefine = ret
+          this.objectFieldDefine = ret.fields
+
+          this.objectFieldDefineMap = {}
+          this.objectFieldDefine.forEach((item, index) => {
+            this.objectFieldDefineMap[item.fieldCode] = item
+
+            this.$set(this.objectData, item.fieldCode, '')
+          })
+
+          //
+          if (this.objectData.extendsFrom && JSON.parse(this.objectData.extendsFrom).length > 0) {
+            this.extendsFrom.values = [].concat(JSON.parse(this.objectData.extendsFrom))
+          }
+
+          if(this.objectData['sender'] && JSON.parse(this.objectData['sender']).length > 0) {
+            this.sender = JSON.parse(this.objectData['sender'])
+          }
+          else {
+            this.loadSenderCondition()
+          }
+
+          if(this.objectData['receiver'] && JSON.parse(this.objectData['receiver']).length > 0) {
+            this.receiver = JSON.parse(this.objectData['receiver'])
+          }
+          else {
+            this.loadReceiverCondition()
+          }
+
+        })
+      }
+    },
+
+    handleSenderChange(c) {
+      if (c.nval.length == 0 || c.nval.length == 1) {
+        this.loadSenderCondition()
+      }
+    },
+
+    loadSenderCondition() {
+
+      let condType = this.extendsFrom.values.length == 0 ? 'origin' : 'sender'
+
+      this.autoConfigSenderObject()
+
+      this.$store.dispatch('fico/getSendConditions', condType).then(ret => {
+        if (ret) {
+          this.sender = ret
+        }
       })
     },
+    loadReceiverCondition() {
+      this.$store.dispatch('fico/getSendConditions', 'receiver').then(ret => {
+        if (ret) {
+          this.receiver = ret
+        }
+      })
+    },
+
     saveData() {
       this.objectData['strategyId'] = this.params.strategyId
       this.objectData['extendsFrom'] = JSON.stringify(this.extendsFrom.values)
       this.objectData['sender'] = JSON.stringify(this.sender)
       this.objectData['receiver'] = JSON.stringify(this.receiver)
-      this.objectData['keyAttribute'] = JSON.stringify(this.keyAttribute)
 
       saveObjectData(this.objectId, this.objectData).then(ret => {
         if (ret.success) {

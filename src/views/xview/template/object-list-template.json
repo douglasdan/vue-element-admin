@@ -30,7 +30,7 @@
       "action": {
         "type": "2",
         "viewId": "",
-        "script": ""
+        "script": "this.deleteDataRow(row)"
       }
     }
   ],

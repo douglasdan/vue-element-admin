@@ -69,6 +69,7 @@ export default {
   watch: {
     'viewJson': {
       handler(nval, oval) {
+        debugger
         this.$nextTick(()=>{
           this.$forceUpdate()
         })

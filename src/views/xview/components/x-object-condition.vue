@@ -3,6 +3,7 @@
     <el-select v-model="cond.op" placeholder="" style="width: 120px;" size="small" v-show="!hideOp">
       <el-option :label="item.label" :value="item.value" v-for="(item,i) in options"></el-option>
     </el-select>
+
     <div style="width: 280px;" v-if="showDataSelect">
       <x-object-data-select v-model="cond.values"
         :object-code="refObjectDefine.objectCode"
@@ -35,12 +36,7 @@ export default {
       fieldDefine: null,
       refObjectDefine: {},
 
-      options: [
-        {label: '空',           value: ''},
-        {label: '与发送方一致',   value: 'same'},
-        {label: '等于',         value: 'eq'},
-        {label: '不等于',       value: 'ne'}
-      ]
+      options: []
     }
   },
   watch: {
@@ -62,7 +58,7 @@ export default {
   computed: {
     'showDataSelect': {
       get() {
-        return !(this.cond.op == '' || this.cond.op == 'same')
+        return !(this.cond.op == '' || this.cond.op == 'same' || this.cond.op == 'all')
       }
     },
     'isAssistCond': {
@@ -78,7 +74,8 @@ export default {
     setDefaultOptions() {
       this.options = []
       this.options.push({label: '等于',         value: 'eq'})
-      this.options.push({label: '不等于',       value: 'ne'})
+      // this.options.push({label: '不等于',       value: 'ne'})
+      this.options.push({label: '所有',       value: 'all'})
     },
 
     loadMetadata() {
@@ -88,12 +85,13 @@ export default {
 
       this.setDefaultOptions()
 
-      if (this.objectCode) {
-        this.$store.dispatch('lowCode/getObjectDefineByCode', this.objectCode).then(ret => {
+      if (this.cond && this.cond.objectCode) {
+
+        this.$store.dispatch('lowCode/getObjectDefineByCode', this.cond.objectCode).then(ret => {
           this.objectDefine = ret
           this.fieldDefine = this.objectDefine.fields.filter(a => a.fieldCode == this.cond.field)[0]
 
-          console.log(this.cond.fieldName, this.cond.objectCode+'.'+this.cond.departTypeCode, this.fieldDefine)
+          console.log(this.cond.fieldName, this.cond.objectCode+'.'+this.cond.field, this.fieldDefine)
           this.loadRefObjectDefine()
         })
       }

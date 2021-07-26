@@ -85,8 +85,10 @@ export default {
     'viewJson': {
       handler(nval, oval) {
         console.log('x-object-query-editor watch viewJson changed')
-        if (nval && nval.queryDefine && nval.queryDefine.conditions && nval.queryDefine.conditions.length > 0) {
-          this.syncFilterField()
+        if (nval && nval.queryDefine && nval.queryDefine.conditions) {
+          if (JSON.stringify(nval) !== JSON.stringify(oval)) {
+            this.syncFilterField()
+          }
         }
       },
       deep: true,

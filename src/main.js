@@ -55,8 +55,8 @@ Vue.component('x-object-field-select', ObjectFieldSelect)
 import XObjectFieldControl from '@/views/xview/components/x-object-field-control'
 Vue.component('x-object-field-control', XObjectFieldControl)
 
-
-
+import XObjectFieldQuery from '@/views/xview/components/x-object-field-query'
+Vue.component('x-object-field-query', XObjectFieldQuery)
 
 import xObjectCondition from '@/views/xview/components/x-object-condition'
 Vue.component('x-object-condition', xObjectCondition)

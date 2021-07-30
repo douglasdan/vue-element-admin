@@ -52,3 +52,10 @@ export function callObjectAction(oid, id, cmd, data) {
     data
   })
 }
+
+export function exportTaskResult(taskPlanId) {
+  return request({
+    url: `/api/v1/costResult/export?taskPlanId=${taskPlanId}`,
+    method: 'get',
+  })
+}

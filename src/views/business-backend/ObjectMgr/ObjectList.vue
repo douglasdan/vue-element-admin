@@ -24,7 +24,7 @@
       <!-- <el-table-column prop="objectIcon" label="图标" :formatter="formatter" /> -->
       <!-- <el-table-column prop="version" label="当前版本" :formatter="formatter" /> -->
       <!-- <el-table-column prop="deployVersion" label="已发布版本" :formatter="formatter" /> -->
-      <el-table-column width="240">
+      <el-table-column width="300">
         <template slot="header">
           <span>操作</span>
         </template>
@@ -44,6 +44,11 @@
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleClone(scope.$index, scope.row)"
+          >复制</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,6 +69,23 @@
       <object-editor ref="objectEditor" :obj="editForm" />
     </el-dialog>
 
+    <el-dialog title="编辑" :visible.sync="cloneDialogVisible" :close-on-click-modal="false">
+      <div style="width: 600px;">
+        <el-form :inline="true">
+          <el-form-item label="名称：">
+            <el-input v-model="cloneObject.name" placeholder="" style="width: 300px;"></el-input>
+          </el-form-item>
+          <el-form-item label="代码：">
+            <el-input v-model="cloneObject.code" placeholder="" style="width: 300px;"></el-input>
+          </el-form-item>
+          <div></div>
+          <el-form-item>
+            <el-button type="primary" @click="onSaveClone">保存</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
+
   </section>
 </template>
 
@@ -71,7 +93,7 @@
 
 import store from '@/store'
 import { mapState } from 'vuex'
-import { selectObjectDefinePage, saveObjectDefine, deleteObjectDefine } from '@/api/object-define'
+import { selectObjectDefinePage, saveObjectDefine, deleteObjectDefine, cloneObjectDefine } from '@/api/object-define'
 import { selectViewDefinePage, saveViewDefine } from '@/api/view-define'
 import { selectAppPage } from '@/api/app'
 import AppSelect from '../AppMgr/AppSelect'
@@ -110,7 +132,14 @@ export default {
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: JSON.parse(JSON.stringify(DefaultObject))
+      editForm: JSON.parse(JSON.stringify(DefaultObject)),
+
+      cloneObject: {
+        objectId: '',
+        name: '',
+        code: ''
+      },
+      cloneDialogVisible: false
     }
   },
   computed: {
@@ -362,6 +391,27 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+
+    handleClone(i, row) {
+      this.cloneObject.objectId = row.id
+      this.cloneObject.name = row.objectName
+      this.cloneObject.code = row.objectCode
+      this.cloneDialogVisible = true
+    },
+
+    onSaveClone() {
+
+      cloneObjectDefine(this.cloneObject.objectId, {
+        name: this.cloneObject.name,
+        code: this.cloneObject.code
+      }).then(ret => {
+        if (ret.success) {
+          this.cloneDialogVisible = false
+          this.loadData()
+        }
+      })
+
     }
   }
 }

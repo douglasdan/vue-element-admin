@@ -1,13 +1,14 @@
 <template>
   <div style="display: inline-flex;">
+
     <el-select v-model="cond.op" placeholder="" style="width: 120px;" size="small" v-show="!hideOp">
       <el-option :label="item.label" :value="item.value" v-for="(item,i) in options"></el-option>
     </el-select>
 
     <div style="width: 280px;" v-if="showDataSelect">
       <x-object-data-select v-model="cond.values"
-        :object-code="refObjectDefine.objectCode"
-        v-if="refObjectDefine" @change="handleChange">
+        :object-code="refObjectDefine ? refObjectDefine.objectCode : cond.objectCode"
+        @change="handleChange">
       </x-object-data-select>
     </div>
   </div>
@@ -34,7 +35,7 @@ export default {
     return {
       objectDefine: null,
       fieldDefine: null,
-      refObjectDefine: {},
+      refObjectDefine: null,
 
       options: []
     }
@@ -53,7 +54,8 @@ export default {
       },
       immediate: true,
       deep: true
-    }
+    },
+
   },
   computed: {
     'showDataSelect': {
@@ -65,6 +67,11 @@ export default {
       get() {
         return this.objectCode != this.cond.objectCode
       }
+    },
+    "disableOp": {
+      get() {
+        return this.cond.field == 'subjectCode'
+      }
     }
   },
   created() {
@@ -74,7 +81,7 @@ export default {
     setDefaultOptions() {
       this.options = []
       this.options.push({label: '等于',         value: 'eq'})
-      // this.options.push({label: '不等于',       value: 'ne'})
+      this.options.push({label: '不等于',       value: 'ne'})
       this.options.push({label: '所有',       value: 'all'})
     },
 
@@ -92,7 +99,9 @@ export default {
           this.fieldDefine = this.objectDefine.fields.filter(a => a.fieldCode == this.cond.field)[0]
 
           console.log(this.cond.fieldName, this.cond.objectCode+'.'+this.cond.field, this.fieldDefine)
-          this.loadRefObjectDefine()
+          if (this.fieldDefine.refTableId) {
+            this.loadRefObjectDefine()
+          }
         })
       }
     },
@@ -101,6 +110,10 @@ export default {
         this.$store.dispatch('lowCode/getObjectDefine', this.fieldDefine.refTableId).then(ret => {
           this.refObjectDefine = ret
 
+          if (this.cond.objectCode == 'CS_TASK') {
+            console.log("this.refObjectDefine = ", this.refObjectDefine)
+            debugger
+          }
           console.log(this.cond.fieldName, this.cond.objectCode+'.'+this.cond.departTypeCode, ' ref ', this.refObjectDefine)
 
           if (this.refObjectDefine.treeFlag) {

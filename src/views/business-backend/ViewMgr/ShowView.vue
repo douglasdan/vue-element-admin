@@ -9,6 +9,7 @@
         :object-id="pageDefine.objectId"
         :view-json="viewJson"
         :params="params"
+        ref="view"
       />
 
       <component
@@ -18,6 +19,7 @@
         :object-id="pageDefine.objectId"
         :view-json="viewJson"
         :params="params"
+        ref="view"
       />
 
       <component
@@ -28,6 +30,7 @@
         :object-data-id="pageDefine.dataId"
         :view-json="viewJson"
         :params="params"
+        ref="view"
       />
 
     </div>
@@ -185,6 +188,10 @@ export default {
     this.show()
   },
   methods: {
+
+    invoke(methodName, params) {
+      return this.$refs.view[methodName](params)
+    },
 
     isRootPageView() {
       return this.$parent.$options._componentTag == 'app-main'

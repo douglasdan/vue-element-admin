@@ -115,7 +115,7 @@ export default {
 
       },
       extendsFrom: {
-        field: 'extendsFrom', op: 'eq', values: []
+        objectCode: 'CS_TASK', field: 'taskCode', op: 'eq', values: []
       },
       sender: [
       ],

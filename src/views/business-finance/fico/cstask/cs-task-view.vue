@@ -133,7 +133,7 @@ export default {
 
       },
       extendsFrom: {
-        field: 'extendsFrom', op: 'eq', values: []
+        objectCode: 'CS_TASK', field: 'taskCode', op: 'eq', values: []
       },
       sender: [
       ],
@@ -232,6 +232,13 @@ export default {
     },
 
     saveData() {
+
+      this.receiver.forEach((cond) => {
+        if (cond.field == 'subjectCode') {
+          cond.op = 'same'
+        }
+      })
+
       this.objectData['extendsFrom'] = JSON.stringify(this.extendsFrom.values)
       this.objectData['sender'] = JSON.stringify(this.sender)
       this.objectData['receiver'] = JSON.stringify(this.receiver)

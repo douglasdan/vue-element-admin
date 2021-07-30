@@ -1,7 +1,7 @@
 <template>
   <section>
     <div>
-      <el-row v-if="viewButtons && viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+      <el-row v-if="!hideFuncBar && viewButtons && viewButtons.length > 0" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
         <div style="display: flex-inline;">
           <el-link v-show="queryBtnVisible()" type="primary" style="line-height: 32px;" @click="toggleQueryPanel">筛选</el-link>
         </div>
@@ -147,6 +147,10 @@ export default {
     },
     params: {
       type: Object
+    },
+    hideFuncBar: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

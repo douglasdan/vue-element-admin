@@ -333,7 +333,8 @@ export default {
           {
             field: 'oid', op: 'eq', values: [this.$props.objectId]
           }
-        ]
+        ],
+        sorts: [{field: 'id', direction: '0'}]
       }
       selectObjectFieldDefinePage(queryObj).then(ret => {
         if (ret.success) {

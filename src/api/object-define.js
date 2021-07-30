@@ -36,3 +36,12 @@ export function syncObjectDefineToDB(id) {
     method: 'get'
   })
 }
+
+export function cloneObjectDefine(id, data) {
+  return request({
+    url: `/api/v1/objectDefine/${id}/clone`,
+    method: 'post',
+    data
+  })
+}
+

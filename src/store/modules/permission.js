@@ -115,7 +115,7 @@ function SYS() {
   if (window.localStorage.getItem('SYS')) {
     return parseInt(window.localStorage.getItem('SYS'))
   }
-  window.localStorage.setItem('SYS', 1)
+  window.localStorage.setItem('SYS', 2)
   return 1
 }
 

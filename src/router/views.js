@@ -23,6 +23,7 @@ const routesMap =
 
   '/fico/sharing/strategy': () => import('@/views/business-finance/fico/csmethod/CsMethodListView'),
 
+  '/fico/ca/doc/custom': () => import('@/views/business-finance/fico/cabase/ca-doc-list'),
 }
 
 export { routesMap }

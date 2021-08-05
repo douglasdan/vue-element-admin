@@ -71,7 +71,7 @@ const DefaultMenu = {
   supMenuId: null,
   menuName: '空白菜单',
   menuType: 2,
-  menuPath: 'view',
+  menuPath: '',
   viewId: null,
   extraUrl: '',
   menuStatus: 0,

@@ -16,6 +16,12 @@ const CustomViewDefines =
   // 'CS_STRATEGY_PLAN': {
   //   'object-view': require(`@/views/business-finance/fico/csstrategyplan/cs-strategy-plan-view`).default
   // }
+  'CA_ORG': {
+    'object-view': require(`@/views/business-finance/fico/caorg/ca-org-view`).default
+  },
+  // 'CS_DOC': {
+  //   'object-list': require(`@/views/business-finance/fico/cabase/ca-doc-list`).default
+  // },
 }
 
 export { CustomViewDefines }

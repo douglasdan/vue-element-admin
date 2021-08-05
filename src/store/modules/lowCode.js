@@ -2,7 +2,7 @@ import { selectViewDefinePage } from '@/api/view-define.js'
 
 import { getObjectDefineById, deleteObjectDefine, saveObjectDefine, selectObjectDefinePage } from '@/api/object-define'
 import { selectObjectFieldDefinePage, deleteObjectFieldDefine, saveObjectFieldDefine } from '@/api/object-field-define'
-import { getViewDefineById } from '@/api/object-define'
+import { getViewDefineById } from '@/api/view-define'
 
 const state = {
   apps: [],

@@ -3,6 +3,9 @@
     <el-aside :style="sidebarStyle" width="160px">
       <el-menu default-active="1" style="height: 100%;" @select="handleSelect">
         <el-menu-item index="1">
+          <span slot="title">基本信息</span>
+        </el-menu-item>
+        <el-menu-item index="2">
           <span slot="title">菜单权限</span>
         </el-menu-item>
       </el-menu>
@@ -16,6 +19,18 @@
           </div>
         </div>
         <div v-if="selectIndex === '1'" style="padding-top: 10px;">
+          <div style="width: 400px;">
+            <el-form width="400px" label-width="120px">
+              <el-form-item label="角色名称：">
+                <el-input placeholder="" />
+              </el-form-item>
+              <el-form-item label="角色描述：">
+                <el-input placeholder="" />
+              </el-form-item>
+            </el-form>
+          </div>
+        </div>
+        <div v-if="selectIndex === '2'" style="padding-top: 10px;">
           <div class="custom-tree-container">
             <div class="block" style="margin-top:30px; border-top: 1px solid #eee;">
               <el-tree

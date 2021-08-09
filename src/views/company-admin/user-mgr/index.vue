@@ -1,6 +1,6 @@
 <template>
   <el-container style="border: 1px solid #eee" class="main-content-full">
-    <org-side-bar>></org-side-bar>
+    <!-- <org-side-bar></org-side-bar> -->
     <el-container>
       <el-main style="padding: 10px;">
         <UserList />

@@ -1,13 +1,23 @@
 <template>
   <section>
-    <el-row style="margin-bottom: 10px;">
-      <el-button type="primary" @click="handleAdd">新增用户</el-button>
+    <el-row style="margin-bottom: 0px;">
+      <el-form :inline="true">
+        <el-form-item label="账号：">
+          <el-input size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名：">
+          <el-input size="small"></el-input>
+        </el-form-item>
+        <el-form-item style="float: right;">
+          <el-button type="primary" @click="handleAdd">新增用户</el-button>
+        </el-form-item>
+      </el-form>
     </el-row>
     <el-table :data="users" border style="width: 100%;" :height="tableHeight">
       <el-table-column type="index" label="序号" />
       <el-table-column prop="userAccount" label="账号" />
       <el-table-column prop="userName" label="姓名" />
-      <el-table-column prop="userPhone" label="电话" />
+      <!-- <el-table-column prop="userPhone" label="电话" /> -->
       <el-table-column width="240">
         <template slot="header">
           <span>操作</span>
@@ -18,16 +28,16 @@
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="primary"
-            @click="handleEdit(scope.$index, scope.row)"
-          >角色</el-button>
+            @click="handleRole(scope.$index, scope.row)"
+          >角色</el-button> -->
           <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button>
+          >禁用</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -53,6 +63,13 @@
       </el-row>
       <el-row>
         <el-form :inline="true">
+          <el-form-item label="用户账号：">
+            <el-input v-model="editForm.userAccount" placeholder="" />
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-form :inline="true">
           <el-form-item label="用户名称：">
             <el-input v-model="editForm.userName" placeholder="" />
           </el-form-item>
@@ -62,6 +79,15 @@
         <el-form :inline="true">
           <el-form-item label="用户账号：">
             <el-input v-model="editForm.userAccount" placeholder="" />
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-form :inline="true">
+          <el-form-item label="授权角色：">
+            <el-checkbox v-model="checked">系统管理员</el-checkbox>
+            <el-checkbox v-model="checked">成本分摊</el-checkbox>
+            <el-checkbox v-model="checked">报表</el-checkbox>
           </el-form-item>
         </el-form>
       </el-row>
@@ -94,7 +120,10 @@ export default {
       pageSizes: [10, 20, 40],
 
       editDialogVisible: false,
-      editForm: {}
+      editForm: {},
+
+      editRoleVisible: false,
+      roleIds: []
     }
   },
   watch: {
@@ -156,6 +185,9 @@ export default {
     handleEdit(i, row) {
       Object.assign(this.editForm, row)
       this.editDialogVisible = true
+    },
+    handleRole(i, row) {
+      this.editRoleVisible = true
     },
     handleAdd() {
       Object.assign(this.editForm, {})

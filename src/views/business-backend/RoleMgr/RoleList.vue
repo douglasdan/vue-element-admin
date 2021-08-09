@@ -12,21 +12,21 @@
           <span>操作</span>
         </template>
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
             type="primary"
             @click="handleEdit(scope.$index, scope.row)"
+          >编辑</el-button> -->
+          <el-button
+            size="mini"
+            type="primary"
+            @click="editPerm(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
-          <el-button
-            size="mini"
-            type="primary"
-            @click="editPerm(scope.$index, scope.row)"
-          >分配权限</el-button>
         </template>
       </el-table-column>
     </el-table>

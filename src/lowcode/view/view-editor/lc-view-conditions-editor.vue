@@ -1,6 +1,11 @@
 <template>
   <div :class="eid">
     <el-row style="margin: 10px;">
+      <lc-form-item label="宽度">
+        <el-input v-model="viewJson.operate.width" placeholder="" style="width: 200px;" size="small"></el-input>
+      </lc-form-item>
+    </el-row>
+    <el-row style="margin: 10px;">
       <lc-form-item label="选择字段">
         <lc-field-select :object-code="objectCode" @selectField="handleSelectField" />
         <i class="el-icon-plus" style="font-weight: 600; margin: 8px;" size="mini" @click="showField" />
@@ -9,40 +14,30 @@
 
     <el-table
       ref="table"
-      :row-key="'id'"
-      :data="viewJson.showFields"
+      :data="viewJson.queryDefine.conditions"
+      :show-header="false"
       border
       style="width: 100%;"
     >
-      <el-table-column prop="fieldCode" label="字段代码" width="120" />
-      <el-table-column prop="fieldName" label="字段名称">
+      <el-table-column prop="fieldCode" label="字段代码" width="120"/>
+      <!-- <el-table-column prop="fieldName" label="字段名称" width="120"/>
         <template scope="scope">
           <el-input v-model="scope.row.fieldName" size="mini" />
         </template>
-      </el-table-column>
-      <el-table-column prop="visible" label="是否显示">
-        <template scope="scope">
-          <el-switch v-model="scope.row.visible"
-            active-color="#13ce66" inactive-color="#ff4949"
-            style="margin-top: 5px;">
-          </el-switch>
-        </template>
-      </el-table-column>>
-      <el-table-column prop="width" label="宽度" width="90">
-        <template scope="scope">
-          <el-input v-model="scope.row.width" type="number" size="mini" />
-        </template>
-      </el-table-column>
-
-      <!-- <el-table-column prop="visible" label="是否显示" width="80">
-        <template scope="scope">
-          <el-switch v-model="scope.row.visible"
-            active-color="#13ce66" inactive-color="#ff4949"
-            @change="handleChange"
-            style="margin-top: 5px;">
-          </el-switch>
-        </template>
       </el-table-column> -->
+      <el-table-column prop="visible" label="是否显示" width="70">
+        <template scope="scope">
+          <el-switch v-model="scope.row.visible"
+            active-color="#13ce66" inactive-color="#ff4949"
+            style="margin-top: 5px;">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="x">
+        <template scope="scope">
+          <lc-condition :object-code="objectCode" :hide-op="false" :cond="scope.row" :width="viewJson.operate.width"></lc-condition>
+        </template>
+      </el-table-column>
 
       <el-table-column width="60">
         <template slot="header">
@@ -62,7 +57,7 @@ import { uuid } from 'vue-uuid'
 import Sortable from 'sortablejs'
 
 export default {
-  name: 'LcShowFieldsEditor',
+  name: 'lc-view-conditions-editor',
   props: {
     objectCode: String,
     viewJson: Object,
@@ -88,35 +83,37 @@ export default {
       const _this = this
       Sortable.create(tbody, {
         onEnd({ newIndex, oldIndex }) {
-          const currRow = _this.viewJson.showFields.splice(oldIndex, 1)[0]
-          _this.viewJson.showFields.splice(newIndex, 0, currRow)
-          console.log('drag end: ' + JSON.stringify(_this.viewJson.showFields.map(a => a.fieldCode)))
+          const currRow = _this.viewJson.queryDefine.conditions.splice(oldIndex, 1)[0]
+          _this.viewJson.queryDefine.conditions.splice(newIndex, 0, currRow)
+          console.log('drag end: ' + JSON.stringify(_this.viewJson.queryDefine.conditions.map(a => a.fieldCode)))
         }
       })
     },
+
     handleSelectField(field) {
       this.selectField = field
     },
     showField() {
       if (this.selectField) {
-        if (!this.repeat && this.viewJson.showFields.filter(a => a.fieldCode == this.selectField.fieldCode).length > 0) {
+        if (!this.repeat && this.viewJson.queryDefine.conditions.filter(a => a.fieldCode == this.selectField.fieldCode).length > 0) {
           this.$message.error('已经存在')
         } else {
-          this.viewJson.showFields.push({
+          this.viewJson.queryDefine.conditions.push({
             id: this.selectField.id,
             fieldCode: this.selectField.fieldCode,
             fieldName: this.selectField.fieldName,
             visible: true,
-            width: 100
+            op: 'eq',
+            values: []
           })
         }
       }
     },
     deleteEle(ele) {
-      for (const item of this.viewJson.showFields) {
+      for (const item of this.viewJson.queryDefine.conditions) {
         if (item.id === ele.id) {
-          const index = this.viewJson.showFields.indexOf(item)
-          this.viewJson.showFields.splice(index, 1)
+          const index = this.viewJson.queryDefine.conditions.indexOf(item)
+          this.viewJson.queryDefine.conditions.splice(index, 1)
           break
         }
       }

@@ -78,8 +78,8 @@ Vue.component('lc-show-fields-editor', lcShowFieldsEditor)
 import lcViewBtnEditor from '@/lowcode/view/view-editor/lc-view-btn-editor'
 Vue.component('lc-view-btn-editor', lcViewBtnEditor)
 
-
-
+import lcViewConditionsEditor from '@/lowcode/view/view-editor/lc-view-conditions-editor'
+Vue.component('lc-view-conditions-editor', lcViewConditionsEditor)
 
 
 

@@ -21,7 +21,14 @@
           </el-collapse-item>
 
           <el-collapse-item title="查询条件" name="4" >
-
+            <lc-view-conditions-editor
+              :object-code="objectCode"
+              :view-json="viewJson">
+            </lc-view-conditions-editor>
+          </el-collapse-item>
+          <el-collapse-item title="高级选项" name="5" >
+            1.动态控制按钮显示
+            2.输入框，联动
           </el-collapse-item>
 
         </el-collapse>

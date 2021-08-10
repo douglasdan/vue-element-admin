@@ -15,6 +15,9 @@
         <lc-form-item label="对象">
           <lc-object-select v-model="viewDefine.objectCode" :app-code="appCode" @change="handleChange" />
         </lc-form-item>
+        <lc-form-item label="视图代码">
+          <el-input v-model="viewDefine.viewCode" placeholder="" style="width: 200px;"></el-input>
+        </lc-form-item>
         <div style="right: 10px; float: right; position: absolute;">
           <el-button size="small" type="primary" @click="doSave">保存</el-button>
         </div>

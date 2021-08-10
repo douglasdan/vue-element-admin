@@ -4,6 +4,8 @@ import { getObjectDefineById, deleteObjectDefine, saveObjectDefine, selectObject
 import { selectObjectFieldDefinePage, deleteObjectFieldDefine, saveObjectFieldDefine } from '@/api/object-field-define'
 import { getViewDefineById } from '@/api/view-define'
 
+import { getViewByObjectCodeAndViewCode } from '@/lowcode/api/lowcode'
+
 const state = {
   apps: [],
   views: [],
@@ -24,6 +26,10 @@ const mutations = {
   SET_VIEWS: (state, data) => {
     state.views = data
   },
+  CACHE_VIEW: (state, view) => {
+    state.view.push(view)
+  },
+
   SET_OBJECT_DEFINE: (state, { oid, data }) => {
     state.objects[oid] = data
     state.objectCodeMap[data.fieldCode] = data
@@ -144,12 +150,23 @@ const actions = {
     })
   },
 
-  getViewDefine({ commit }, vid) {
-    console.log(new Date(), 'lowCode/getViewDefine ' + vid)
+  getViewDefine({ commit }, {ocode, vcode}) {
+    console.log(new Date(), 'lowCode/getViewDefine ' + ocode+' '+vcode)
 
     return new Promise((resolve, reject) => {
-      if (!state.views['' + vid]) {
-        getViewDefineById(oid).then(ret => {
+
+      if (state.views.length > 0) {
+        let finded = false
+        state.view.forEach((v) => {
+          if (v.objectCode == ocode && v.viewCode == vcode) {
+            finded = true
+            resolve(v)
+          }
+        })
+      }
+
+      if (!finded) {
+        getViewByObjectCodeAndViewCode(ocode, vcode).then(ret => {
           if (ret.success) {
             commit('SET_VIEW_DEFINE', {
               oid: '' + vid,
@@ -158,8 +175,6 @@ const actions = {
           }
           resolve(ret.data)
         })
-      } else {
-        resolve(state.views['' + vid])
       }
     })
   }

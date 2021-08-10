@@ -1,0 +1,63 @@
+{
+  "width": 0,
+  "height": 0,
+  "minHeight": 0,
+  "minWidth": 0,
+  "maxHeight": 0,
+  "maxWidth": 0,
+
+  "labelWidth": 120,
+  "contentWidth": 140,
+  "cols": 2,
+  "showFields": [
+
+  ],
+  "ers": {
+
+  },
+  "viewButtons": [
+    {
+      "name": "保存",
+      "code": "",
+      "visible": true,
+      "props": {
+        "size": "small",
+        "type": "primary",
+        "disabled": false
+      },
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.saveData()"
+      }
+    },
+    {
+      "name": "取消",
+      "code": "",
+      "visible": true,
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.cancelEdit()"
+      }
+    },
+    {
+      "name": "编辑",
+      "code": "",
+      "visible": true,
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.beginEdit()"
+      }
+    }
+  ]
+}

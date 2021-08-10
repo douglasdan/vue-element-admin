@@ -1,0 +1,35 @@
+{
+  "labelWidth": 120,
+  "showFields": [
+
+  ],
+  "viewButtons": [
+    {
+      "name": "保存",
+      "code": "",
+      "props": {
+        "size": "small",
+        "disabled": false,
+        "type": "primary"
+      },
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.saveData()"
+      }
+    },
+    {
+      "name": "取消",
+      "code": "",
+      "props": {
+        "size": "small",
+        "disabled": false
+      },
+      "action": {
+        "type":"2",
+        "viewId":"",
+        "script":"this.cancel()"
+      }
+    }
+  ]
+}

@@ -98,33 +98,65 @@ export function selectObjectFieldDefinePage(data) {
   })
 }
 
-//*********** 数据操作 ***********/
+//*********** 视图处理 ***********/
 
-export function getObjectDataById(oid, id) {
+export function saveViewDefine(data) {
   return request({
-    url: `/api/v1/object/${oid}/${id}`,
-    method: 'get'
-  })
-}
-
-export function saveObjectData(oid, data) {
-  return request({
-    url: `/api/v1/object/${oid}/save`,
+    url: `/api/v1/viewDefine/save`,
     method: 'post',
     data
   })
 }
 
-export function deleteObjectData(oid, id) {
+export function deleteViewDefine(id) {
   return request({
-    url: `/api/v1/object/${oid}/delete/${id}`,
+    url: `/api/v1/viewDefine/${id}`,
     method: 'delete'
   })
 }
 
-export function selectObjectDataPage(oid, data) {
+export function selectViewDefinePage(data) {
   return request({
-    url: `/api/v1/object/${oid}/query`,
+    url: `/api/v1/viewDefine/query`,
+    method: 'post',
+    data
+  })
+}
+
+export function getViewByObjectCodeAndViewCode(code, viewCode) {
+  return request({
+    url: `/api/v1/viewDefine/${code}/${viewCode}`,
+    method: 'get',
+  })
+}
+
+//*********** 数据操作 ***********/
+
+export function getObjectDataById(code, id) {
+  return request({
+    url: `/api/v1/object/${code}/${id}`,
+    method: 'get'
+  })
+}
+
+export function saveObjectData(code, data) {
+  return request({
+    url: `/api/v1/object/${code}/save`,
+    method: 'post',
+    data
+  })
+}
+
+export function deleteObjectData(code, id) {
+  return request({
+    url: `/api/v1/object/${code}/delete/${id}`,
+    method: 'delete'
+  })
+}
+
+export function selectObjectDataPage(code, data) {
+  return request({
+    url: `/api/v1/object/${code}/query`,
     method: 'post',
     data
   })
@@ -152,3 +184,5 @@ export function callObjectAction(oid, id, cmd, data) {
     data
   })
 }
+
+

@@ -22,6 +22,61 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import TreeSelect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+Vue.use(TreeSelect)
+
+
+/************lowcode components ************/
+import lcViewEditor from '@/lowcode/view/lc-view-editor'
+Vue.component('lc-view-editor', lcViewEditor)
+
+import lcView from '@/lowcode/view/lc-view'
+Vue.component('lc-view', lcView)
+
+import lcViewListEditor from '@/lowcode/view/view-editor/lc-view-list-editor'
+Vue.component('lc-view-list-editor', lcViewListEditor)
+
+import lcViewCreateEditor from '@/lowcode/view/view-editor/lc-view-create-editor'
+Vue.component('lc-view-create-editor', lcViewCreateEditor)
+
+import lcViewEditEditor from '@/lowcode/view/view-editor/lc-view-edit-editor'
+Vue.component('lc-view-edit-editor', lcViewEditEditor)
+
+import lcViewList from '@/lowcode/view/template/lc-view-list'
+Vue.component('lc-view-list', lcViewList)
+
+import lcViewCreate from '@/lowcode/view/template/lc-view-create'
+Vue.component('lc-view-create', lcViewCreate)
+
+import lcViewEdit from '@/lowcode/view/template/lc-view-edit'
+Vue.component('lc-view-edit', lcViewEdit)
+
+import lcAppSelect from '@/lowcode/view/components/lc-app-select'
+Vue.component('lc-app-select', lcAppSelect)
+
+import lcCondition from '@/lowcode/view/components/lc-condition'
+Vue.component('lc-condition', lcCondition)
+
+import lcFieldSelect from '@/lowcode/view/components/lc-field-select'
+Vue.component('lc-field-select', lcFieldSelect)
+
+import lcFormItem from '@/lowcode/view/components/lc-form-item'
+Vue.component('lc-form-item', lcFormItem)
+
+import lcInput from '@/lowcode/view/components/lc-input'
+Vue.component('lc-input', lcInput)
+
+import lcObjectSelect from '@/lowcode/view/components/lc-object-select'
+Vue.component('lc-object-select', lcObjectSelect)
+
+import lcObjectDataSelect from '@/lowcode/view/components/lc-object-data-select'
+Vue.component('lc-object-data-select', lcObjectDataSelect)
+
+import lsShowFieldsEditor from '@/lowcode/view/components/lc-show-fields-editor'
+Vue.component('lc-show-fields-editor', lsShowFieldsEditor)
+
+
 import Mdm from './components/LowCode/index'
 Vue.use(Mdm)
 
@@ -30,11 +85,6 @@ Vue.component('view-select', ViewSelect)
 
 import AppSelect from '@/views/business-backend/AppMgr/AppSelect'
 Vue.component('app-select', AppSelect)
-
-import TreeSelect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-Vue.use(TreeSelect)
-
 
 import XObjectDefineEditor from '@/views/xview/x-object-editor'
 import XObjectEditor from '@/views/xview/x-object-editor'

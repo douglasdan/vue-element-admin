@@ -81,6 +81,10 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/test',
+    component: () => import('@/lowcode/view/testview'),
+  },
+  {
     path: '/singleview',
     component: Layout,
     hidden: true,

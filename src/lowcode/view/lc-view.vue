@@ -10,14 +10,16 @@ import { ViewOverride } from './view-override'
 import { ViewTemplate } from './view-template'
 
 export default {
-  name: 'lc-view',
+  name: 'LcView',
   props: {
     objectCode: String,
     viewCode: String,
     viewId: [String, Number],
 
     templateCode: String,
-    viewJson: Object,
+    viewJson: Object
+  },
+  computed: {
   },
   watch: {
     'objectCode': {
@@ -33,9 +35,7 @@ export default {
       },
       immediate: true,
       deep: true
-    },
-  },
-  computed: {
+    }
   },
   date() {
     return {
@@ -50,21 +50,16 @@ export default {
       return this.$parent.$options._componentTag == 'app-main'
     },
     async loadMetadata() {
-
       if (this.objectCode && this.viewCode) {
         //
 
       }
-
     },
 
     renderView() {
-
       if (this.viewJson && this.templateCode) {
 
-
       }
-
     }
 
   }

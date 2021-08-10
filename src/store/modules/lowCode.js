@@ -15,8 +15,8 @@ const state = {
   objectCodeMap: {
 
   },
-  keywords:[],
-  defaultFields:['id', 'create_by', 'create_user', 'create_time', 'update_by', 'update_user', 'update_time', 'tenant_id', 'tenant_code', 'company_id', 'company_code', 'depart_id', 'depart_code']
+  keywords: [],
+  defaultFields: ['id', 'create_by', 'create_user', 'create_time', 'update_by', 'update_user', 'update_time', 'tenant_id', 'tenant_code', 'company_id', 'company_code', 'depart_id', 'depart_code']
 }
 
 const mutations = {
@@ -150,11 +150,10 @@ const actions = {
     })
   },
 
-  getViewDefine({ commit }, {ocode, vcode}) {
-    console.log(new Date(), 'lowCode/getViewDefine ' + ocode+' '+vcode)
+  getViewDefine({ commit }, { ocode, vcode }) {
+    console.log(new Date(), 'lowCode/getViewDefine ' + ocode + ' ' + vcode)
 
     return new Promise((resolve, reject) => {
-
       if (state.views.length > 0) {
         let finded = false
         state.view.forEach((v) => {

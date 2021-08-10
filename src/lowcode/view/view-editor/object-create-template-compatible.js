@@ -1,6 +1,5 @@
 
 export function repairObjectEditViewJson(viewJson) {
-
   if (!viewJson.hasOwnProperty('width')) {
     viewJson.width = 0
   }
@@ -24,19 +23,17 @@ export function repairObjectEditViewJson(viewJson) {
 
   if (viewJson.hasOwnProperty('viewButtons')) {
     viewJson.viewButtons.forEach((btn) => {
-
       if (!btn.hasOwnProperty('props')) {
         btn.props = {
-          "size": "small",
-          "type": "primary",
-          "disabled": false
+          'size': 'small',
+          'type': 'primary',
+          'disabled': false
         }
       }
 
       if (!btn.hasOwnProperty('visible')) {
         btn.visible = true
       }
-
     })
   }
 
@@ -44,18 +41,16 @@ export function repairObjectEditViewJson(viewJson) {
     viewJson.rowButtons.forEach((btn) => {
       if (!btn.hasOwnProperty('props')) {
         btn.props = {
-          "size": "mini",
-          "type": "",
-          "disabled": false
+          'size': 'mini',
+          'type': '',
+          'disabled': false
         }
       }
 
       if (!btn.hasOwnProperty('visible')) {
         btn.visible = true
       }
-
     })
   }
-
 }
 

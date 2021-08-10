@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="val" filterable clearable :disabled="disabled" @change="handleChange" :style="showStyle">
+  <el-select v-model="val" filterable clearable :disabled="disabled" :style="showStyle" @change="handleChange">
     <el-option
       v-for="item in objects"
       :key="item.objectCode"
@@ -14,7 +14,7 @@
 import { selectObjectDefinePage } from '@/lowcode/api/lowcode'
 
 export default {
-  name: 'ls-field-select',
+  name: 'LsFieldSelect',
   props: {
     appCode: String,
     value: String,
@@ -25,8 +25,19 @@ export default {
     },
     width: [String, Number]
   },
+  data() {
+    return {
+      objects: [],
+      val: null
+    }
+  },
+  computed: {
+    showStyle() {
+      return 'width: ' + (this.width ? this.width + 'px;' : '200px;')
+    }
+  },
   watch: {
-    'appCode' :{
+    'appCode': {
       handler(nval, oval) {
         this.loadData()
       },
@@ -44,17 +55,6 @@ export default {
       handler(nval, oval) {
       },
       immediate: true
-    },
-  },
-  computed: {
-    showStyle() {
-      return 'width: '+ (this.width ? this.width+'px;' : '200px;')
-    }
-  },
-  data() {
-    return {
-      objects: [],
-      val: null,
     }
   },
   mounted() {
@@ -63,7 +63,7 @@ export default {
     loadData() {
       selectObjectDefinePage({
         conditions: [{
-          field: 'app_code', op:'eq', values:[this.appCode]
+          field: 'app_code', op: 'eq', values: [this.appCode]
         }]
       }).then(ret => {
         this.objects = ret.data.rows
@@ -77,7 +77,7 @@ export default {
       if (nval) {
         this.$emit('selectObject', this.objects.filter(a => a.objectCode == nval)[0])
       }
-    },
+    }
   }
 }
 

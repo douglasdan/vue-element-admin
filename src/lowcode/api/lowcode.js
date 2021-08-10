@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-//*********** 应用 ***********/
+//* ********** 应用 ***********/
 
 export function getAppByCode(code) {
   return request({
@@ -25,9 +25,9 @@ export function selectAppPage(data) {
   })
 }
 
-//*********** 主数据 ***********/
+//* ********** 主数据 ***********/
 
-//CRUD通过标准的对象API来处理
+// CRUD通过标准的对象API来处理
 
 // 获取mdm_type的所有最新的数据
 export function getMdmTypeAll(code) {
@@ -40,7 +40,7 @@ export function getMdmTypeAll(code) {
   })
 }
 
-//*********** 对象定义 ***********/
+//* ********** 对象定义 ***********/
 
 export function saveObjectDefine(data) {
   return request({
@@ -53,7 +53,7 @@ export function saveObjectDefine(data) {
 export function deleteObjectDefine(id) {
   return request({
     url: `/api/v1/objectDefine/delete/${id}`,
-    method: 'delete',
+    method: 'delete'
   })
 }
 
@@ -80,7 +80,7 @@ export function cloneObjectDefine(code, data) {
   })
 }
 
-//*********** 对象字段定义 ***********/
+//* ********** 对象字段定义 ***********/
 
 export function saveObjectFieldDefine(data) {
   return request({
@@ -98,7 +98,7 @@ export function selectObjectFieldDefinePage(data) {
   })
 }
 
-//*********** 视图处理 ***********/
+//* ********** 视图处理 ***********/
 
 export function saveViewDefine(data) {
   return request({
@@ -126,11 +126,11 @@ export function selectViewDefinePage(data) {
 export function getViewByObjectCodeAndViewCode(code, viewCode) {
   return request({
     url: `/api/v1/viewDefine/${code}/${viewCode}`,
-    method: 'get',
+    method: 'get'
   })
 }
 
-//*********** 数据操作 ***********/
+//* ********** 数据操作 ***********/
 
 export function getObjectDataById(code, id) {
   return request({
@@ -173,7 +173,7 @@ export function selectTreeRootPage(code, data) {
 export function getTree(oid, id) {
   return request({
     url: `/api/v1/object/${oid}/tree/${id}`,
-    method: 'get',
+    method: 'get'
   })
 }
 
@@ -184,5 +184,4 @@ export function callObjectAction(oid, id, cmd, data) {
     data
   })
 }
-
 

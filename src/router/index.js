@@ -82,7 +82,7 @@ export const constantRoutes = [
   },
   {
     path: '/test',
-    component: () => import('@/lowcode/view/testview'),
+    component: () => import('@/lowcode/view/testview')
   },
   {
     path: '/singleview',
@@ -91,11 +91,11 @@ export const constantRoutes = [
     children: [
       {
         path: '/singleview/:viewId(.*)/:dataId(.*)',
-        component: () => import('@/views/business-backend/ViewMgr/ShowView'),
+        component: () => import('@/views/business-backend/ViewMgr/ShowView')
       },
       {
         path: '/singleview/:viewId(.*)',
-        component: () => import('@/views/business-backend/ViewMgr/ShowView'),
+        component: () => import('@/views/business-backend/ViewMgr/ShowView')
       }
     ]
   },

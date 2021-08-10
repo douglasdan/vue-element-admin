@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="val" filterable clearable :disabled="disabled" @change="handleChange" :style="showStyle">
+  <el-select v-model="val" filterable clearable :disabled="disabled" :style="showStyle" @change="handleChange">
     <el-option
       v-for="item in objectDefine.fields"
       :key="item.fieldCode"
@@ -12,7 +12,7 @@
 <script>
 
 export default {
-  name: 'ls-field-select',
+  name: 'LsFieldSelect',
   props: {
     objectCode: String,
     value: String,
@@ -22,6 +22,19 @@ export default {
       default: false
     },
     width: [String, Number]
+  },
+  data() {
+    return {
+      objectDefine: {
+        fields: []
+      },
+      val: null
+    }
+  },
+  computed: {
+    showStyle() {
+      return 'width: ' + (this.width ? this.width + 'px;' : '200px;')
+    }
   },
   watch: {
     'value': {
@@ -43,19 +56,6 @@ export default {
       immediate: true
     }
   },
-  computed: {
-    showStyle() {
-      return 'width: '+ (this.width ? this.width+'px;' : '200px;')
-    }
-  },
-  data() {
-    return {
-      objectDefine: {
-        fields: []
-      },
-      val: null,
-    }
-  },
   mounted() {
     this.loadData()
   },
@@ -73,7 +73,7 @@ export default {
       if (nval) {
         this.$emit('selectField', this.objectDefine.fields.filter(a => a.fieldCode == nval)[0])
       }
-    },
+    }
   }
 }
 

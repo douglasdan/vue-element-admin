@@ -1,6 +1,6 @@
 <template>
-  <el-select v-model="val" v-if="rows" clearable @input="handleChange" :style="showStyle">
-    <el-option :label="item.appName" :value="item.appCode" v-for="(item,i) in rows"></el-option>
+  <el-select v-if="rows" v-model="val" clearable :style="showStyle" @input="handleChange">
+    <el-option v-for="(item,i) in rows" :label="item.appName" :value="item.appCode" />
   </el-select>
 </template>
 
@@ -8,7 +8,7 @@
 import { selectAppPage } from '@/lowcode/api/lowcode'
 
 export default {
-  name: 'lc-object-data-select',
+  name: 'LcObjectDataSelect',
   props: {
     value: String,
     disabled: {
@@ -26,6 +26,21 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      val: '',
+      objectDefine: null,
+      total: 0,
+      rows: [],
+      sels: []
+
+    }
+  },
+  computed: {
+    showStyle() {
+      return 'width: ' + (this.width ? this.width + 'px;' : '200px;')
+    }
+  },
   watch: {
     'value': {
       handler(nval, oval) {
@@ -33,21 +48,6 @@ export default {
       },
       deep: true,
       immediate: true
-    }
-  },
-  computed: {
-    showStyle() {
-      return 'width: '+ (this.width ? this.width+'px;' : '200px;')
-    }
-  },
-  data() {
-    return {
-      val: '',
-      objectDefine: null,
-      total:0,
-      rows:[],
-      sels: [],
-
     }
   },
   created() {

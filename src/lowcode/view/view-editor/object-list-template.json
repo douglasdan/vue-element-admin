@@ -11,6 +11,7 @@
       "code": "edit",
       "props": {
         "size": "small",
+        "type": "primary",
         "disabled": false
       },
       "action": {
@@ -24,7 +25,7 @@
       "code": "delete",
       "props": {
         "size": "small",
-        "type": "primary",
+        "type": "danger",
         "disabled": false
       },
       "action": {

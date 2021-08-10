@@ -7,7 +7,7 @@
 <script>
 
 export default {
-  name: 'lc-view-edit-editor',
+  name: 'LcViewEditEditor'
 }
 
 </script>

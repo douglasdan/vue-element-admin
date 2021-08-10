@@ -1,6 +1,5 @@
 
 export function repairObjectListViewJson(viewJson) {
-
   if (!viewJson.hasOwnProperty('width')) {
     viewJson.width = 0
   }
@@ -24,12 +23,11 @@ export function repairObjectListViewJson(viewJson) {
 
   if (viewJson.hasOwnProperty('viewButtons')) {
     viewJson.viewButtons.forEach((btn) => {
-
       if (!btn.hasOwnProperty('props')) {
         btn.props = {
-          "size": "small",
-          "type": "primary",
-          "disabled": false
+          'size': 'small',
+          'type': 'primary',
+          'disabled': false
         }
       }
 
@@ -46,9 +44,9 @@ export function repairObjectListViewJson(viewJson) {
     viewJson.rowButtons.forEach((btn) => {
       if (!btn.hasOwnProperty('props')) {
         btn.props = {
-          "size": "mini",
-          "type": "",
-          "disabled": false
+          'size': 'mini',
+          'type': '',
+          'disabled': false
         }
       }
 
@@ -60,9 +58,9 @@ export function repairObjectListViewJson(viewJson) {
       }
       if (!btn.hasOwnProperty('action')) {
         btn.action = {
-          "type": "2",
-          "viewId": "",
-          "script": ""
+          'type': '2',
+          'viewId': '',
+          'script': ''
         }
       }
     })
@@ -70,15 +68,15 @@ export function repairObjectListViewJson(viewJson) {
 
   if (!viewJson.operate) {
     viewJson.operate = {
-      "visible": true,
-      "width": 120
+      'visible': true,
+      'width': 120
     }
   }
 
   if (!viewJson.queryDefine) {
     viewJson.queryDefine = {
-      "labelWidth": 100,
-      "conditions":[
+      'labelWidth': 100,
+      'conditions': [
       ]
     }
   }

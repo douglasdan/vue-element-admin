@@ -1,33 +1,35 @@
 <template>
 
   <el-row>
-    <el-col :span="8">
-      <div style="margin-left: 10px; width: 450px;">
+    <el-col :span="8" style="border-right: 1px solid #eee;">
+      <div style="margin-left: 10px;">
         <el-collapse v-model="activeNames">
 
           <el-collapse-item title="字段显示" name="1">
-            <lc-show-fields-editor style="width: 420px;"
+            <lc-show-fields-editor
               :object-code="objectCode"
-              :view-json="viewJson">
-            </lc-show-fields-editor>
+              :view-json="viewJson"
+            />
           </el-collapse-item>
 
-          <el-collapse-item v-if="viewJson.viewButtons" title="页面功能按钮" name="2">
-
+          <el-collapse-item v-if="viewJson.viewButtons" title="页面功能按钮" name="2" >
+            <lc-view-btn-editor :btns="viewJson.viewButtons"></lc-view-btn-editor>
           </el-collapse-item>
 
           <el-collapse-item v-if="viewJson.rowButtons" title="数据行功能按钮" name="3">
+            <lc-view-btn-editor :btns="viewJson.rowButtons"></lc-view-btn-editor>
+          </el-collapse-item>
+
+          <el-collapse-item title="查询条件" name="4" >
 
           </el-collapse-item>
 
-          <el-collapse-item title="查询条件" name="4">
-
-          </el-collapse-item>
         </el-collapse>
       </div>
     </el-col>
+
     <el-col :span="16">
-      <lc-view :template-code="templateCode" :object-code="objectCode"></lc-view>
+      <lc-view :template-code="templateCode" :object-code="objectCode" />
     </el-col>
   </el-row>
 
@@ -39,13 +41,13 @@ import { uuid } from 'vue-uuid'
 import Sortable from 'sortablejs'
 
 export default {
-  name: 'lc-view-list-editor',
+  name: 'LcViewListEditor',
   props: {
     objectCode: String,
     templateCode: String,
     viewJson: {
       type: Object,
-      default: function(){
+      default: function() {
         return {
           viewButtons: [],
           showFields: [],
@@ -58,7 +60,7 @@ export default {
     return {
       eid: 'e' + uuid.v1(),
       activeNames: '1',
-      selectField: null,
+      selectField: null
 
     }
   },
@@ -71,42 +73,3 @@ export default {
 }
 
 </script>
-
-<style lang="scss" scoped>
-/* .list-complete-item {
-  cursor: pointer;
-  position: relative;
-  font-size: 14px;
-  padding: 5px 12px;
-  margin-top: 4px;
-  border: 1px solid #bfcbd9;
-  transition: all 1s;
-}
-
-.list-complete-item-handle {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 50px;
-}
-
-.list-complete-item-handle2 {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 20px;
-}
-
-.list-complete-item.sortable-chosen {
-  background: #4AB7BD;
-}
-
-.list-complete-item.sortable-ghost {
-  background: #30B08F;
-}
-
-.list-complete-enter,
-.list-complete-leave-active {
-  opacity: 0;
-} */
-</style>

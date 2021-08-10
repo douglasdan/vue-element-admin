@@ -26,8 +26,7 @@ import TreeSelect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 Vue.use(TreeSelect)
 
-
-/************lowcode components ************/
+/** **********lowcode components ************/
 import lcViewEditor from '@/lowcode/view/lc-view-editor'
 Vue.component('lc-view-editor', lcViewEditor)
 
@@ -73,8 +72,18 @@ Vue.component('lc-object-select', lcObjectSelect)
 import lcObjectDataSelect from '@/lowcode/view/components/lc-object-data-select'
 Vue.component('lc-object-data-select', lcObjectDataSelect)
 
-import lsShowFieldsEditor from '@/lowcode/view/components/lc-show-fields-editor'
-Vue.component('lc-show-fields-editor', lsShowFieldsEditor)
+import lcShowFieldsEditor from '@/lowcode/view/view-editor/lc-show-fields-editor'
+Vue.component('lc-show-fields-editor', lcShowFieldsEditor)
+
+import lcViewBtnEditor from '@/lowcode/view/view-editor/lc-view-btn-editor'
+Vue.component('lc-view-btn-editor', lcViewBtnEditor)
+
+
+
+
+
+
+
 
 
 import Mdm from './components/LowCode/index'
@@ -91,11 +100,11 @@ import XObjectEditor from '@/views/xview/x-object-editor'
 Vue.component('x-object-define-editor', XObjectDefineEditor)
 Vue.component('x-object-editor', XObjectEditor)
 
-//主数据选择器
+// 主数据选择器
 import MdmList from '@/views/business-backend/MdmDataMgr/MdmList'
 Vue.component('mdm-list', MdmList)
 
-//对象选择器
+// 对象选择器
 import ObjectSelect from '@/views/business-backend/ObjectMgr/ObjectSelect'
 Vue.component('x-object-select', ObjectSelect)
 
@@ -114,34 +123,32 @@ Vue.component('x-object-condition', xObjectCondition)
 import xObjectDataSelect from '@/views/xview/components/x-object-data-select'
 Vue.component('x-object-data-select', xObjectDataSelect)
 
-//字段输入
+// 字段输入
 import xFormItem from '@/views/xview/components/x-form-item'
 Vue.component('x-form-item', xFormItem)
 
 import xObjectFilter from '@/views/xview/x-object-filter'
 Vue.component('x-object-filter', xObjectFilter)
 
-//对象列表展示
+// 对象列表展示
 import XObjectListView from '@/views/xview/components/x-object-list-view'
 Vue.component('x-object-list-view', XObjectListView)
 
-//对象编辑展示
+// 对象编辑展示
 import XObjectEditView from '@/views/xview/components/x-object-edit-view'
 Vue.component('x-object-edit-view', XObjectEditView)
 
-//对象展示视图
+// 对象展示视图
 import XObjectViewView from '@/views/xview/components/x-object-view-view'
 Vue.component('x-object-view-view', XObjectViewView)
 
-//视图，数据行功能按钮
+// 视图，数据行功能按钮
 import XRowOperator from '@/views/xview/components/x-row-operator'
 Vue.component('x-row-operator', XRowOperator)
 
-//显示页面
+// 显示页面
 import ShowView from '@/views/business-backend/ViewMgr/ShowView'
 Vue.component('show-view', ShowView)
-
-
 
 import XElement from '@/views/xview-editor/xelement'
 import XCard from '@/views/xview-editor/xcard'
@@ -154,9 +161,6 @@ Vue.component('x-table', XTable)
 Vue.component('x-card', XCard)
 
 Vue.component('x-button', XButton)
-
-
-
 
 /**
  * If you don't want to use mock-server

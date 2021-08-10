@@ -1,6 +1,7 @@
 <template>
   <div>
-    <tree-select v-if="objectDefine && objectDefine.treeFlag == '1'"
+    <tree-select
+      v-if="objectDefine && objectDefine.treeFlag == '1'"
       style="width: 100%;"
       :options="rows"
       placeholder="请选择"
@@ -14,8 +15,8 @@
       @select="handleSelect"
       @deselect="handleDeSelect"
     />
-    <el-select v-model="vals" v-if="!(objectDefine && objectDefine.treeFlag)" :multiple="muliple" clearable @input="handleChange" style="width: 100%;">
-      <el-option :label="item[objectDefine.labelFieldCode]" :value="item[objectDefine.keyFieldCode]" v-for="(item,i) in rows"></el-option>
+    <el-select v-if="!(objectDefine && objectDefine.treeFlag)" v-model="vals" :multiple="muliple" clearable style="width: 100%;" @input="handleChange">
+      <el-option v-for="(item,i) in rows" :label="item[objectDefine.labelFieldCode]" :value="item[objectDefine.keyFieldCode]" />
     </el-select>
   </div>
 </template>
@@ -27,7 +28,7 @@ import '@/styles/tree-select.scss'
 import { selectObjectDataPage, selectTreeRootPage, getTree, getObjectDataById } from '@/lowcode/api/lowcode'
 
 export default {
-  name: 'lc-object-data-select',
+  name: 'LcObjectDataSelect',
   components: { TreeSelect },
   props: {
     value: Array,
@@ -54,11 +55,11 @@ export default {
   data() {
     return {
       objectDefine: null,
-      total:0,
-      rows:[],
+      total: 0,
+      rows: [],
       sels: [],
 
-      vals:[]
+      vals: []
     }
   },
   watch: {
@@ -66,8 +67,7 @@ export default {
       handler(nval, oval) {
         if (Array.isArray(nval)) {
           this.vals = [].concat(nval)
-        }
-        else {
+        } else {
           this.vals = [].concat([nval])
         }
       },
@@ -95,7 +95,7 @@ export default {
     loadData() {
       if (this.objectDefine.treeFlag == '1') {
         selectTreeRootPage(this.objectDefine.id, {
-          conditions: [{field: 'lazy', values:['Y']}]
+          conditions: [{ field: 'lazy', values: ['Y'] }]
         }).then(ret => {
           if (ret.success) {
             ret.data.rows.forEach((row) => {
@@ -123,9 +123,9 @@ export default {
       }
     },
     handleSelect(node, instanceId) {
-      let oval = JSON.parse(JSON.stringify(this.vals))
+      const oval = JSON.parse(JSON.stringify(this.vals))
 
-      let val = ''+(this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
+      const val = '' + (this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
       this.vals.push(val)
       this.$emit('input', this.vals)
       this.$emit('change', {
@@ -133,19 +133,18 @@ export default {
       })
     },
     handleDeSelect(node, instanceId) {
+      const oval = JSON.parse(JSON.stringify(this.vals))
 
-      let oval = JSON.parse(JSON.stringify(this.vals))
-
-      let val = ''+(this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
+      const val = '' + (this.objectDefine.idFieldCode ? node[this.objectDefine.idFieldCode] : node.id)
       let idx = -1
-      for (let i=0;i<this.vals.length;i++) {
+      for (let i = 0; i < this.vals.length; i++) {
         if (this.vals[i] == val) {
           idx = i
         }
       }
 
       if (idx > -1) {
-        this.vals.splice(idx,1)
+        this.vals.splice(idx, 1)
       }
       this.$emit('input', this.vals)
 

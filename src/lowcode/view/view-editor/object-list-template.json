@@ -87,6 +87,7 @@
   ],
   "queryDefine": {
     "labelWidth": 100,
+    "inputWidth": 200,
     "conditions":[
 
     ]

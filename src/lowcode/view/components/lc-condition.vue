@@ -1,9 +1,30 @@
 <template>
   <div style="display: inline-flex;">
 
-    <el-select v-show="!hideOp" v-model="cond.op" placeholder="" style="width: 80px;margin-right: 10px;" size="small" @change="handleOpChange">
+    <el-select v-show="!hideOp" v-model="cond.op" placeholder="" style="width: 80px;margin-right: 10px;" size="small"
+      @change="handleOpChange">
       <el-option v-for="(item,i) in options" :label="item.label" :value="item.value" />
     </el-select>
+
+    <div v-if="showDialog">
+
+      <el-dialog
+        title="选择"
+        :visible.sync="selectDataRowDialogVisible"
+        :close-on-click-modal="false"
+        :append-to-body="true"
+        :destroy-on-close="true"
+      >
+        <lc-view-list
+          v-if="selectDataRowDialogVisible"
+          :object-code="refObjectDefine.objectCode"
+          :template-code="'list'"
+          :mode="'select'"
+          @object-relation="handleObjectRelation">
+        </lc-view-list>
+      </el-dialog>
+
+    </div>
 
     <div v-if="showSelect" :style="showStyle">
       <lc-object-data-select
@@ -34,11 +55,11 @@
         v-else-if="fieldDefine && fieldDefine.fieldType == 'decimal'"
       />
 
-      <el-date-picker v-model="val" type="date" value-format="yyyy-MM-dd"
+      <el-date-picker v-model="val" type="date" value-format="yyyy-MM-dd" :style="showStyle"
         v-else-if="fieldDefine.fieldType == 'date'"
       />
 
-      <el-date-picker v-model="val" value-format="yyyy-MM-dd HH:mm:ss" type="datetime"
+      <el-date-picker v-model="val" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" :style="showStyle"
         v-else-if="fieldDefine.fieldType == 'datetime'"
       />
 
@@ -107,18 +128,25 @@ export default {
       refObjectDefine: null,
       refObjectField: null,
 
-      val: null,
+      val: '',
 
-      val1: null,
-      val2: null,
+      val1: '',
+      val2: '',
 
-      options: []
+      options: [],
+
+      selectDataRowDialogVisible: false
     }
   },
   computed: {
     'showSelect': {
       get() {
-        return this.mdmCode || (this.refObjectDefine && this.refObjectField)
+        return this.mdmCode || (this.refObjectDefine && this.refObjectDefine.mdmFlag == '1' && this.refObjectField)
+      }
+    },
+    'showDialog': {
+      get() {
+        return !this.mdmCode && this.refObjectDefine && this.refObjectDefine.mdmFlag == '0'
       }
     },
     'showCoupleStyle': {
@@ -139,25 +167,59 @@ export default {
         }
       }
     },
+    'valueSize': {
+      get() {
+        if (['eq', 'ne', 'ge', 'gt', 'le', 'lt', 'like'].indexOf(this.cond.op) > -1) {
+          return 1
+        }
+        else if (['between'].indexOf(this.cond.op) > -1) {
+          return 2
+        }
+        else if (['in', 'nin'].indexOf(this.cond.op) > -1) {
+          return Infinity
+        }
+        return -1
+      }
+    },
     'showSingle': {
       get() {
-        return this.fieldDefine &&['eq', 'ne', 'ge', 'gt', 'le', 'lt', 'like'].indexOf(this.cond.op) > -1
+        return this.fieldDefine && this.valueSize == 1
       }
     },
     'showCouple': {
       get() {
-        return this.fieldDefine && ['between'].indexOf(this.cond.op) > -1
+        return this.fieldDefine && this.valueSize == 2
       }
     },
     'showMultiple': {
       get() {
-        return this.fieldDefine && ['in', 'nin'].indexOf(this.cond.op) > -1
+        return this.fieldDefine && this.valueSize == Infinity
       }
     }
   },
   watch: {
     'cond': {
       handler(nval, oval) {
+        if (nval == oval || !nval) {
+          return
+        }
+
+        if (this.valueSize == 1) {
+          this.val = this.cond.values.length > 0 ? this.cond.values[0] : null
+          this.cond.values = [this.val]
+        }
+        else if (this.valueSize == 2) {
+          if (this.cond.values.length > 1) {
+            this.val1 = this.cond.values[1]
+          }
+          if (this.cond.values.length > 0) {
+            this.val2 = this.cond.values[0]
+          }
+          this.cond.values = [this.val1, this.val2]
+        }
+        else if (this.showMultiple) {
+          //
+        }
         this.loadMetadata()
       },
       immediate: true,
@@ -172,19 +234,34 @@ export default {
     },
     'val': {
       handler(nval, oval) {
-        this.cond.values = [nval]
+        if (nval !== oval) {
+          if (this.valueSize == 1) {
+            this.cond.values = [nval]
+          }
+          else if (this.valueSize == Infinity) {
+
+          }
+        }
       },
       immediate: true,
     },
     'val1': {
       handler(nval, oval) {
-        this.cond.values[0] = nval
+        if (nval !== oval) {
+          if (this.valueSize == 2) {
+            this.cond.values[0] = this.val1
+          }
+        }
       },
       immediate: true,
     },
     'val2': {
       handler(nval, oval) {
-        this.cond.values[1] = nval
+        if (nval !== oval) {
+          if (this.valueSize == 2) {
+            this.cond.values[1] = this.val2
+          }
+        }
       },
       immediate: true,
     }
@@ -236,10 +313,11 @@ export default {
       // TODO??
     },
     handleOpChange() {
-      if (this.cond.op == 'between') {
-        this.cond.values = ['', '']
-      } else {
-        this.cond.values = []
+      if (this.valueSize == 1) {
+        this.cond.values = [this.val]
+      }
+      else if (this.valueSize == 2) {
+        this.cond.values = [this.val1, this.val2]
       }
     },
     async loadMetadata() {
@@ -267,6 +345,9 @@ export default {
           await this.findFinalFieldRef(this.refObjectField)
         }
       }
+    },
+    handleObjectRelation(sels) {
+      //
     }
 
   }

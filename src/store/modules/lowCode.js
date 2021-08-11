@@ -32,7 +32,7 @@ const mutations = {
 
   SET_OBJECT_DEFINE: (state, { oid, data }) => {
     state.objects[oid] = data
-    state.objectCodeMap[data.fieldCode] = data
+    state.objectCodeMap[data.objectCode] = data
   },
   UPDATE_OBJECT_DEFINE: (state, oid) => {
     if (state.objects[oid]) {
@@ -119,7 +119,7 @@ const actions = {
       if (!state.objectCodeMap['' + code]) {
         selectObjectDefinePage({
           conditions: [
-            { field: 'object_code', op: 'eq', values: [code] }
+            { fieldCode: 'object_code', op: 'eq', values: [code] }
           ]
         }).then(ret => {
           if (ret.success && ret.data.rows.length > 0) {

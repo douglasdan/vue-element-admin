@@ -1,8 +1,13 @@
 <template>
   <div :class="eid">
     <el-row style="margin: 10px;">
-      <lc-form-item label="宽度">
-        <el-input v-model="viewJson.operate.width" placeholder="" style="width: 200px;" size="small"></el-input>
+      <lc-form-item label="Label宽度">
+        <el-input v-model="viewJson.queryDefine.labelWidth" placeholder="" style="width: 200px;" size="small"></el-input>
+      </lc-form-item>
+    </el-row>
+    <el-row style="margin: 10px;">
+      <lc-form-item label="Input宽度">
+        <el-input v-model="viewJson.queryDefine.inputWidth" placeholder="" style="width: 200px;" size="small"></el-input>
       </lc-form-item>
     </el-row>
     <el-row style="margin: 10px;">
@@ -35,7 +40,7 @@
       </el-table-column>
       <el-table-column prop="x">
         <template scope="scope">
-          <lc-condition :object-code="objectCode" :hide-op="false" :cond="scope.row" :width="viewJson.operate.width"></lc-condition>
+          <lc-condition :object-code="objectCode" :hide-op="false" :cond="scope.row" :width="viewJson.queryDefine.inputWidth"></lc-condition>
         </template>
       </el-table-column>
 

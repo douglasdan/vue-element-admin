@@ -27,7 +27,7 @@
     <div>
       <component
         :is="renderComponent"
-        v-if="viewDefine.templateCode"
+        v-if="viewDefine.templateCode && viewDefine.objectCode"
         ref="view"
         :object-code="viewDefine.objectCode"
         :template-code="viewDefine.templateCode"

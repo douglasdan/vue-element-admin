@@ -63,7 +63,7 @@ export default {
     loadData() {
       selectObjectDefinePage({
         conditions: [{
-          field: 'app_code', op: 'eq', values: [this.appCode]
+          fieldCode: 'app_code', op: 'eq', values: [this.appCode]
         }]
       }).then(ret => {
         this.objects = ret.data.rows

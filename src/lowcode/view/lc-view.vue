@@ -1,7 +1,11 @@
 <template>
-  <div>
-    信息
-  </div>
+  <component
+    ref="view"
+    :is="renderComponent"
+    :object-code="objectCode"
+    :template-code="templateCode"
+    :view-json="viewJson"
+  />
 </template>
 
 <script>
@@ -42,6 +46,22 @@ export default {
       viewDefine: null
     }
   },
+  computed: {
+    renderComponent: {
+      get() {
+        if (this.templateCode == 'list') {
+          return 'lc-view-list'
+        }
+        if (this.templateCode == 'create') {
+          return 'lc-view-create'
+        }
+        if (this.templateCode == 'edit') {
+          return 'lc-view-edit'
+        }
+        return 'div'
+      }
+    }
+  },
   created() {
 
   },
@@ -52,14 +72,21 @@ export default {
     async loadMetadata() {
       if (this.objectCode && this.viewCode) {
         //
-
       }
     },
 
     renderView() {
-      if (this.viewJson && this.templateCode) {
+      if (!this.viewJson) {
+        //
+        if (this.viewJson && this.templateCode) {
+          //从后台获取
+        }
+        else if (this.viewId) {
+          //
 
+        }
       }
+
     }
 
   }

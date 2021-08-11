@@ -27,8 +27,9 @@
             </lc-view-conditions-editor>
           </el-collapse-item>
           <el-collapse-item title="高级选项" name="5" >
-            1.动态控制按钮显示
-            2.输入框，联动
+            1.动态控制按钮显示<br/>
+            2.行编辑：FieldChange事件,输入框，联动<br/>
+            3.动态控制disable<br/>
           </el-collapse-item>
 
         </el-collapse>
@@ -36,7 +37,7 @@
     </el-col>
 
     <el-col :span="16">
-      <lc-view :template-code="templateCode" :object-code="objectCode" />
+      <lc-view :template-code="templateCode" :object-code="objectCode" :view-json="viewJson"/>
     </el-col>
   </el-row>
 

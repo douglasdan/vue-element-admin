@@ -4,7 +4,23 @@
     <el-col :span="8" style="border-right: 1px solid #eee;">
       <div style="margin-left: 10px;">
         <el-collapse v-model="activeNames">
-
+          <el-collapse-item title="页面设置" name="0">
+            <el-row style="margin: 10px;">
+              <lc-form-item label="操作栏宽度">
+                <el-input v-model="viewJson.operate.width" placeholder="" style="width: 200px;" size="small"></el-input>
+              </lc-form-item>
+            </el-row>
+            <el-row style="margin: 10px;">
+              <lc-form-item label="Label宽度">
+                <el-input v-model="viewJson.queryDefine.labelWidth" placeholder="" style="width: 200px;" size="small"></el-input>
+              </lc-form-item>
+            </el-row>
+            <el-row style="margin: 10px;">
+              <lc-form-item label="Input宽度">
+                <el-input v-model="viewJson.queryDefine.inputWidth" placeholder="" style="width: 200px;" size="small"></el-input>
+              </lc-form-item>
+            </el-row>
+          </el-collapse-item>
           <el-collapse-item title="字段显示" name="1">
             <lc-show-fields-editor
               :object-code="objectCode"
@@ -64,10 +80,18 @@ export default {
       }
     }
   },
+  watch: {
+    'viewJson': {
+      handler(nval, oval) {
+      },
+      deep: true,
+      immediate: true
+    },
+  },
   data() {
     return {
       eid: 'e' + uuid.v1(),
-      activeNames: '1',
+      activeNames: '',
       selectField: null
 
     }

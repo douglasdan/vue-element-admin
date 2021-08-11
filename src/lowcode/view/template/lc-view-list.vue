@@ -1,12 +1,12 @@
 <template>
   <section>
     <div>
-      <el-row v-if="!showFuncBar" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
+      <el-row v-if="showFuncBar" style="margin: 10px; font-size: 14px; height: 32px;" type="flex">
         <div style="display: flex-inline;">
           <el-link v-show="showFilterBtn" type="primary" style="line-height: 32px;" @click="toggleQueryPanel">筛选</el-link>
         </div>
         <div style="right: 10px; float: right; position: absolute;">
-          <x-button v-for="(btn, index) in viewButtons" :view="btn" :self="self" />
+          <lc-button v-if="btn.visible" v-for="(btn, index) in viewButtons" :btn="btn" :self="self" />
         </div>
       </el-row>
     </div>
@@ -17,12 +17,86 @@
       </lc-form-item>
     </div>
 
+    <el-table
+        :data="rows"
+        border
+        :row-key="rowKey"
+        style="width: 100%;"
+        highlight-current-row
+        :height="tableHeight"
+        lazy
+        :load="loadTreeNode"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+        @selection-change="handleSelectionChange"
+        @row-click="haneldRowClick"
+      >
+
+        <el-table-column v-if="isTree" :width="dropdownWidth" />
+        <el-table-column type="selection" width="55" />
+        <el-table-column type="index" label="序号" />
+        <el-table-column
+          v-for="(f, i) in viewJson.showFields"
+          v-if="f.visible"
+          :prop="f.fieldCode"
+          :label="f.fieldName"
+          :show-overflow-tooltip="showTooltip(f.fieldCode)"
+          :width=" !!f.width ? f.width : 100"
+        >
+          <template scope="scope">
+            <lc-field-input
+              v-model="scope.row[f.fieldCode]"
+              :object-code="objectCode"
+              :field-code="f.fieldCode"
+            />
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          v-if="showRowOperate"
+          prop="operate"
+          :width="operateWidth"
+        >
+          <template slot="header">
+            <span>操作</span>
+          </template>
+          <template scope="scope">
+            <lc-button
+              v-for="(btn, index) in rowButtons"
+              v-if="btn.visible"
+              :size="'mini'"
+              :btn="btn"
+              :self="self"
+              :row="scope.row"
+            />
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-row v-if="pagination.visible">
+        <div class="block" style="margin: 5px; float: right;">
+          <el-pagination
+            :current-page.sync="pageNo"
+            :page-size="pageSize"
+            :page-sizes="pagination.pageSizes"
+            :total="total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
+      </el-row>
+
+      <el-row v-if="selectMode" style="margin: 10px; font-size: 14px; height: 32px; text-align: right;">
+        <el-button type="primary" size="small" @click="submitSelection">确定</el-button>
+      </el-row>
+
   </section>
 </template>
 <script>
 
   import { mapState } from 'vuex'
   import { selectTreeRootPage, selectObjectDataPage } from '@/lowcode/api/lowcode.js'
+  import { isRootPageView, isShowInDialog } from '@/utils'
 
   export default {
     name: 'lc-view-list',
@@ -102,12 +176,26 @@
           if (nval && nval.queryDefine.conditions) {
             this.conditions = JSON.parse(JSON.stringify(nval.queryDefine.conditions))
           }
+          console.log('lc-view-list show field ', this.viewJson.showFields.map(a => a.fieldCode))
+          this.$nextTick(() => {
+            this.$forceUpdate()
+            this.rows = [].concat(this.rows)
+          })
         },
         deep: true,
         immediate: true
       },
     },
     computed: {
+      rowKey() {
+        return this.isTree ? this.objectDefine.keyFieldCode : 'id'
+      },
+      isTree() {
+        return this.objectDefine && this.objectDefine.treeFlag == '1'
+      },
+      dropdownWidth() {
+        return 31 + this.treeMaxDepth * 14
+      },
       showFuncBar() {
         if (!this.funcVisible) {
           return false
@@ -132,9 +220,31 @@
       viewButtons() {
         return this.viewJson ? this.viewJson.viewButtons : []
       },
-      checkBoxWidth() {
-        return 31 + this.treeMaxDepth * 14
-      }
+      rowButtons() {
+        return this.viewJson ? this.viewJson.rowButtons : []
+      },
+      showRowOperate() {
+        return this.rowOperateVisible && this.rowButtons.filter(a => a.visible).length > 0
+      },
+      operateWidth() {
+        return (this.viewJson.operate && this.viewJson.operate.width) ? this.viewJson.operate.width : 100
+      },
+      tableHeight() {
+        let h
+        if (isRootPageView(this)) {
+          h = (window.innerHeight - 22 -
+            this.$store.state.settings.navbarHeight -
+            this.$store.state.settings.tagsViewHeight -
+            this.$store.state.settings.tableFuncBarHeight -
+            this.$store.state.settings.tablePaginationHeight)
+        } else {
+          h = (window.innerHeight / 2)
+        }
+        if (this.viewJson.maxHeight > 0 && h > this.viewJson.maxHeight) {
+          h = this.viewJson.maxHeight
+        }
+        return h + 'px'
+      },
     },
     created() {
       console.log('lc-view-list '+this.objectCode+' '+this.viewCode+' created')
@@ -143,11 +253,20 @@
       console.log('lc-view-list '+this.objectCode+' '+this.viewCode+' mounted')
     },
     methods: {
-
+      showTooltip(code) {
+        return true
+        // const fieldDefine = this.objectDefine.filter(a => a.fieldCode == code)[0]
+        // if (fieldDefine) {
+        //   if (fieldDefine.fieldType == 'text' && fieldDefine.fieldLength >= 20) {
+        //     //TODO 且有内容超过长度？
+        //     return true
+        //   }
+        // }
+        // return false
+      },
       async loadMetadata() {
         //同步加载，对象信息
         this.objectDefine = await this.$store.dispatch('lowCode/getObjectDefineByCode', this.objectCode)
-
       },
       toggleQueryPanel() {
         this.queryPanelVisible = !this.queryPanelVisible
@@ -192,7 +311,41 @@
             }
           })
         }
-      }
+      },
+      loadTreeNode(tree, treeNode, resolve) {
+        selectObjectDataPage(this.objectCode, {
+          conditions: [{ fieldCode: this.objectDefine['supFieldCode'], op: 'eq', values: [tree[this.objectDefine['keyFieldCode']]] }]
+        }).then(ret => {
+          if (ret.success) {
+            if (ret.data.rows.length == 0) {
+              this.$message.error('没有下级数据')
+              resolve([])
+            } else {
+              ret.data.rows.forEach(item => {
+                item.children = []
+                item.hasChildren = true
+                item.level = tree.level + 1
+
+                this.treeMaxDepth = Math.max(this.treeMaxDepth, item.level)
+              })
+              resolve(ret.data.rows)
+            }
+          }
+        })
+      },
+
+      haneldRowClick(	row, column, event) {
+        this.$emit('row-click', { row, column, event })
+      },
+      handleSelectionChange(sels) {
+        this.sels = sels
+      },
+
+      //****** 选择模式
+
+      submitSelection() {
+
+      },
     }
   }
 </script>

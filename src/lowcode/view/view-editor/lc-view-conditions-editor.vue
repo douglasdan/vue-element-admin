@@ -1,15 +1,6 @@
 <template>
   <div :class="eid">
-    <el-row style="margin: 10px;">
-      <lc-form-item label="Label宽度">
-        <el-input v-model="viewJson.queryDefine.labelWidth" placeholder="" style="width: 200px;" size="small"></el-input>
-      </lc-form-item>
-    </el-row>
-    <el-row style="margin: 10px;">
-      <lc-form-item label="Input宽度">
-        <el-input v-model="viewJson.queryDefine.inputWidth" placeholder="" style="width: 200px;" size="small"></el-input>
-      </lc-form-item>
-    </el-row>
+
     <el-row style="margin: 10px;">
       <lc-form-item label="选择字段">
         <lc-field-select :object-code="objectCode" @selectField="handleSelectField" />

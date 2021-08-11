@@ -355,3 +355,43 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+
+
+export function type2Color(type) {
+  if ('primary' == type) {
+    return '#1890ff'
+  }
+  if ('success' == type) {
+    return '#13ce66'
+  }
+  if ('warning' == type) {
+    return '#ffba00'
+  }
+  if ('danger' == type) {
+    return '#ff4949'
+  }
+  if ('info' == type) {
+    return '#1E1E1E'
+  }
+  return 'black'
+}
+
+export function isShowInDialog(vm) {
+  let flag = false
+  let p = vm.$parent
+  while (p) {
+    if (p.$options._componentTag == 'app-main') {
+      break
+    }
+    if (p.$options._componentTag == 'el-dialog') {
+      flag = true
+      break
+    }
+    p = p.$parent
+  }
+  return flag
+}
+
+export function isRootPageView(vm) {
+  return !isShowInDialog(vm)
+}

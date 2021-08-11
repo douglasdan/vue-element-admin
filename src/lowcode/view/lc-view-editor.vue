@@ -63,7 +63,6 @@ export default {
     return {
       appCode: '',
       objects: []
-
     }
   },
   computed: {

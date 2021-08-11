@@ -66,6 +66,9 @@ Vue.component('lc-form-item', lcFormItem)
 import lcFieldInput from '@/lowcode/view/components/lc-field-input'
 Vue.component('lc-field-input', lcFieldInput)
 
+import lcButton from '@/lowcode/view/components/lc-button'
+Vue.component('lc-button', lcButton)
+
 import lcObjectSelect from '@/lowcode/view/components/lc-object-select'
 Vue.component('lc-object-select', lcObjectSelect)
 

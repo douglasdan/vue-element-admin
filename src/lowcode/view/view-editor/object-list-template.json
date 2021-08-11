@@ -9,6 +9,8 @@
     {
       "name": "编辑",
       "code": "edit",
+      "icon": "el-icon-edit",
+      "visible": true,
       "props": {
         "size": "small",
         "type": "primary",
@@ -23,6 +25,8 @@
     {
       "name": "删除",
       "code": "delete",
+      "icon": "el-icon-delete",
+      "visible": true,
       "props": {
         "size": "small",
         "type": "danger",
@@ -46,6 +50,7 @@
     {
       "code":"add_new",
       "name":"新增",
+      "visible": true,
       "props":{
           "size":"small",
           "type":"primary",
@@ -60,6 +65,7 @@
     {
       "name": "重置",
       "code": "",
+      "visible": true,
       "props": {
         "size": "small",
         "disabled": false
@@ -73,6 +79,7 @@
     {
       "name": "查询",
       "code": "",
+      "visible": true,
       "props": {
         "size": "small",
         "type": "primary",

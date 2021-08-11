@@ -66,9 +66,6 @@ export default {
 
   },
   methods: {
-    isRootPageView() {
-      return this.$parent.$options._componentTag == 'app-main'
-    },
     async loadMetadata() {
       if (this.objectCode && this.viewCode) {
         //

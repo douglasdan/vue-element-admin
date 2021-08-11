@@ -8,6 +8,7 @@
       <!-- <el-table-column type="index" label="序号" /> -->
       <el-table-column prop="name" label="名称"/>
       <el-table-column prop="code" label="编码"/>
+      <el-table-column prop="icon" label="图标"/>
       <el-table-column prop="visible" label="是否显示">
         <template scope="scope">
           <el-switch v-model="scope.row.visible"
@@ -30,7 +31,7 @@
     <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :append-to-body="true">
       <el-form :inline="true" label-width="120px" style="width: 400px;">
         <el-form-item label="名称：">
-          <el-input v-model="editForm.name" placeholder="" />
+          <el-input v-model="editForm.name" placeholder="" clearable style="width: 180px;"/>
         </el-form-item>
       </el-form>
       <el-form :inline="true" label-width="120px" style="width: 800px;">

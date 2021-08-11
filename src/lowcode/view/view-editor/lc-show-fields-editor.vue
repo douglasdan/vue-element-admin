@@ -49,7 +49,7 @@
           <span />
         </template>
         <template slot-scope="scope">
-          <i class="el-icon-delete" style="color: red;" @click="deleteEle(scope.row)" />
+          <i class="el-icon-delete btn-icon-danger" style="color: red;" @click="deleteEle(scope.row)" />
         </template>
       </el-table-column>
     </el-table>

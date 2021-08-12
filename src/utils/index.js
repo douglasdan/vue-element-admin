@@ -377,19 +377,26 @@ export function type2Color(type) {
 }
 
 export function isShowInDialog(vm) {
-  let flag = false
+  return !!getParentDialog(vm)
+}
+
+export function getParentDialog(vm) {
+  let ret = null
   let p = vm.$parent
   while (p) {
     if (p.$options._componentTag == 'app-main') {
       break
     }
     if (p.$options._componentTag == 'el-dialog') {
-      flag = true
+      ret = p
       break
     }
     p = p.$parent
   }
-  return flag
+  if (ret) {
+    return ret.$parent
+  }
+  return ret
 }
 
 export function isRootPageView(vm) {

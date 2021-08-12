@@ -5,7 +5,9 @@
       <el-option v-for="(item,i) in options" :label="item.label" :value="item.value" />
     </el-select>
 
-    <div v-if="showDialog">
+    <lc-bool v-if="showBool" v-model="val"></lc-bool>
+
+    <div v-else-if="showDialog">
 
       <el-dialog
         title="选择"
@@ -25,7 +27,7 @@
 
     </div>
 
-    <div v-if="showSelect" :style="showStyle">
+    <div v-else-if="showSelect" :style="showStyle">
       <lc-object-data-select
         v-model="cond.values"
         :object-code="refObjectDefine.objectCode"
@@ -139,6 +141,11 @@ export default {
     }
   },
   computed: {
+    'showBool': {
+      get() {
+        return this.fieldDefine && this.fieldDefine.valueRefType == '1'
+      }
+    },
     'showSelect': {
       get() {
         return this.mdmCode || (this.refObjectDefine && this.refObjectDefine.mdmFlag == '1' && this.refObjectField)

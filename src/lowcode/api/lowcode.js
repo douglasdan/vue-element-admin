@@ -3,7 +3,10 @@ import request from '@/utils/request'
 export function LowcodeConst() {
   return {
     storeSystem: 'store-system',
+    fieldType: 'field-type',
+    refType: 'ref-type',
     tables: {
+      'MDM': 'lc_mdm_data',
       'MDM_ITEM': 'lc_mdm_data_item'
     }
   }

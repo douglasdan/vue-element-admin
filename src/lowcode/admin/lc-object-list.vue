@@ -8,7 +8,7 @@
           </lc-form-item>
         </div>
         <div style="right: 10px; float: right; position: absolute;">
-          <el-button size="small" type="primary">新建</el-button>
+          <el-button size="small" type="primary" @click="handleAdd">新建</el-button>
           <el-button size="small" type="primary" @click="loadData">查询</el-button>
         </div>
       </el-row>
@@ -63,6 +63,10 @@
       </div>
     </el-row>
 
+    <el-dialog title="编辑" :visible.sync="editDialogVisible" :close-on-click-modal="false" :fullscreen="true">
+      <lc-object-editor ref="objectEditor" :obj="editForm" />
+    </el-dialog>
+
   </section>
 </template>
 
@@ -70,9 +74,16 @@
 
 import { isRootPageView, isShowInDialog } from '@/utils'
 import { selectObjectDefinePage, LowcodeConst } from '@/lowcode/api/lowcode'
+import LcObjectEditor from './lc-object-editor'
+
+const DefaultObject = {
+  id: null,
+  storeSystem: '0',
+}
 
 export default {
   name: 'lc-object-list',
+  components: {LcObjectEditor},
   data() {
     return {
       LC: LowcodeConst(),
@@ -83,7 +94,11 @@ export default {
       sels: [],
       query: {
         appCode: ''
-      }
+      },
+
+      editForm: JSON.parse(JSON.stringify(DefaultObject)),
+      editDialogVisible: false,
+
     }
   },
   computed: {
@@ -119,7 +134,15 @@ export default {
         this.total = ret.data.total
         this.rows = ret.data.rows
       })
-    }
+    },
+    handleAdd() {
+      this.editForm = JSON.parse(JSON.stringify(DefaultObject))
+      this.editDialogVisible = true
+    },
+    handleEdit(row) {
+      this.editForm = row
+      this.editDialogVisible = true
+    },
   }
 }
 

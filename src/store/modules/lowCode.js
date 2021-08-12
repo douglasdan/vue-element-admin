@@ -12,6 +12,8 @@ const state = {
   objectCodeMap: {
 
   },
+
+  mdmList: [],
   mdmItems: {
 
   },
@@ -34,14 +36,22 @@ const mutations = {
     state.objects[oid] = data
     state.objectCodeMap[data.objectCode] = data
   },
-  UPDATE_OBJECT_DEFINE: (state, oid) => {
-    if (state.objects[oid]) {
-      delete state.objectCodeMap[state.objects[oid].fieldCode]
+  INVALIDATE_OBJECT_DEFINE: (state, key) => {
+    if (state.objects[key]) {
+      delete state.objects[key]
+      delete state.objectCodeMap[state.objects[key].objectCode]
     }
-    delete state.objects[oid]
+    if (state.objectCodeMap[key]) {
+      delete state.objects[state.objectCodeMap[key].id]
+      delete state.objectCodeMap[key]
+    }
   },
   SET_VIEW_DEFINE: (state, { vid, view }) => {
     state.views['' + vid] = view
+  },
+
+  SET_MDM: (state, data) => {
+    state.mdmList = data
   },
   SET_MDM_ITEMS: (state, {code, data}) => {
     state.mdmItems[code] = data
@@ -134,10 +144,27 @@ const actions = {
     })
   },
 
-  updateObjectDefine({ commit }, oid) {
+  invalidateObjectDefine({ commit }, oid) {
     return new Promise((resolve, reject) => {
-      commit('UPDATE_OBJECT_DEFINE', oid)
+      commit('INVALIDATE_OBJECT_DEFINE', oid)
       resolve(true)
+    })
+  },
+
+  getMdmList({commit}) {
+    return new Promise((resolve, reject) => {
+      if (state.mdmList.length > 0) {
+        resolve(state.mdmList)
+      } else {
+        selectObjectDataPage(LowcodeConst().tables.MDM, {}).then(ret => {
+          if (ret.success && ret.data) {
+            commit('SET_MDM', ret.data.rows)
+            resolve(ret.data.rows)
+          } else {
+            resolve([])
+          }
+        })
+      }
     })
   },
 

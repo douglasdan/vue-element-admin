@@ -34,7 +34,7 @@
           <lc-mdm-select :editing="false" :mdm-code="LC.refType" v-model="scope.row.valueRefType"></lc-mdm-select>
         </template>
       </el-table-column>
-      <el-table-column prop="fieldNullable"     label="可为空">
+      <el-table-column prop="fieldNullable" label="可为空">
         <template scope="scope">
           <lc-bool :editing="false" v-model="scope.row.fieldNullable"></lc-bool>
         </template>

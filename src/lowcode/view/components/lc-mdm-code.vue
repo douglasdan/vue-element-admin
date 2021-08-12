@@ -50,6 +50,7 @@ export default {
     }
   },
   mounted() {
+    this.loadData()
   },
   methods: {
     loadData() {

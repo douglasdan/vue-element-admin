@@ -14,7 +14,7 @@
 import { selectObjectDefinePage } from '@/lowcode/api/lowcode'
 
 export default {
-  name: 'LsFieldSelect',
+  name: 'lc-object-select',
   props: {
     appCode: String,
     value: String,
@@ -58,6 +58,7 @@ export default {
     }
   },
   mounted() {
+    this.loadData()
   },
   methods: {
     loadData() {

@@ -28,11 +28,21 @@
       </el-form-item>
 
       <el-form-item label="引用主数据：" v-if="fieldDefine.valueRefType == '2'">
-        <lc-mdm-code v-model="fieldDefine.mdmCode"></lc-mdm-code>
+        <lc-mdm-code v-model="fieldDefine.mdmCode" :width="180"></lc-mdm-code>
       </el-form-item>
 
-      <el-form-item label="引用字段：" v-if="fieldDefine.valueRefType == '3'">
+      <el-form-item label="引用分组：" v-if="fieldDefine.valueRefType == '2'">
+        <el-input v-model="fieldDefine.refGroup"></el-input>
+      </el-form-item>
 
+      <el-form-item label="应用：" v-if="fieldDefine.valueRefType == '3'">
+        <lc-app-select v-model="appCode" :width="180"></lc-app-select>
+      </el-form-item>
+      <el-form-item label="引用对象：" v-if="fieldDefine.valueRefType == '3'">
+        <lc-object-select :app-code="appCode" v-model="fieldDefine.refObjectCode" :width="180"></lc-object-select>
+      </el-form-item>
+      <el-form-item label="引用字段：" v-if="fieldDefine.valueRefType == '3'">
+        <lc-field-select :object-code="fieldDefine.refObjectCode" v-model="fieldDefine.refFieldCode" :width="180"></lc-field-select>
       </el-form-item>
 
       <el-form-item label="小数位：" v-show="showInputFor('fieldPrecision')">
@@ -71,12 +81,11 @@ export default {
     editForCreate() {
       return !this.fieldDefine.id
     },
-
-
   },
   data() {
     return {
       LC: LowcodeConst(),
+      appCode: '',
       InputShowMap:{
         text: ['fieldNullable', 'fieldUnique', 'maxLength', 'valueRefType'],
         int:  ['fieldNullable', 'fieldUnique', 'maxLength'],

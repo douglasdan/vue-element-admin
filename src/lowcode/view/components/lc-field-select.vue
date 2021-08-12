@@ -12,7 +12,7 @@
 <script>
 
 export default {
-  name: 'LsFieldSelect',
+  name: 'lc-field-select',
   props: {
     objectCode: String,
     value: String,
@@ -63,6 +63,7 @@ export default {
     async loadData() {
       if (this.objectCode) {
         this.objectDefine = await this.$store.dispatch('lowCode/getObjectDefineByCode', this.objectCode)
+        console.log(JSON.stringify(this.objectDefine))
       }
     },
     handleChange(nval, oval) {

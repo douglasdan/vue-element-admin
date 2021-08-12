@@ -1,10 +1,7 @@
 import { selectViewDefinePage } from '@/api/view-define.js'
 
-import { getObjectDefineById, deleteObjectDefine, saveObjectDefine, selectObjectDefinePage } from '@/api/object-define'
-import { selectObjectFieldDefinePage, deleteObjectFieldDefine, saveObjectFieldDefine } from '@/api/object-field-define'
-import { getViewDefineById } from '@/api/view-define'
-
-import { getViewByObjectCodeAndViewCode } from '@/lowcode/api/lowcode'
+import { getViewByObjectCodeAndViewCode, getObjectDefineById, getObjectDefineByCode, selectObjectDataPage } from '@/lowcode/api/lowcode'
+import { LowcodeConst } from '@/lowcode/api/lowcode'
 
 const state = {
   apps: [],
@@ -13,6 +10,9 @@ const state = {
 
   },
   objectCodeMap: {
+
+  },
+  mdmItems: {
 
   },
   keywords: [],
@@ -40,9 +40,11 @@ const mutations = {
     }
     delete state.objects[oid]
   },
-
   SET_VIEW_DEFINE: (state, { vid, view }) => {
     state.views['' + vid] = view
+  },
+  SET_MDM_ITEMS: (state, {code, data}) => {
+    state.mdmItems[code] = data
   }
 }
 
@@ -117,25 +119,14 @@ const actions = {
 
     return new Promise((resolve, reject) => {
       if (!state.objectCodeMap['' + code]) {
-        selectObjectDefinePage({
-          conditions: [
-            { fieldCode: 'object_code', op: 'eq', values: [code] }
-          ]
-        }).then(ret => {
-          if (ret.success && ret.data.rows.length > 0) {
-            const oid = ret.data.rows[0].id
-            getObjectDefineById(oid).then(ret => {
-              if (ret.success) {
-                commit('SET_OBJECT_DEFINE', {
-                  oid: '' + oid,
-                  data: ret.data
-                })
-              }
-              resolve(ret.data)
+        getObjectDefineByCode(code).then(ret => {
+          if (ret.success) {
+            commit('SET_OBJECT_DEFINE', {
+              oid: ret.data.id,
+              data: ret.data
             })
-          } else {
-            resolve(null)
           }
+          resolve(ret.data)
         })
       } else {
         resolve(state.objectCodeMap['' + code])
@@ -147,6 +138,30 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('UPDATE_OBJECT_DEFINE', oid)
       resolve(true)
+    })
+  },
+
+  getMdmItems({commit}, mdmCode) {
+    return new Promise((resolve, reject) => {
+      if (state.mdmItems[mdmCode]) {
+        resolve(state.mdmItems[mdmCode])
+      } else {
+        selectObjectDataPage(LowcodeConst().tables.MDM_ITEM, {
+          conditions: [{
+            fieldCode: 'mdm_code', op:'eq', values:[mdmCode]
+          }]
+        }).then(ret => {
+          if (ret.success && ret.data) {
+            commit('SET_MDM_ITEMS', {
+              code: mdmCode,
+              data: ret.data.rows
+            })
+            resolve(ret.data.rows)
+          } else {
+            resolve([])
+          }
+        })
+      }
     })
   },
 

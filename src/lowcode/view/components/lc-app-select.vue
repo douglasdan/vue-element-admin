@@ -1,7 +1,8 @@
 <template>
-  <el-select v-if="rows" v-model="val" clearable :style="showStyle" @input="handleChange">
+  <el-select v-if="editing" v-model="val" clearable :style="showStyle" @input="handleChange">
     <el-option v-for="(item,i) in rows" :label="item.appName" :value="item.appCode" />
   </el-select>
+  <span v-else-if="!editing">{{ showLabel }}</span>
 </template>
 
 <script>
@@ -10,6 +11,10 @@ import { selectAppPage } from '@/lowcode/api/lowcode'
 export default {
   name: 'LcObjectDataSelect',
   props: {
+    editing:{
+      type: Boolean,
+      default: true
+    },
     value: String,
     disabled: {
       type: Boolean,
@@ -39,6 +44,15 @@ export default {
   computed: {
     showStyle() {
       return 'width: ' + (this.width ? this.width + 'px;' : '200px;')
+    },
+    showLabel() {
+      if (this.val && this.rows && this.rows.length > 0) {
+        let temp = this.rows.filter(a => a.appCode == this.val)
+        if (temp.length > 0) {
+          return temp[0].appName
+        }
+      }
+      return ''
     }
   },
   watch: {

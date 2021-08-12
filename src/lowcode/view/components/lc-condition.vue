@@ -1,6 +1,5 @@
 <template>
   <div style="display: inline-flex;">
-
     <el-select v-show="!hideOp" v-model="cond.op" placeholder="" style="width: 80px;margin-right: 10px;" size="small"
       @change="handleOpChange">
       <el-option v-for="(item,i) in options" :label="item.label" :value="item.value" />
@@ -31,6 +30,7 @@
         v-model="cond.values"
         :object-code="refObjectDefine.objectCode"
         :value-field-code="valueFieldCode"
+        :multiple="true"
         :mdm-code="mdmCode"
         @change="handleChange"
       />
@@ -47,11 +47,11 @@
         v-else-if="fieldDefine && fieldDefine.fieldType == 'text'"
       />
 
-      <el-input-number v-model="val" size="small" :style="showStyle"
+      <el-input-number v-model="val" size="small" :style="showStyle" :controls="false"
         v-else-if="fieldDefine && fieldDefine.fieldType == 'int'"
       />
 
-      <el-input-number v-model="val" size="small" :style="showStyle" :precision="fieldDefine.fieldPrecision"
+      <el-input-number v-model="val" size="small" :style="showStyle" :controls="false" :precision="fieldDefine.fieldPrecision"
         v-else-if="fieldDefine && fieldDefine.fieldType == 'decimal'"
       />
 
@@ -331,17 +331,25 @@ export default {
     },
 
     async findFinalFieldRef(fieldDefine) {
+
+      console.log('查找最终引用字段 '+fieldDefine.fieldCode+' '+fieldDefine.valueRefType);
+
       if (fieldDefine.valueRefType == '2') {
         this.mdmCode = fieldDefine.mdmCode
       }
       else if (fieldDefine.valueRefType == '3') {
         this.refObjectDefine = await this.$store.dispatch('lowCode/getObjectDefineByCode', fieldDefine.refObjectCode)
-        this.refObjectField = refObj.fields.filter(a => a.fieldCode == this.refObjectDefine.refFieldCode)[0]
+        this.refObjectField = this.refObjectDefine.fields.filter(a => a.fieldCode == fieldDefine.refFieldCode)[0]
+
+        console.log('找到引用关系 '+fieldDefine.fieldCode+' => '
+          +this.refObjectDefine.objectCode+'.'+this.refObjectField.fieldCode
+          +' '+this.refObjectDefine.mdmFlag);
 
         if (this.refObjectField.valueRefType == '2') {
           this.mdmCode = this.refObjectField.mdmCode
         }
         else if (this.refObjectField.valueRefType == '3') {
+          console.log('继续查找引用关系 '+this.refObjectField.fieldCode+' '+this.refObjectField.valueRefType)
           await this.findFinalFieldRef(this.refObjectField)
         }
       }

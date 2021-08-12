@@ -84,8 +84,8 @@ Vue.component('lc-view-btn-editor', lcViewBtnEditor)
 import lcViewConditionsEditor from '@/lowcode/view/view-editor/lc-view-conditions-editor'
 Vue.component('lc-view-conditions-editor', lcViewConditionsEditor)
 
-
-
+import lcMdmSelect from '@/lowcode/view/components/lc-mdm-select'
+Vue.component('lc-mdm-select', lcMdmSelect)
 
 
 

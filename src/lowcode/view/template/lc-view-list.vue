@@ -11,7 +11,7 @@
       </el-row>
     </div>
 
-    <div v-show="queryPanelVisible">
+    <div v-show="queryPanelVisible" class="cond-parent">
       <lc-form-item v-for="(cond,i) in conditions" :label="cond.fieldName" :label-width="condLabelWidth">
         <lc-condition :object-code="objectCode" :hide-op="true" :cond="cond" :width="condInputWidth"></lc-condition>
       </lc-form-item>

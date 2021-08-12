@@ -1,5 +1,15 @@
 import request from '@/utils/request'
 
+export function LowcodeConst() {
+  return {
+    storeSystem: 'store-system',
+    tables: {
+      'MDM_ITEM': 'lc_mdm_data_item'
+    }
+  }
+}
+
+
 //* ********** 应用 ***********/
 
 export function getAppByCode(code) {
@@ -47,6 +57,20 @@ export function saveObjectDefine(data) {
     url: `/api/v1/objectDefine/save`,
     method: 'post',
     data
+  })
+}
+
+export function getObjectDefineById(id) {
+  return request({
+    url: `/api/v1/objectDefine/${id}`,
+    method: 'get',
+  })
+}
+
+export function getObjectDefineByCode(code) {
+  return request({
+    url: `/api/v1/objectDefine/bycode/${code}`,
+    method: 'get',
   })
 }
 
@@ -99,6 +123,13 @@ export function selectObjectFieldDefinePage(data) {
 }
 
 //* ********** 视图处理 ***********/
+
+export function getViewDefineById(id) {
+  return request({
+    url: `/api/v1/viewDefine/${id}`,
+    method: 'get',
+  })
+}
 
 export function saveViewDefine(data) {
   return request({

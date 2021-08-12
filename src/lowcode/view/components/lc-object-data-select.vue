@@ -5,7 +5,7 @@
       style="width: 100%;"
       :options="rows"
       placeholder="请选择"
-      :multiple="muliple"
+      :multiple="multiple"
       :disabled="disabled"
       :max-height="480"
       :normalizer="normalizer"
@@ -15,9 +15,16 @@
       @select="handleSelect"
       @deselect="handleDeSelect"
     />
-    <el-select v-if="!(objectDefine && objectDefine.treeFlag)" v-model="vals" :multiple="muliple" clearable style="width: 100%;" @input="handleChange">
-      <el-option v-for="(item,i) in rows" :label="item[objectDefine.labelFieldCode]" :value="item[objectDefine.keyFieldCode]" />
+    <el-select v-if="!(objectDefine && objectDefine.treeFlag == '1') && multiple" v-model="vals" :multiple="multiple" filterable clearable style="width: 100%;"
+      @input="handleChange">
+      <el-option v-for="(item,i) in rows" :label="selectLabel(item)" :value="item[objectDefine.keyFieldCode]" />
     </el-select>
+
+    <el-select v-if="!(objectDefine && objectDefine.treeFlag == '1') && !multiple" v-model="val" :multiple="multiple" filterable clearable style="width: 100%;"
+      @input="handleChange">
+      <el-option v-for="(item,i) in rows" :label="selectLabel(item)" :value="item[objectDefine.keyFieldCode]" />
+    </el-select>
+
   </div>
 </template>
 
@@ -32,7 +39,7 @@ export default {
   components: { TreeSelect },
   props: {
     value: Array,
-    muliple: {
+    multiple: {
       type: Boolean,
       required: false,
       default: false
@@ -47,8 +54,10 @@ export default {
     mdmCode: String,
     filter: {
       type: Object,
-      default: {
-        conditions: []
+      default() {
+        return {
+          conditions: []
+        }
       }
     }
   },
@@ -86,6 +95,9 @@ export default {
     this.loadMetadata()
   },
   methods: {
+    selectLabel(item) {
+      return item[this.objectDefine.keyFieldCode]+' '+item[this.objectDefine.labelFieldCode]
+    },
     async loadMetadata() {
       if (this.objectCode) {
         this.objectDefine = await this.$store.dispatch('lowCode/getObjectDefineByCode', this.objectCode)
